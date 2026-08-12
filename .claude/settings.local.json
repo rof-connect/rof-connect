@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import secrets,string; alphabet=string.ascii_letters+string.digits; print\\(''.join\\(secrets.choice\\(alphabet\\) for _ in range\\(24\\)\\)\\)\")",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(18\\).toString\\('base64'\\).replace\\(/[^A-Za-z0-9]/g,''\\).slice\\(0,24\\)\\)\")"
+    ]
+  }
+}
