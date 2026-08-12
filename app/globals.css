@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05070C;
+  --foreground: #E7EDF7;
+
+  /* Palette ROF Connect (reprise du prototype rof-connect.jsx) */
+  --rof-noir: #05070C;
+  --rof-marine: #0B1220;
+  --rof-marine2: #152340;
+  --rof-royal: #2C5FE0;
+  --rof-royal-sombre: #132A5E;
+  --rof-poudre: #7FC4EC;
+  --rof-or: #E8B93F;
+  --rof-or-fonce: #B8860B;
+  --rof-craie: #111A2B;
+  --rof-blanc: #0E1626;
+  --rof-carte-haut: #17203A;
+  --rof-texte: #E7EDF7;
+  --rof-gris: #93A1BC;
+  --rof-ligne: #22304C;
+  --rof-gazon: #4FB477;
+  --rof-rouge: #E0524A;
+  --rof-pur: #FFFFFF;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-rof-noir: var(--rof-noir);
+  --color-rof-marine: var(--rof-marine);
+  --color-rof-marine2: var(--rof-marine2);
+  --color-rof-royal: var(--rof-royal);
+  --color-rof-royal-sombre: var(--rof-royal-sombre);
+  --color-rof-poudre: var(--rof-poudre);
+  --color-rof-or: var(--rof-or);
+  --color-rof-or-fonce: var(--rof-or-fonce);
+  --color-rof-craie: var(--rof-craie);
+  --color-rof-blanc: var(--rof-blanc);
+  --color-rof-carte-haut: var(--rof-carte-haut);
+  --color-rof-texte: var(--rof-texte);
+  --color-rof-gris: var(--rof-gris);
+  --color-rof-ligne: var(--rof-ligne);
+  --color-rof-gazon: var(--rof-gazon);
+  --color-rof-rouge: var(--rof-rouge);
+  --font-sans: var(--font-inter);
+  --font-condensed: var(--font-barlow-condensed);
+  --font-serif-r: var(--font-playfair);
+  --font-script: var(--font-dancing-script);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
