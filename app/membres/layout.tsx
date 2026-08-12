@@ -26,6 +26,9 @@ export default async function MembresLayout({ children }: { children: React.Reac
             <Link href="/membres/agenda" className="font-condensed text-sm font-semibold uppercase tracking-wide text-rof-gris">
               Agenda
             </Link>
+            <Link href="/membres/nouvelles" className="font-condensed text-sm font-semibold uppercase tracking-wide text-rof-gris">
+              Nouvelles
+            </Link>
             {profile?.role === "admin" && (
               <Link
                 href="/membres/admin/equipes"
