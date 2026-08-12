@@ -1,6 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import { deconnecter } from "@/app/connexion/actions";
-import Link from "next/link";
 
 export default async function MembresPage() {
   const supabase = await createClient();
@@ -41,21 +39,6 @@ export default async function MembresPage() {
           <p className="text-sm text-rof-gris">Aucune équipe assignée pour le moment.</p>
         )}
       </div>
-
-      {profile?.role === "admin" && (
-        <Link
-          href="/membres/admin/equipes"
-          className="mt-8 inline-block w-fit rounded-lg border border-rof-poudre px-4 py-2 text-sm font-semibold text-rof-poudre"
-        >
-          Gérer les équipes →
-        </Link>
-      )}
-
-      <form action={deconnecter} className="mt-10">
-        <button type="submit" className="text-sm text-rof-gris underline">
-          Se déconnecter
-        </button>
-      </form>
     </main>
   );
 }
