@@ -2,19 +2,22 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { deconnecter } from "@/app/connexion/actions";
 import { LogoR } from "@/components/LogoR";
+import { getDictionnaire } from "@/lib/i18n/server";
+import { LanguageToggle } from "@/components/i18n/LanguageToggle";
+import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 
-const ONGLETS: [string, string][] = [
-  ["/membres", "Accueil"],
-  ["/membres/agenda", "Agenda"],
-  ["/membres/calendrier", "Calendrier"],
-  ["/membres/nouvelles", "Nouvelles"],
-  ["/membres/saison", "Saison"],
-  ["/membres/plans", "Plans"],
-  ["/membres/relais", "Relais"],
-  ["/membres/videos", "Vidéos"],
-  ["/membres/gc", "GC"],
-  ["/membres/signaux", "Signaux"],
-  ["/membres/messages", "Messages"],
+const ONGLETS: [string, keyof Dictionnaire["nav"]][] = [
+  ["/membres", "accueil"],
+  ["/membres/agenda", "agenda"],
+  ["/membres/calendrier", "calendrier"],
+  ["/membres/nouvelles", "nouvelles"],
+  ["/membres/saison", "saison"],
+  ["/membres/plans", "plans"],
+  ["/membres/relais", "relais"],
+  ["/membres/videos", "videos"],
+  ["/membres/gc", "gc"],
+  ["/membres/signaux", "signaux"],
+  ["/membres/messages", "messages"],
 ];
 
 export default async function MembresLayout({ children }: { children: React.ReactNode }) {
@@ -24,6 +27,7 @@ export default async function MembresLayout({ children }: { children: React.Reac
   } = await supabase.auth.getUser();
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
+  const { locale, t } = await getDictionnaire();
 
   return (
     <div className="flex min-h-screen flex-col bg-rof-noir">
@@ -35,30 +39,31 @@ export default async function MembresLayout({ children }: { children: React.Reac
               ROF Connect
             </span>
           </Link>
-          <div className="flex min-w-0 items-center gap-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <LanguageToggle locale={locale} />
             {profile?.role === "admin" && (
               <Link
                 href="/membres/admin"
                 className="shrink-0 rounded-lg border border-rof-poudre px-2 py-1 font-condensed text-xs font-semibold uppercase tracking-wide text-rof-poudre"
               >
-                Direction
+                {t.nav.direction}
               </Link>
             )}
             <form action={deconnecter} className="shrink-0">
               <button type="submit" className="text-sm text-rof-gris underline">
-                Quitter
+                {t.nav.quitter}
               </button>
             </form>
           </div>
         </div>
         <nav className="mx-auto flex max-w-3xl gap-4 overflow-x-auto px-5 pb-2">
-          {ONGLETS.map(([href, label]) => (
+          {ONGLETS.map(([href, cle]) => (
             <Link
               key={href}
               href={href}
               className="shrink-0 font-condensed text-sm font-semibold uppercase tracking-wide text-rof-gris"
             >
-              {label}
+              {t.nav[cle]}
             </Link>
           ))}
         </nav>

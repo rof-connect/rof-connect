@@ -1,15 +1,20 @@
 import Link from "next/link";
+import { getDictionnaire } from "@/lib/i18n/server";
+import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 
-export default function ConfirmationInscriptionPage() {
+export default async function ConfirmationInscriptionPage() {
+  const { locale, t } = await getDictionnaire();
+  const c = t.confirmation;
+
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-5 py-10 text-center">
-      <h1 className="font-condensed text-3xl font-bold uppercase text-rof-texte">Vérifie ton courriel</h1>
-      <p className="mt-3 text-rof-gris">
-        Ton compte a été créé. Clique sur le lien de confirmation qu&apos;on vient de t&apos;envoyer par courriel pour
-        pouvoir te connecter.
-      </p>
+      <div className="mb-2">
+        <LanguageToggle locale={locale} />
+      </div>
+      <h1 className="font-condensed text-3xl font-bold uppercase text-rof-texte">{c.titre}</h1>
+      <p className="mt-3 text-rof-gris">{c.texte}</p>
       <Link href="/connexion" className="mt-6 text-rof-poudre">
-        Retour à la connexion
+        {c.retour}
       </Link>
     </main>
   );

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { connecter } from "./actions";
+import { getDictionnaire } from "@/lib/i18n/server";
+import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 
 export default async function ConnexionPage({
   searchParams,
@@ -7,11 +9,16 @@ export default async function ConnexionPage({
   searchParams: Promise<{ erreur?: string; suite?: string }>;
 }) {
   const { erreur, suite } = await searchParams;
+  const { locale, t } = await getDictionnaire();
+  const c = t.connexion;
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-5 py-10">
+      <div className="mb-2">
+        <LanguageToggle locale={locale} />
+      </div>
       <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Royal On Field</p>
-      <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">Connexion</h1>
+      <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">{c.titre}</h1>
 
       {erreur && (
         <div className="mt-4 w-full rounded-lg bg-rof-rouge/10 px-3 py-2 text-sm text-rof-rouge">{erreur}</div>
@@ -20,7 +27,7 @@ export default async function ConnexionPage({
       <form action={connecter} className="mt-6 flex w-full flex-col gap-4">
         <input type="hidden" name="suite" value={suite ?? "/membres"} />
         <div>
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Courriel</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">{c.courriel}</p>
           <input
             name="email"
             type="email"
@@ -29,7 +36,7 @@ export default async function ConnexionPage({
           />
         </div>
         <div>
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Mot de passe</p>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">{c.motDePasse}</p>
           <input
             name="password"
             type="password"
@@ -41,12 +48,12 @@ export default async function ConnexionPage({
           type="submit"
           className="mt-2 w-full rounded-xl bg-rof-or py-3 font-condensed text-lg font-bold uppercase tracking-wider text-white"
         >
-          Entrer
+          {c.entrer}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-rof-gris">
-        Pas encore de compte ? <Link href="/inscription" className="text-rof-poudre">S&apos;inscrire</Link>
+        {c.pasDeCompte} <Link href="/inscription" className="text-rof-poudre">{c.sinscrire}</Link>
       </p>
     </main>
   );

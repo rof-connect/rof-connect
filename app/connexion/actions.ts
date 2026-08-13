@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getDictionnaire } from "@/lib/i18n/server";
 
 export async function connecter(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
@@ -12,7 +13,8 @@ export async function connecter(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    redirect("/connexion?erreur=" + encodeURIComponent("Courriel ou mot de passe incorrect."));
+    const { t } = await getDictionnaire();
+    redirect("/connexion?erreur=" + encodeURIComponent(t.connexion.erreur));
   }
 
   redirect(suite || "/membres");
