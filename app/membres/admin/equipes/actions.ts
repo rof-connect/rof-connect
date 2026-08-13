@@ -26,3 +26,13 @@ export async function archiverEquipe(formData: FormData) {
 
   revalidatePath("/membres/admin/equipes");
 }
+
+export async function desarchiverEquipe(formData: FormData) {
+  const teamId = String(formData.get("team_id") ?? "");
+  if (!teamId) return;
+
+  const supabase = await createClient();
+  await supabase.from("teams").update({ archived: false }).eq("id", teamId);
+
+  revalidatePath("/membres/admin/equipes");
+}
