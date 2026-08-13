@@ -1,0 +1,5 @@
+{
+  "crons": [
+    { "path": "/api/cron/rappels-presence", "schedule": "0 13 * * *" }
+  ]
+}

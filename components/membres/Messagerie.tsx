@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { envoyerMessage } from "@/app/membres/messages/actions";
 
 type Message = {
   id: string;
@@ -101,11 +102,10 @@ export function Messagerie({
     if (!t) return;
     if (canal === "private" && !threadProfileId) return;
     setEnvoi(true);
-    await supabase.from("messages").insert({
-      team_id: teamId,
+    await envoyerMessage({
+      teamId,
       channel: canal,
-      thread_profile_id: canal === "private" ? threadProfileId : null,
-      author_id: monId,
+      threadProfileId: canal === "private" ? threadProfileId : null,
       content: t,
     });
     setTexte("");
