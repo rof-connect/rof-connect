@@ -6,6 +6,7 @@ import { LogoR } from "@/components/LogoR";
 const ONGLETS: [string, string][] = [
   ["/membres", "Accueil"],
   ["/membres/agenda", "Agenda"],
+  ["/membres/calendrier", "Calendrier"],
   ["/membres/nouvelles", "Nouvelles"],
   ["/membres/saison", "Saison"],
   ["/membres/plans", "Plans"],
