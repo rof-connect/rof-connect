@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SECTIONS } from "@/lib/section-config";
 import { CarteContenu } from "@/components/membres/CarteContenu";
 import { FormAjoutContenu } from "@/components/membres/FormAjoutContenu";
+import { ImportExcel } from "@/components/membres/ImportExcel";
 
 export default async function SectionPage({ params }: { params: Promise<{ section: string }> }) {
   const { section } = await params;
@@ -75,7 +76,12 @@ async function EquipeSection({
     <section className="flex flex-col gap-4">
       <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-white">{teamName}</h2>
 
-      {peutEditer && <FormAjoutContenu slug={slug} config={config} teamId={teamId} />}
+      {peutEditer && (
+        <div className="flex flex-wrap gap-3">
+          <FormAjoutContenu slug={slug} config={config} teamId={teamId} />
+          <ImportExcel modeleSlug={slug} teamId={teamId} accesDefaut={config.accesDefaut} />
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         {(items ?? []).map((item, index) => (

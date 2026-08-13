@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { CarteEvenement } from "@/components/membres/CarteEvenement";
 import { FormAjoutEvenement } from "@/components/membres/FormAjoutEvenement";
+import { ImportExcel } from "@/components/membres/ImportExcel";
 
 type EvenementBody = {
   type?: string;
@@ -94,7 +95,12 @@ async function EquipeAgenda({
     <section className="flex flex-col gap-4">
       <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-white">{teamName}</h2>
 
-      {peutEditer && <FormAjoutEvenement teamId={teamId} />}
+      {peutEditer && (
+        <div className="flex flex-wrap gap-3">
+          <FormAjoutEvenement teamId={teamId} />
+          <ImportExcel modeleSlug="agenda" teamId={teamId} accesDefaut={1} />
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         {(evenements ?? []).map((e) => {

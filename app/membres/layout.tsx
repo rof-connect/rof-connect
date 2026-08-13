@@ -37,7 +37,7 @@ export default async function MembresLayout({ children }: { children: React.Reac
           <div className="flex min-w-0 items-center gap-1">
             {profile?.role === "admin" && (
               <Link
-                href="/membres/admin/equipes"
+                href="/membres/admin"
                 className="shrink-0 rounded-lg border border-rof-poudre px-2 py-1 font-condensed text-xs font-semibold uppercase tracking-wide text-rof-poudre"
               >
                 Direction

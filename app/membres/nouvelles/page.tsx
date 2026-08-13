@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CarteNouvelle } from "@/components/membres/CarteNouvelle";
 import { FormAjoutNouvelle } from "@/components/membres/FormAjoutNouvelle";
+import { ImportExcel } from "@/components/membres/ImportExcel";
 
 type NouvelleBody = {
   date?: string | null;
@@ -81,7 +82,12 @@ async function EquipeNouvelles({
     <section className="flex flex-col gap-4">
       <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-white">{teamName}</h2>
 
-      {peutEditer && <FormAjoutNouvelle teamId={teamId} />}
+      {peutEditer && (
+        <div className="flex flex-wrap gap-3">
+          <FormAjoutNouvelle teamId={teamId} />
+          <ImportExcel modeleSlug="nouvelles" teamId={teamId} accesDefaut={1} />
+        </div>
+      )}
 
       <div className="flex flex-col gap-4">
         {items.map((n) => (
