@@ -52,6 +52,10 @@ export default async function ConnexionPage({
         </button>
       </form>
 
+      <Link href="/mot-de-passe-oublie" className="mt-4 text-center text-sm text-rof-poudre">
+        {c.motDePasseOublie}
+      </Link>
+
       <p className="mt-6 text-center text-sm text-rof-gris">
         {c.pasDeCompte} <Link href="/inscription" className="text-rof-poudre">{c.sinscrire}</Link>
       </p>
