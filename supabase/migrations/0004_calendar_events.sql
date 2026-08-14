@@ -1,7 +1,7 @@
--- Calendrier mensuel partagé (organisation / sport / équipe), distinct
--- de l'agenda par équipe (table contents, kind='agenda'). Visible par
--- tous les membres connectés ; création/suppression réservées à l'admin.
-
+-- Calendrier direction : événements généraux (organisation, un sport, ou une
+-- équipe précise), distincts de l'agenda par équipe (table contents,
+-- kind='agenda'). Visibles par tous les coachs/dirigeants, écrits par les
+-- dirigeants (admins) seulement.
 create table calendar_events (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -21,13 +21,21 @@ create index on calendar_events (team_id);
 
 alter table calendar_events enable row level security;
 
-grant select, insert, update, delete on calendar_events to authenticated;
-
+-- Lecture : tout coach (peu importe l'équipe) ou tout dirigeant.
 create policy "calendar_events_select" on calendar_events
   for select to authenticated
-  using (true);
+  using (
+    public.is_admin(auth.uid())
+    or exists (
+      select 1 from team_members tm
+      where tm.profile_id = auth.uid() and tm.role_in_team = 'coach'
+    )
+  );
 
+-- Écriture : dirigeants (admins) seulement.
 create policy "calendar_events_write" on calendar_events
   for all to authenticated
   using (public.is_admin(auth.uid()))
   with check (public.is_admin(auth.uid()));
+
+grant select, insert, update, delete on calendar_events to authenticated;

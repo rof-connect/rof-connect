@@ -6,10 +6,9 @@ import { getDictionnaire } from "@/lib/i18n/server";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 
-const ONGLETS: [string, keyof Dictionnaire["nav"]][] = [
+const ONGLETS_BASE: [string, keyof Dictionnaire["nav"]][] = [
   ["/membres", "accueil"],
   ["/membres/agenda", "agenda"],
-  ["/membres/calendrier", "calendrier"],
   ["/membres/nouvelles", "nouvelles"],
   ["/membres/saison", "saison"],
   ["/membres/plans", "plans"],
@@ -27,6 +26,18 @@ export default async function MembresLayout({ children }: { children: React.Reac
   } = await supabase.auth.getUser();
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
+  const estAdmin = profile?.role === "admin";
+  const { data: memberships } = await supabase
+    .from("team_members")
+    .select("role_in_team")
+    .eq("profile_id", user!.id);
+  const estStaff = estAdmin || (memberships ?? []).some((m) => m.role_in_team === "coach");
+
+  // Le calendrier direction n'est visible (RLS) que par les coachs/admins.
+  const ONGLETS: [string, keyof Dictionnaire["nav"]][] = estStaff
+    ? [ONGLETS_BASE[0], ["/membres/calendrier", "calendrier"], ...ONGLETS_BASE.slice(1)]
+    : ONGLETS_BASE;
+
   const { locale, t } = await getDictionnaire();
 
   return (
@@ -41,7 +52,7 @@ export default async function MembresLayout({ children }: { children: React.Reac
           </Link>
           <div className="flex min-w-0 items-center gap-2">
             <LanguageToggle locale={locale} />
-            {profile?.role === "admin" && (
+            {estAdmin && (
               <Link
                 href="/membres/admin"
                 className="shrink-0 rounded-lg border border-rof-poudre px-2 py-1 font-condensed text-xs font-semibold uppercase tracking-wide text-rof-poudre"

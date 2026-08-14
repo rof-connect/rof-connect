@@ -31,15 +31,20 @@ export const dictionnaires = {
       titre1: "Deviens l'athlète que tu",
       titreAccent: "mérites",
       titre2: "d'être.",
-      slogan: "Earn the crown.",
+      slogan: "Earn the Crown.",
       intro:
-        "Royal On Field est l'académie québécoise de développement complet — athlétique, scolaire et humain — pour les joueurs et joueuses de baseball et softball qui visent les plus grandes scènes, jusqu'à Williamsport.",
+        "Royal On Field est le programme québécois de développement complet — athlétique, scolaire et humain — pour les joueurs et joueuses de baseball et softball qui visent les plus grandes scènes.",
+      introSuite: "Des World Series de Little League aux plus grands événements de développement et de recrutement :",
+      destinations: "Williamsport. Greenville. Livermore. Taylor. Easley. Kirkland. Lower Sussex.",
+      destinationsNote: "Des destinations qui représentent le prochain niveau.",
+      duQuebec: "Du Québec aux plus grandes scènes.",
+      reveGrand: "Rêve grand. Travaille fort. Earn the Crown.",
       decouvrir: "Découvrir l'académie",
-      baseballQuebec: "Baseball Québec · Softball Québec",
+      baseballQuebec: "ECTBL · Fastpitch Nation · Triple Crown · NSA Softball · Perfect Game · Prep Baseball · Can-Am United League",
       statsHero: [
-        ["5", "Titres canadiens Softball"],
-        ["3", "Équipes à la World Series en 2025"],
-        ["8", "Divisions, du prospect au Varsity"],
+        ["8", "Titres canadiens Softball"],
+        ["8", "Équipes à la Little League World Series"],
+        ["13", "Équipes"],
         ["2", "Sports — Baseball & Softball"],
       ] as [string, string][],
       approcheKicker: "Notre approche",
@@ -66,28 +71,20 @@ export const dictionnaires = {
       voiesKicker: "Voies de développement",
       voiesTitre: "Un parcours. Une destination.",
       voiesIntro:
-        "Chaque groupe d'âge s'inscrit dans un plan de développement continu qui vise les plus grandes scènes du baseball et de la softball mineurs — jusqu'à Williamsport.",
+        "Chaque groupe d'âge s'inscrit dans un plan de développement continu qui vise les plus grandes scènes du baseball et de la softball mineurs.",
       parcours: [
-        { age: "12 ans", items: ["Championnat provincial Baseball", "Championnat canadien *", "World Series"] },
         {
-          age: "14 ans",
-          items: [
-            "Championnat Est-Canada Baseball 13U",
-            "Championnat Est-Canada Baseball 14U",
-            "Championnat canadien Baseball & Softball",
-            "World Series Baseball & Softball",
-          ],
-        },
-        {
-          age: "16 ans",
-          items: [
-            "Championnat Est-Canada Baseball 16U",
-            "Championnat canadien * Baseball & Softball",
-            "World Series Baseball & Softball",
+          sport: "Baseball",
+          groupes: [
+            { groupe: "9/10U", etapes: ["ECTBL", "Tournoi", "Championnat Provincial"] },
+            {
+              groupe: "11/12U",
+              etapes: ["ECTBL", "Tournoi", "Championnat Provincial", "Championnat Canadien", "World Series — Williamsport"],
+            },
+            { groupe: "13U", etapes: ["ECTBL", "Championnat Provincial", "Championnat Canadien", "World Series"] },
           ],
         },
       ],
-      voiesNote: "* Selon la qualification",
       scolaireKicker: "Étudiant·e-athlète d'abord",
       scolaireTitre: "Programme scolaire",
       scolaireIntro:
@@ -224,15 +221,20 @@ export const dictionnaires = {
       titre1: "Become the athlete you",
       titreAccent: "deserve",
       titre2: "to be.",
-      slogan: "Earn the crown.",
+      slogan: "Earn the Crown.",
       intro:
-        "Royal On Field is Québec's academy for complete development — athletic, academic and personal — for baseball and softball players aiming for the biggest stages, all the way to Williamsport.",
+        "Royal On Field is Québec's complete development program — athletic, academic and personal — for baseball and softball players aiming for the biggest stages.",
+      introSuite: "From the Little League World Series to the biggest development and recruiting events:",
+      destinations: "Williamsport. Greenville. Livermore. Taylor. Easley. Kirkland. Lower Sussex.",
+      destinationsNote: "Destinations that represent the next level.",
+      duQuebec: "From Québec to the biggest stages.",
+      reveGrand: "Dream big. Work hard. Earn the Crown.",
       decouvrir: "Discover the academy",
-      baseballQuebec: "Baseball Québec · Softball Québec",
+      baseballQuebec: "ECTBL · Fastpitch Nation · Triple Crown · NSA Softball · Perfect Game · Prep Baseball · Can-Am United League",
       statsHero: [
-        ["5", "Canadian Softball titles"],
-        ["3", "Teams at the 2025 World Series"],
-        ["8", "Divisions, from Prospect to Varsity"],
+        ["8", "Canadian Softball titles"],
+        ["8", "Teams at the Little League World Series"],
+        ["13", "Teams"],
         ["2", "Sports — Baseball & Softball"],
       ] as [string, string][],
       approcheKicker: "Our approach",
@@ -259,28 +261,20 @@ export const dictionnaires = {
       voiesKicker: "Development pathways",
       voiesTitre: "One journey. One destination.",
       voiesIntro:
-        "Every age group follows a continuous development plan aimed at the biggest stages in minor baseball and softball — all the way to Williamsport.",
+        "Every age group follows a continuous development plan aimed at the biggest stages in minor baseball and softball.",
       parcours: [
-        { age: "Age 12", items: ["Provincial Baseball Championship", "Canadian Championship *", "World Series"] },
         {
-          age: "Age 14",
-          items: [
-            "Eastern Canada Baseball 13U Championship",
-            "Eastern Canada Baseball 14U Championship",
-            "Canadian Baseball & Softball Championship",
-            "Baseball & Softball World Series",
-          ],
-        },
-        {
-          age: "Age 16",
-          items: [
-            "Eastern Canada Baseball 16U Championship",
-            "Canadian Baseball & Softball Championship *",
-            "Baseball & Softball World Series",
+          sport: "Baseball",
+          groupes: [
+            { groupe: "9/10U", etapes: ["ECTBL", "Tournament", "Provincial Championship"] },
+            {
+              groupe: "11/12U",
+              etapes: ["ECTBL", "Tournament", "Provincial Championship", "Canadian Championship", "World Series — Williamsport"],
+            },
+            { groupe: "13U", etapes: ["ECTBL", "Provincial Championship", "Canadian Championship", "World Series"] },
           ],
         },
       ],
-      voiesNote: "* Subject to qualification",
       scolaireKicker: "Student-athlete first",
       scolaireTitre: "Academic Program",
       scolaireIntro:

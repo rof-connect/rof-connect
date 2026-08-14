@@ -32,6 +32,17 @@ export default async function Home() {
           </h1>
           <div className="mt-3 font-script text-4xl text-rof-poudre sm:text-5xl">{s.slogan}</div>
           <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-rof-gris">{s.intro}</p>
+
+          <div className="mx-auto mt-6 max-w-xl">
+            <p className="text-base leading-relaxed text-rof-texte">{s.introSuite}</p>
+            <p className="mt-2 font-condensed text-lg font-semibold uppercase tracking-[0.08em] text-rof-poudre">
+              {s.destinations}
+            </p>
+            <p className="mt-2 text-sm text-rof-gris">{s.destinationsNote}</p>
+            <p className="mt-1 text-sm text-rof-gris">{s.duQuebec}</p>
+            <p className="mt-4 font-condensed text-lg font-bold uppercase tracking-[0.05em] text-white">{s.reveGrand}</p>
+          </div>
+
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <a
               href="#apropos"
@@ -82,22 +93,31 @@ export default async function Home() {
       {/* Voies de développement */}
       <Section id="programmes" kicker={s.voiesKicker} titre={s.voiesTitre} fond="marine">
         <p className="mx-auto mb-8 max-w-2xl text-center text-base text-rof-gris">{s.voiesIntro}</p>
-        <div className="grid gap-4 md:grid-cols-3">
-          {s.parcours.map((g) => (
-            <div key={g.age} className="flex flex-col rounded-2xl border border-rof-ligne bg-rof-blanc p-6">
-              <div className="font-condensed text-4xl font-bold uppercase tracking-[0.03em] text-rof-or">{g.age}</div>
-              <div className="mt-2 h-0.5 w-10 bg-rof-royal" />
-              <ul className="mt-4 grid gap-2.5">
-                {g.items.map((x) => (
-                  <li key={x} className="flex items-start gap-2 text-base leading-snug text-rof-texte">
-                    <span className="text-rof-poudre">♦</span> {x}
-                  </li>
-                ))}
-              </ul>
+        {s.parcours.map((sp) => (
+          <div key={sp.sport} className="mb-10 last:mb-0">
+            <h3 className="mb-4 text-center font-condensed text-2xl font-bold uppercase tracking-[0.05em] text-white">
+              {sp.sport}
+            </h3>
+            <div className="grid gap-4 md:grid-cols-3">
+              {sp.groupes.map((g) => (
+                <div key={g.groupe} className="flex flex-col items-center rounded-2xl border border-rof-ligne bg-rof-blanc p-6">
+                  <div className="font-condensed text-4xl font-bold uppercase tracking-[0.03em] text-rof-or">{g.groupe}</div>
+                  <div className="mt-2 h-0.5 w-10 bg-rof-royal" />
+                  <div className="mt-4 flex flex-col items-center">
+                    {g.etapes.map((etape, i) => (
+                      <div key={etape} className="flex flex-col items-center">
+                        <div className="rounded-lg bg-rof-craie px-4 py-2 text-center text-base font-semibold leading-snug text-rof-texte">
+                          {etape}
+                        </div>
+                        {i < g.etapes.length - 1 && <div className="my-1 text-rof-poudre">↓</div>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <p className="mt-5 text-center text-xs text-rof-gris">{s.voiesNote}</p>
+          </div>
+        ))}
       </Section>
 
       {/* Programme scolaire */}
