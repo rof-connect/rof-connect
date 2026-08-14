@@ -35,10 +35,6 @@ export function CarteContenu({
     return <CarteSignal titre={titre} body={body} boutonSupprimer={boutonSupprimer} />;
   }
 
-  if (kind === "season") {
-    return <CartePhase index={index} titre={titre} body={body} boutonSupprimer={boutonSupprimer} />;
-  }
-
   if (kind === "relay") {
     return (
       <div className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
@@ -155,42 +151,6 @@ function CarteSignal({
         </button>
       )}
       {revele && boutonSupprimer}
-    </div>
-  );
-}
-
-function CartePhase({
-  index,
-  titre,
-  body,
-  boutonSupprimer,
-}: {
-  index: number;
-  titre: string;
-  body: Record<string, string>;
-  boutonSupprimer: React.ReactNode;
-}) {
-  return (
-    <div className="flex gap-3">
-      <div className="flex flex-col items-center">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rof-or font-condensed text-lg font-bold text-rof-noir">
-          {index + 1}
-        </div>
-        <div className="w-px flex-1 bg-rof-or-fonce" />
-      </div>
-      <div className="mb-3 flex-1 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
-        {body.periode && <div className="font-condensed text-xs font-bold uppercase tracking-wide text-rof-poudre">{body.periode}</div>}
-        <div className="font-condensed text-xl font-bold uppercase leading-tight text-white">{titre}</div>
-        {body.frequence && <div className="mt-0.5 text-sm text-rof-royal">⏱ {body.frequence}</div>}
-        {body.focus && (
-          <div className="mt-2 rounded-lg bg-rof-craie px-3 py-2 text-sm text-rof-texte">
-            <span className="font-condensed font-bold uppercase tracking-wide text-rof-gazon">Focus : </span>
-            {body.focus}
-          </div>
-        )}
-        {body.objectifs && <p className="mt-2 whitespace-pre-wrap text-base leading-relaxed text-rof-texte">{body.objectifs}</p>}
-        {boutonSupprimer}
-      </div>
     </div>
   );
 }

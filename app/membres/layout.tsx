@@ -10,7 +10,6 @@ const ONGLETS_BASE: [string, keyof Dictionnaire["nav"]][] = [
   ["/membres", "accueil"],
   ["/membres/agenda", "agenda"],
   ["/membres/nouvelles", "nouvelles"],
-  ["/membres/saison", "saison"],
   ["/membres/plans", "plans"],
   ["/membres/relais", "relais"],
   ["/membres/videos", "videos"],

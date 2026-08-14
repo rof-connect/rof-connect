@@ -4,12 +4,11 @@ import { useState } from "react";
 import { MODELES_IMPORT } from "@/lib/import-templates";
 import { importerLot } from "@/app/membres/import-actions";
 
-type Kind = "agenda" | "news" | "season" | "plan" | "relay" | "video" | "gamechanger" | "signal";
+type Kind = "agenda" | "news" | "plan" | "relay" | "video" | "gamechanger" | "signal";
 
 const SLUG_VERS_KIND: Record<string, Kind> = {
   agenda: "agenda",
   nouvelles: "news",
-  saison: "season",
   relais: "relay",
 };
 

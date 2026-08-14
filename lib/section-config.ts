@@ -8,7 +8,7 @@ export type Champ = {
 
 export type SectionConfig = {
   slug: string;
-  kind: "season" | "plan" | "relay" | "video" | "signal" | "gamechanger";
+  kind: "plan" | "relay" | "video" | "signal" | "gamechanger";
   titre: string;
   titreChamp: string; // quel champ du formulaire devient contents.title
   accesDefaut: number;
@@ -16,20 +16,6 @@ export type SectionConfig = {
 };
 
 export const SECTIONS: Record<string, SectionConfig> = {
-  saison: {
-    slug: "saison",
-    kind: "season",
-    titre: "Plan annuel d'entraînement",
-    titreChamp: "phase",
-    accesDefaut: 2,
-    champs: [
-      { name: "phase", label: "Nom de la phase", required: true, placeholder: "Ex. : Phase 1 — Préparation générale" },
-      { name: "periode", label: "Période", required: true, placeholder: "Ex. : Novembre – Décembre" },
-      { name: "frequence", label: "Fréquence", placeholder: "Ex. : 3x / semaine — 90 min" },
-      { name: "focus", label: "Focus principal", placeholder: "Ex. : Force générale et mobilité" },
-      { name: "objectifs", label: "Objectifs & contenu", type: "textarea", placeholder: "• Développer la base aérobie\n• Technique de lancer" },
-    ],
-  },
   plans: {
     slug: "plans",
     kind: "plan",

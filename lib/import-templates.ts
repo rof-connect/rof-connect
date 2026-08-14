@@ -63,22 +63,6 @@ export const MODELES_IMPORT: Record<string, ModeleImport> = {
     }),
     valide: (o) => !!(o.titre && (o.texte || o.video_url)),
   },
-  saison: {
-    colonnes: ["phase", "periode", "frequence", "focus", "objectifs"],
-    titreChamp: "phase",
-    gabarit: [
-      { phase: "Phase 1 — Préparation générale", periode: "Novembre - Décembre", frequence: "3x / semaine — 90 min", focus: "Force générale et mobilité", objectifs: "Développer la base aérobie\nMobilité épaules et hanches" },
-      { phase: "Phase 2 — Préparation spécifique", periode: "Janvier - Février", frequence: "4x / semaine — 90 min", focus: "Puissance et mécanique de frappe", objectifs: "Travail en cages\nPuissance des jambes" },
-    ],
-    mapper: (r) => ({
-      phase: champ(r, "phase", "Phase"),
-      periode: champ(r, "periode", "période", "Periode", "Période"),
-      frequence: champ(r, "frequence", "fréquence", "Frequence"),
-      focus: champ(r, "focus", "Focus"),
-      objectifs: champ(r, "objectifs", "Objectifs"),
-    }),
-    valide: (o) => !!(o.phase && o.periode),
-  },
   relais: {
     colonnes: ["situation", "relayeur", "coupeur", "couvertures", "note"],
     titreChamp: "situation",

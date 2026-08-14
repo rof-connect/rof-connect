@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-type Kind = "agenda" | "news" | "season" | "plan" | "relay" | "video" | "gamechanger" | "signal";
+type Kind = "agenda" | "news" | "plan" | "relay" | "video" | "gamechanger" | "signal";
 
 export async function importerLot(
   teamId: string,
