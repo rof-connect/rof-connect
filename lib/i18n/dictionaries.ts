@@ -172,6 +172,8 @@ export const dictionnaires = {
       erreurGenerique: "Impossible de mettre à jour le mot de passe. Le lien a peut-être expiré — recommence la demande.",
       succes: "Mot de passe mis à jour ! Tu peux maintenant te connecter.",
       allerConnexion: "Aller à la connexion",
+      lienExpire: "Ce lien n'est plus valide — il a peut-être déjà été utilisé ou a expiré.",
+      redemander: "Redemander un lien",
     },
     inscription: {
       titre: "Inscription",
@@ -383,6 +385,8 @@ export const dictionnaires = {
       erreurGenerique: "Couldn't update the password. The link may have expired — try requesting a new one.",
       succes: "Password updated! You can now log in.",
       allerConnexion: "Go to log in",
+      lienExpire: "This link is no longer valid — it may have already been used or expired.",
+      redemander: "Request a new link",
     },
     inscription: {
       titre: "Sign Up",

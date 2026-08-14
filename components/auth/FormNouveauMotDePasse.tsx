@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -8,6 +9,7 @@ import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 export function FormNouveauMotDePasse({ t }: { t: Dictionnaire["nouveauMotDePasse"] }) {
   const router = useRouter();
   const [pret, setPret] = useState(false);
+  const [lienInvalide, setLienInvalide] = useState(false);
   const [motDePasse, setMotDePasse] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [erreur, setErreur] = useState("");
@@ -23,10 +25,17 @@ export function FormNouveauMotDePasse({ t }: { t: Dictionnaire["nouveauMotDePass
 
     (async () => {
       if (code) {
-        await supabase.auth.exchangeCodeForSession(code);
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) setLienInvalide(true);
       } else if (accessToken && refreshToken) {
-        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+        const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+        if (error) setLienInvalide(true);
         history.replaceState(null, "", window.location.pathname);
+      } else {
+        // Ni code ni jeton dans le lien — souvent un lien à usage unique déjà
+        // consommé (p. ex. par un filtre de sécurité courriel qui pré-visite
+        // les liens avant l'ouverture réelle par la personne).
+        setLienInvalide(true);
       }
       setPret(true);
     })();
@@ -61,6 +70,17 @@ export function FormNouveauMotDePasse({ t }: { t: Dictionnaire["nouveauMotDePass
 
   if (succes) {
     return <p className="mt-6 text-center text-rof-gazon">{t.succes}</p>;
+  }
+
+  if (pret && lienInvalide) {
+    return (
+      <div className="mt-6 flex flex-col items-center gap-3 text-center">
+        <p className="text-sm text-rof-rouge">{t.lienExpire}</p>
+        <Link href="/mot-de-passe-oublie" className="text-rof-poudre">
+          {t.redemander}
+        </Link>
+      </div>
+    );
   }
 
   return (
