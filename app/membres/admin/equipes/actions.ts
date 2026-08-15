@@ -12,7 +12,20 @@ export async function creerEquipe(formData: FormData) {
   if (!orgId || !name || !sport) return;
 
   const supabase = await createClient();
-  await supabase.from("teams").insert({ org_id: orgId, name, sport, season_year: seasonYear });
+  const { data: equipe } = await supabase
+    .from("teams")
+    .insert({ org_id: orgId, name, sport, season_year: seasonYear })
+    .select("id")
+    .single();
+
+  if (equipe) {
+    const { data: direction } = await supabase.from("profiles").select("id").eq("role", "admin");
+    if (direction && direction.length > 0) {
+      await supabase.from("team_members").insert(
+        direction.map((d) => ({ team_id: equipe.id, profile_id: d.id, role_in_team: "coach" as const, status_id: 8 })),
+      );
+    }
+  }
 
   revalidatePath("/membres/admin/equipes");
 }
