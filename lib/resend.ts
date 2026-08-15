@@ -1,10 +1,7 @@
 import "server-only";
 import { Resend } from "resend";
 
-// Domaine d'expédition temporaire (Resend "onboarding@resend.dev") tant que le
-// domaine personnalisé du site n'est pas configuré (voir cahier des charges,
-// étape 11). À remplacer par une adresse @<domaine ROF> une fois disponible.
-export const EXPEDITEUR = "ROF Connect <onboarding@resend.dev>";
+export const EXPEDITEUR = "ROF Connect <notifications@rofconnect.lentrepotdubaseball.com>";
 
 let client: Resend | null = null;
 
