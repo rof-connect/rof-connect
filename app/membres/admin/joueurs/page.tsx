@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe } from "./actions";
+import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
@@ -60,6 +61,8 @@ export default async function JoueursPage() {
           Change le statut d&apos;un joueur, déplace-le vers une autre équipe, ou ajoute-le à une équipe supplémentaire.
         </p>
       </div>
+
+      <ImportJoueurs />
 
       <div className="flex flex-col gap-4">
         {joueurs.map(([profileId, j]) => {
