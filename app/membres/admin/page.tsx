@@ -77,6 +77,9 @@ export default async function DirectionPage() {
           <Link href="/membres/admin/equipes" className="text-sm text-rof-poudre underline">
             Gérer les équipes
           </Link>
+          <Link href="/membres/admin/joueurs" className="text-sm text-rof-poudre underline">
+            Gérer les joueurs
+          </Link>
           <Link href="/membres/admin/comptes" className="text-sm text-rof-poudre underline">
             Comptes entraîneurs &amp; direction
           </Link>
