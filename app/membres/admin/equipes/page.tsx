@@ -3,6 +3,15 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { creerEquipe, archiverEquipe, desarchiverEquipe } from "./actions";
 
+const LABEL_OPTION: Record<string, string> = {
+  ete: "Été",
+  automne: "Automne",
+  academie: "Académie",
+  voyage: "Voyage",
+  pses: "PSES",
+  cla: "CLA",
+};
+
 export default async function GestionEquipesPage({
   searchParams,
 }: {
@@ -22,7 +31,7 @@ export default async function GestionEquipesPage({
   const { data: org } = await supabase.from("organizations").select("id, name").limit(1).single();
   const { data: teams } = await supabase
     .from("teams")
-    .select("id, name, sport, season_year, archived")
+    .select("id, name, sport, season_year, option, archived")
     .eq("archived", voirArchives)
     .order("name");
 
@@ -61,6 +70,15 @@ export default async function GestionEquipesPage({
               />
             </div>
           </div>
+          <div>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Option</p>
+            <select name="option" className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte">
+              <option value="">— Aucune —</option>
+              {Object.entries(LABEL_OPTION).map(([valeur, label]) => (
+                <option key={valeur} value={valeur}>{label}</option>
+              ))}
+            </select>
+          </div>
           <button
             type="submit"
             className="mt-1 w-fit rounded-lg bg-rof-or px-4 py-2 text-sm font-bold uppercase tracking-wide text-white"
@@ -89,6 +107,7 @@ export default async function GestionEquipesPage({
               <p className="font-condensed text-lg font-semibold uppercase text-rof-texte">{t.name}</p>
               <p className="text-sm text-rof-gris">
                 {t.sport} · saison {t.season_year}
+                {t.option && ` · ${LABEL_OPTION[t.option] ?? t.option}`}
               </p>
             </div>
             {voirArchives ? (

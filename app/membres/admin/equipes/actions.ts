@@ -8,13 +8,14 @@ export async function creerEquipe(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const sport = String(formData.get("sport") ?? "");
   const seasonYear = Number(formData.get("season_year") ?? new Date().getFullYear());
+  const option = String(formData.get("option") ?? "") || null;
 
   if (!orgId || !name || !sport) return;
 
   const supabase = await createClient();
   const { data: equipe } = await supabase
     .from("teams")
-    .insert({ org_id: orgId, name, sport, season_year: seasonYear })
+    .insert({ org_id: orgId, name, sport, season_year: seasonYear, option })
     .select("id")
     .single();
 
