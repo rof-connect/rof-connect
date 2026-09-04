@@ -74,3 +74,22 @@ export async function inviterDirection(formData: FormData) {
   revalidatePath("/membres/admin/comptes");
   return { ok: true, erreur: null };
 }
+
+export async function assignerEquipeCoach(formData: FormData) {
+  const moi = await verifierAdmin();
+  if (!moi) return;
+
+  const profileId = String(formData.get("profile_id") ?? "");
+  const teamId = String(formData.get("team_id") ?? "");
+  if (!profileId || !teamId) return;
+
+  const admin = createAdminClient();
+  await admin.from("team_members").insert({
+    team_id: teamId,
+    profile_id: profileId,
+    role_in_team: "coach",
+    status_id: 8,
+  });
+
+  revalidatePath("/membres/admin/comptes");
+}

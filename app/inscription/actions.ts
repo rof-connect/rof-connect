@@ -63,3 +63,31 @@ export async function inscrireAthlete(formData: FormData) {
 
   redirect("/inscription/confirmation");
 }
+
+export async function inscrireEntraineur(formData: FormData) {
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+
+  if (!fullName || !email || !password) {
+    redirect(
+      "/inscription?type=entraineur&erreur=" + encodeURIComponent("Complète le nom, le courriel et le mot de passe."),
+    );
+  }
+
+  const supabase = await createClient();
+  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } },
+  });
+
+  if (signUpError || !signUpData.user) {
+    redirect("/inscription?type=entraineur&erreur=" + encodeURIComponent(signUpError?.message ?? "Impossible de créer le compte."));
+  }
+
+  const admin = createAdminClient();
+  await admin.from("profiles").update({ role: "coach", full_name: fullName }).eq("id", signUpData.user!.id);
+
+  redirect("/inscription/confirmation?type=entraineur");
+}

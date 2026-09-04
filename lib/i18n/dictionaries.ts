@@ -201,9 +201,18 @@ export const dictionnaires = {
       droite: "Droite",
       gauche: "Gauche",
       ambidextre: "Ambidextre",
+      typeCompte: "Type de compte",
+      typeAthlete: "Athlète",
+      typeEntraineur: "Entraîneur",
+      entraineurIntro: "Inscris-toi comme entraîneur — la direction va confirmer ton équipe et activer tes accès.",
+      nomEntraineur: "Nom complet",
+      courrielEntraineur: "Courriel",
+      sinscrireEntraineur: "M'inscrire comme entraîneur",
     },
     confirmation: {
       titre: "Vérifie ton courriel",
+      texteEntraineur:
+        "Ton compte a été créé. La direction va confirmer ton équipe et activer tes accès — tu seras averti(e) une fois assigné(e).",
       texte:
         "Ton compte a été créé. Clique sur le lien de confirmation qu'on vient de t'envoyer par courriel pour pouvoir te connecter.",
       retour: "Retour à la connexion",
@@ -414,9 +423,18 @@ export const dictionnaires = {
       droite: "Right",
       gauche: "Left",
       ambidextre: "Switch",
+      typeCompte: "Account type",
+      typeAthlete: "Athlete",
+      typeEntraineur: "Coach",
+      entraineurIntro: "Sign up as a coach — direction will confirm your team and activate your access.",
+      nomEntraineur: "Full name",
+      courrielEntraineur: "Email",
+      sinscrireEntraineur: "Sign up as a coach",
     },
     confirmation: {
       titre: "Check your email",
+      texteEntraineur:
+        "Your account has been created. Direction will confirm your team and activate your access — you'll be notified once assigned.",
       texte: "Your account has been created. Click the confirmation link we just sent you by email to log in.",
       retour: "Back to log in",
     },
