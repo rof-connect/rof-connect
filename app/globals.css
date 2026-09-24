@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #05070C;
-  --foreground: #E7EDF7;
+  --background: #000000;
+  --foreground: #FFFFFF;
 
-  /* Palette ROF Connect (reprise du prototype rof-connect.jsx) */
-  --rof-noir: #05070C;
-  --rof-marine: #0B1220;
-  --rof-marine2: #152340;
-  --rof-royal: #2C5FE0;
-  --rof-royal-sombre: #132A5E;
-  --rof-poudre: #7FC4EC;
-  --rof-or: #E8B93F;
-  --rof-or-fonce: #B8860B;
-  --rof-craie: #111A2B;
-  --rof-blanc: #0E1626;
-  --rof-carte-haut: #17203A;
-  --rof-texte: #E7EDF7;
-  --rof-gris: #93A1BC;
-  --rof-ligne: #22304C;
+  /* Palette ROF Connect : noir, blanc, bleu royal, or */
+  --rof-noir: #000000;
+  --rof-marine: #0A0A0A;
+  --rof-marine2: #141414;
+  --rof-royal: #2F63C4;
+  --rof-royal-sombre: #12294F;
+  --rof-poudre: #5B8FEA;
+  --rof-or: #D9B44A;
+  --rof-or-fonce: #A8842A;
+  --rof-craie: #111111;
+  --rof-blanc: #0A0A0A;
+  --rof-carte-haut: #171717;
+  --rof-texte: #FFFFFF;
+  --rof-gris: #A8A8A8;
+  --rof-ligne: #2A2A2A;
   --rof-gazon: #4FB477;
   --rof-rouge: #E0524A;
   --rof-pur: #FFFFFF;

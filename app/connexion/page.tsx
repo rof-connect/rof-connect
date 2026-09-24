@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { connecter } from "./actions";
 import { getDictionnaire } from "@/lib/i18n/server";
@@ -17,7 +18,8 @@ export default async function ConnexionPage({
       <div className="mb-2">
         <LanguageToggle locale={locale} />
       </div>
-      <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Royal On Field</p>
+      <Image src="/logo-r.png" alt="Royal On Field" width={112} height={112} priority className="mb-1" />
+      <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-or">Royal On Field</p>
       <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">{c.titre}</h1>
 
       {erreur && (
