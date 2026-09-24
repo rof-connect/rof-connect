@@ -6,8 +6,16 @@ import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 
 type Equipe = { id: string; name: string; sport: string };
 
-export function FormInscription({ teams, i }: { teams: Equipe[]; i: Dictionnaire["inscription"] }) {
-  const [type, setType] = useState<"athlete" | "entraineur">("athlete");
+export function FormInscription({
+  teams,
+  i,
+  typeInitial = "athlete",
+}: {
+  teams: Equipe[];
+  i: Dictionnaire["inscription"];
+  typeInitial?: "athlete" | "entraineur";
+}) {
+  const [type, setType] = useState<"athlete" | "entraineur">(typeInitial);
 
   return (
     <div className="mt-4 flex flex-col gap-4">

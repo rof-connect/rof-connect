@@ -7,9 +7,9 @@ import { FormInscription } from "@/components/inscription/FormInscription";
 export default async function InscriptionPage({
   searchParams,
 }: {
-  searchParams: Promise<{ erreur?: string }>;
+  searchParams: Promise<{ erreur?: string; type?: string }>;
 }) {
-  const { erreur } = await searchParams;
+  const { erreur, type } = await searchParams;
   const { locale, t } = await getDictionnaire();
   const i = t.inscription;
   const admin = createAdminClient();
@@ -32,7 +32,7 @@ export default async function InscriptionPage({
         <div className="mt-4 rounded-lg bg-rof-rouge/10 px-3 py-2 text-sm text-rof-rouge">{erreur}</div>
       )}
 
-      <FormInscription teams={teams ?? []} i={i} />
+      <FormInscription teams={teams ?? []} i={i} typeInitial={type === "entraineur" ? "entraineur" : "athlete"} />
 
       <p className="mt-6 text-center text-sm text-rof-gris">
         {i.dejaInscrit} <Link href="/connexion" className="text-rof-poudre">{i.seConnecter}</Link>

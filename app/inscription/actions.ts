@@ -34,6 +34,10 @@ export async function inscrireAthlete(formData: FormData) {
     redirect("/inscription?erreur=" + encodeURIComponent(signUpError?.message ?? "Impossible de créer le compte."));
   }
 
+  if (signUpData.user!.identities?.length === 0) {
+    redirect("/inscription?erreur=" + encodeURIComponent("Ce courriel a déjà un compte. Connecte-toi, ou utilise « Mot de passe oublié » si tu ne te souviens plus du mot de passe."));
+  }
+
   const admin = createAdminClient();
   const profileId = signUpData.user!.id;
 
@@ -84,6 +88,10 @@ export async function inscrireEntraineur(formData: FormData) {
 
   if (signUpError || !signUpData.user) {
     redirect("/inscription?type=entraineur&erreur=" + encodeURIComponent(signUpError?.message ?? "Impossible de créer le compte."));
+  }
+
+  if (signUpData.user!.identities?.length === 0) {
+    redirect("/inscription?type=entraineur&erreur=" + encodeURIComponent("Ce courriel a déjà un compte. Connecte-toi, ou utilise « Mot de passe oublié » si tu ne te souviens plus du mot de passe."));
   }
 
   const admin = createAdminClient();
