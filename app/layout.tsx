@@ -48,10 +48,16 @@ export const metadata: Metadata = {
     title: TITRE,
     description: DESCRIPTION,
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "ROF Connect",
+  },
 };
 
 export const viewport = {
   themeColor: "#05070C",
+  viewportFit: "cover" as const,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
