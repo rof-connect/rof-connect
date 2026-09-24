@@ -8,7 +8,7 @@ export type Champ = {
 
 export type SectionConfig = {
   slug: string;
-  kind: "plan" | "relay" | "video" | "signal" | "gamechanger";
+  kind: "video" | "signal" | "gamechanger";
   titre: string;
   titreChamp: string; // quel champ du formulaire devient contents.title
   accesDefaut: number;
@@ -16,33 +16,6 @@ export type SectionConfig = {
 };
 
 export const SECTIONS: Record<string, SectionConfig> = {
-  plans: {
-    slug: "plans",
-    kind: "plan",
-    titre: "Plans d'entraînement",
-    titreChamp: "titre",
-    accesDefaut: 2,
-    champs: [
-      { name: "titre", label: "Titre", required: true, placeholder: "Ex. : Semaine 3 — Frappe et vitesse" },
-      { name: "date", label: "Date / période", placeholder: "Ex. : 15–21 juin" },
-      { name: "focus", label: "Focus", placeholder: "Ex. : Mécanique de l'élan" },
-      { name: "contenu", label: "Contenu du plan", type: "textarea", placeholder: "Échauffement : …\nStation 1 : …" },
-    ],
-  },
-  relais: {
-    slug: "relais",
-    kind: "relay",
-    titre: "Système de relayeur",
-    titreChamp: "situation",
-    accesDefaut: 2,
-    champs: [
-      { name: "situation", label: "Situation", required: true, placeholder: "Ex. : Simple au CD, coureur au 1er" },
-      { name: "relayeur", label: "Relayeur", placeholder: "Ex. : Arrêt-court s'aligne CD → 3e but" },
-      { name: "coupeur", label: "Coupeur (cut-off)", placeholder: "Ex. : 1er but coupe vers le marbre" },
-      { name: "couvertures", label: "Couvertures", placeholder: "Ex. : 2e but couvre le 2e" },
-      { name: "note", label: "Note", placeholder: "Rappel ou consigne (optionnel)" },
-    ],
-  },
   videos: {
     slug: "videos",
     kind: "video",

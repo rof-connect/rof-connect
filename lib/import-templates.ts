@@ -48,35 +48,4 @@ export const MODELES_IMPORT: Record<string, ModeleImport> = {
     }),
     valide: (o) => !!(o.titre && o.date),
   },
-  nouvelles: {
-    colonnes: ["titre", "date", "texte", "photo", "video"],
-    titreChamp: "titre",
-    gabarit: [
-      { titre: "Championnes du tournoi FPN ! 👑", date: "6 juillet 2026", texte: "Quelle fin de semaine ! Nos joueuses repartent avec la bague après 4 victoires consécutives.", photo: "", video: "" },
-      { titre: "Match parfait de notre lanceuse", date: "31 mai 2026", texte: "6 manches, 0 coup sûr, 11 retraits au bâton.", photo: "", video: "https://youtube.com/watch?v=exemple" },
-    ],
-    mapper: (r) => ({
-      titre: champ(r, "titre", "Titre"),
-      date: champ(r, "date", "Date"),
-      texte: champ(r, "texte", "Texte"),
-      video_url: champ(r, "video", "Video", "vidéo", "Vidéo"),
-    }),
-    valide: (o) => !!(o.titre && (o.texte || o.video_url)),
-  },
-  relais: {
-    colonnes: ["situation", "relayeur", "coupeur", "couvertures", "note"],
-    titreChamp: "situation",
-    gabarit: [
-      { situation: "Simple au champ droit, coureur au 1er", relayeur: "Arrêt-court s'aligne CD → 3e but", coupeur: "1er but coupe vers le marbre", couvertures: "2e but couvre le 2e, lanceur derrière le 3e", note: "Écouter l'appel du receveur" },
-      { situation: "Double au champ centre, coureur au 1er", relayeur: "2e but s'aligne CC → marbre", coupeur: "1er but en coupe au monticule", couvertures: "Arrêt-court couvre le 2e", note: "" },
-    ],
-    mapper: (r) => ({
-      situation: champ(r, "situation", "Situation"),
-      relayeur: champ(r, "relayeur", "Relayeur"),
-      coupeur: champ(r, "coupeur", "Coupeur", "cut-off"),
-      couvertures: champ(r, "couvertures", "Couvertures"),
-      note: champ(r, "note", "Note"),
-    }),
-    valide: (o) => !!o.situation,
-  },
 };

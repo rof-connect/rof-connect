@@ -35,30 +35,6 @@ export function CarteContenu({
     return <CarteSignal titre={titre} body={body} boutonSupprimer={boutonSupprimer} />;
   }
 
-  if (kind === "relay") {
-    return (
-      <div className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
-        <div className="font-condensed text-xl font-bold uppercase leading-tight text-white">{titre}</div>
-        <div className="mt-2 grid gap-2">
-          {[
-            ["Relayeur", body.relayeur],
-            ["Coupeur (cut-off)", body.coupeur],
-            ["Couvertures", body.couvertures],
-          ]
-            .filter(([, v]) => v)
-            .map(([l, v]) => (
-              <div key={l} className="rounded-lg bg-rof-craie px-3 py-2">
-                <div className="font-condensed text-xs font-bold uppercase tracking-wide text-rof-gazon">{l}</div>
-                <div className="text-base text-rof-texte">{v}</div>
-              </div>
-            ))}
-          {body.note && <p className="text-sm italic text-rof-gris">{body.note}</p>}
-        </div>
-        {boutonSupprimer}
-      </div>
-    );
-  }
-
   if (kind === "video") {
     return (
       <div className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
@@ -78,45 +54,32 @@ export function CarteContenu({
     );
   }
 
-  if (kind === "gamechanger") {
-    return (
-      <div className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
-        <span className="rounded-md bg-rof-royal-sombre px-1.5 py-0.5 font-condensed text-xs font-bold text-rof-or">GC</span>
-        <div className="mt-1 font-condensed text-xl font-bold uppercase leading-tight text-white">{titre}</div>
-        {body.note && <p className="mt-2 text-sm text-rof-texte">{body.note}</p>}
-        {!body.widgetId && (
-          <div className="mt-3 rounded-lg bg-rof-craie px-4 py-5 text-sm text-rof-gris">
-            {body.url ? "Lien d'équipe — touche le bouton ci-dessous pour ouvrir GameChanger." : "Aucun widget ni lien enregistré."}
-          </div>
-        )}
-        {body.widgetId && (
-          <div className="mt-3 rounded-lg bg-rof-craie px-4 py-5 text-sm text-rof-gris">
-            Identifiant widget : {body.widgetId} — le tableau GameChanger s&apos;affichera une fois le domaine déclaré auprès de GameChanger.
-          </div>
-        )}
-        {body.url && (
-          <a
-            href={body.url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-3 inline-block rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wider text-rof-noir"
-          >
-            Ouvrir dans GameChanger ↗
-          </a>
-        )}
-        {boutonSupprimer}
-      </div>
-    );
-  }
-
-  // plan (par défaut)
+  // gamechanger (seul kind restant)
   return (
     <div className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
-      <div className="font-condensed text-xl font-bold uppercase leading-tight text-white">{titre}</div>
-      <div className="mt-0.5 text-sm text-rof-gris">
-        {body.date} {body.focus ? `· ${body.focus}` : ""}
-      </div>
-      {body.contenu && <p className="mt-2 whitespace-pre-wrap text-base leading-relaxed text-rof-texte">{body.contenu}</p>}
+      <span className="rounded-md bg-rof-royal-sombre px-1.5 py-0.5 font-condensed text-xs font-bold text-rof-or">GC</span>
+      <div className="mt-1 font-condensed text-xl font-bold uppercase leading-tight text-white">{titre}</div>
+      {body.note && <p className="mt-2 text-sm text-rof-texte">{body.note}</p>}
+      {!body.widgetId && (
+        <div className="mt-3 rounded-lg bg-rof-craie px-4 py-5 text-sm text-rof-gris">
+          {body.url ? "Lien d'équipe — touche le bouton ci-dessous pour ouvrir GameChanger." : "Aucun widget ni lien enregistré."}
+        </div>
+      )}
+      {body.widgetId && (
+        <div className="mt-3 rounded-lg bg-rof-craie px-4 py-5 text-sm text-rof-gris">
+          Identifiant widget : {body.widgetId} — le tableau GameChanger s&apos;affichera une fois le domaine déclaré auprès de GameChanger.
+        </div>
+      )}
+      {body.url && (
+        <a
+          href={body.url}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-3 inline-block rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wider text-rof-noir"
+        >
+          Ouvrir dans GameChanger ↗
+        </a>
+      )}
       {boutonSupprimer}
     </div>
   );

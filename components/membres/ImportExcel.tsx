@@ -4,12 +4,10 @@ import { useState } from "react";
 import { MODELES_IMPORT } from "@/lib/import-templates";
 import { importerLot } from "@/app/membres/import-actions";
 
-type Kind = "agenda" | "news" | "plan" | "relay" | "video" | "gamechanger" | "signal";
+type Kind = "agenda" | "video" | "gamechanger" | "signal";
 
 const SLUG_VERS_KIND: Record<string, Kind> = {
   agenda: "agenda",
-  nouvelles: "news",
-  relais: "relay",
 };
 
 export function ImportExcel({ modeleSlug, teamId, accesDefaut }: { modeleSlug: string; teamId: string; accesDefaut: number }) {
