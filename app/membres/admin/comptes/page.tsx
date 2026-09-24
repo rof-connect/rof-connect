@@ -20,8 +20,9 @@ export default async function ComptesPage() {
   const { data: coachProfiles } = await supabase.from("profiles").select("id, full_name, email").eq("role", "coach");
   const { data: coachMembers } = await supabase
     .from("team_members")
-    .select("profile_id, team_id, teams (name)")
-    .eq("role_in_team", "coach");
+    .select("profile_id, team_id, teams!inner (name)")
+    .eq("role_in_team", "coach")
+    .eq("teams.archived", false);
 
   const equipesParProfil = new Map<string, { id: string; nom: string }[]>();
   (coachMembers ?? []).forEach((m) => {

@@ -32,14 +32,15 @@ export async function GET(request: Request) {
 
   let equipeIds: string[];
   if (profile?.role === "admin") {
-    const { data: toutes } = await supabase.from("teams").select("id");
+    const { data: toutes } = await supabase.from("teams").select("id").eq("archived", false);
     equipeIds = (toutes ?? []).map((t) => t.id);
   } else {
     const { data: mesEquipes } = await supabase
       .from("team_members")
-      .select("team_id")
+      .select("team_id, teams!inner (id)")
       .eq("profile_id", user.id)
-      .eq("role_in_team", "coach");
+      .eq("role_in_team", "coach")
+      .eq("teams.archived", false);
     equipeIds = (mesEquipes ?? []).map((t) => t.team_id);
   }
 

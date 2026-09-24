@@ -25,8 +25,9 @@ export default async function DirectionPage() {
   const { data: teams } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
   const { data: membres } = await supabase
     .from("team_members")
-    .select("team_id, profile_id, status_id, profiles (full_name, created_at)")
-    .eq("role_in_team", "athlete");
+    .select("team_id, profile_id, status_id, profiles (full_name, created_at), teams!inner (id)")
+    .eq("role_in_team", "athlete")
+    .eq("teams.archived", false);
 
   const profileIds = (membres ?? []).map((m) => m.profile_id);
   const { data: fiches } = await supabase

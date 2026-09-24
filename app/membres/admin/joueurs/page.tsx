@@ -36,8 +36,9 @@ export default async function JoueursPage() {
 
   const { data: memberships } = await supabase
     .from("team_members")
-    .select("id, team_id, profile_id, status_id, profiles (full_name), teams (name)")
-    .eq("role_in_team", "athlete");
+    .select("id, team_id, profile_id, status_id, profiles (full_name), teams!inner (name)")
+    .eq("role_in_team", "athlete")
+    .eq("teams.archived", false);
 
   const parJoueur = new Map<string, { nom: string; memberships: Membership[] }>();
   (memberships ?? []).forEach((m) => {

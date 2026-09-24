@@ -21,8 +21,9 @@ export default async function AgendaPage() {
 
   const { data: memberships } = await supabase
     .from("team_members")
-    .select("team_id, role_in_team, teams (id, name)")
-    .eq("profile_id", user!.id);
+    .select("team_id, role_in_team, teams!inner (id, name)")
+    .eq("profile_id", user!.id)
+    .eq("teams.archived", false);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-10 px-5 py-10">

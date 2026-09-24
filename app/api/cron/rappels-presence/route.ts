@@ -19,9 +19,10 @@ export async function GET(request: Request) {
 
   const { data: evenements } = await admin
     .from("contents")
-    .select("id, title, event_date, min_status, team_id, body, teams (name)")
+    .select("id, title, event_date, min_status, team_id, body, teams!inner (name)")
     .eq("kind", "agenda")
-    .eq("event_date", cible);
+    .eq("event_date", cible)
+    .eq("teams.archived", false);
 
   let envoyes = 0;
 
