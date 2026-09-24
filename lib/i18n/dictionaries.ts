@@ -147,6 +147,7 @@ export const dictionnaires = {
       sinscrire: "S'inscrire",
       erreur: "Courriel ou mot de passe incorrect.",
       motDePasseOublie: "Mot de passe oublié ?",
+      aVenir: "À venir",
     },
     motDePasseOublie: {
       titre: "Mot de passe oublié",
@@ -365,6 +366,7 @@ export const dictionnaires = {
       sinscrire: "Sign up",
       erreur: "Incorrect email or password.",
       motDePasseOublie: "Forgot your password?",
+      aVenir: "Coming soon",
     },
     motDePasseOublie: {
       titre: "Forgot password",
