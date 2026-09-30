@@ -41,6 +41,8 @@ export async function inscrireAthlete(formData: FormData) {
   const admin = createAdminClient();
   const profileId = signUpData.user!.id;
 
+  const { data: equipe } = await admin.from("teams").select("sport").eq("id", teamId).single();
+
   const { error: teamMemberError } = await admin.from("team_members").insert({
     team_id: teamId,
     profile_id: profileId,
@@ -65,7 +67,7 @@ export async function inscrireAthlete(formData: FormData) {
     redirect("/inscription?erreur=" + encodeURIComponent("Compte créé, mais la fiche n'a pas pu être complétée. Contacte un entraîneur."));
   }
 
-  redirect("/inscription/confirmation");
+  redirect("/inscription/confirmation?sport=" + (equipe?.sport ?? ""));
 }
 
 export async function inscrireEntraineur(formData: FormData) {
