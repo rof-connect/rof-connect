@@ -4,13 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
-  { id: 2, nom: "Mineur" },
-  { id: 3, nom: "Majeur" },
-  { id: 4, nom: "Intermédiaire" },
-  { id: 5, nom: "Junior" },
-  { id: 6, nom: "Senior" },
-  { id: 7, nom: "JV" },
-  { id: 8, nom: "Varsity" },
+  { id: 2, nom: "Joueur/Joueuse TP" },
+  { id: 3, nom: "Joueur/Joueuse R" },
 ];
 
 export default async function DirectionPage() {
@@ -118,7 +113,7 @@ export default async function DirectionPage() {
               <div className="w-28 shrink-0 text-xs font-semibold uppercase text-rof-gris">{s.nom}</div>
               <div className="h-3 flex-1 overflow-hidden rounded-full bg-rof-craie">
                 <div
-                  className={`h-full rounded-full ${s.id >= 7 ? "bg-rof-or" : "bg-rof-royal"}`}
+                  className={`h-full rounded-full ${s.id >= 2 ? "bg-rof-or" : "bg-rof-royal"}`}
                   style={{ width: total ? `${(s.n / total) * 100}%` : "0%" }}
                 />
               </div>

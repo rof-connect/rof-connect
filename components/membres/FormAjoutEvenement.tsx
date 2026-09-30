@@ -52,13 +52,8 @@ export function FormAjoutEvenement({ teamId }: { teamId: string }) {
         <Etiquette texte="Statut minimum requis pour voir" />
         <select name="min_status" defaultValue="1" className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte">
           <option value="1">1 — Prospect (tout le monde)</option>
-          <option value="2">2 — Mineur</option>
-          <option value="3">3 — Majeur</option>
-          <option value="4">4 — Intermédiaire</option>
-          <option value="5">5 — Junior</option>
-          <option value="6">6 — Senior</option>
-          <option value="7">7 — JV</option>
-          <option value="8">8 — Varsity</option>
+          <option value="2">2 — Joueur/Joueuse TP</option>
+          <option value="3">3 — Joueur/Joueuse R</option>
         </select>
       </div>
 

@@ -5,13 +5,8 @@ import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
-  { id: 2, nom: "Mineur" },
-  { id: 3, nom: "Majeur" },
-  { id: 4, nom: "Intermédiaire" },
-  { id: 5, nom: "Junior" },
-  { id: 6, nom: "Senior" },
-  { id: 7, nom: "JV" },
-  { id: 8, nom: "Varsity" },
+  { id: 2, nom: "Joueur/Joueuse TP" },
+  { id: 3, nom: "Joueur/Joueuse R" },
 ];
 
 type Membership = {

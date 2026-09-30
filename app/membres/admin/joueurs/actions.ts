@@ -6,13 +6,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
   prospect: 1,
-  mineur: 2,
-  majeur: 3,
-  intermediaire: 4,
-  junior: 5,
-  senior: 6,
-  jv: 7,
-  varsity: 8,
+  "joueur/joueuse tp": 2,
+  "joueur tp": 2,
+  "joueuse tp": 2,
+  tp: 2,
+  "joueur/joueuse r": 3,
+  "joueur r": 3,
+  "joueuse r": 3,
+  r: 3,
 };
 
 function normaliser(s: string) {
