@@ -61,8 +61,16 @@ export function FormAjoutContenu({ slug, config, teamId }: { slug: string; confi
           className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte"
         >
           <option value="1">1 — Prospect (tout le monde)</option>
-          <option value="2">2 — Joueur/Joueuse TP</option>
-          <option value="3">3 — Joueur/Joueuse R</option>
+          <option value="2">2 — 9U</option>
+          <option value="3">3 — 10U</option>
+          <option value="4">4 — 11U</option>
+          <option value="5">5 — 12U</option>
+          <option value="6">6 — 13U</option>
+          <option value="7">7 — 14U</option>
+          <option value="8">8 — 15U</option>
+          <option value="9">9 — 16U</option>
+          <option value="10">10 — 17U</option>
+          <option value="11">11 — 18U</option>
         </select>
       </div>
 

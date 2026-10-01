@@ -4,8 +4,16 @@ import { createClient } from "@/lib/supabase/server";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
-  { id: 2, nom: "Joueur/Joueuse TP" },
-  { id: 3, nom: "Joueur/Joueuse R" },
+  { id: 2, nom: "9U" },
+  { id: 3, nom: "10U" },
+  { id: 4, nom: "11U" },
+  { id: 5, nom: "12U" },
+  { id: 6, nom: "13U" },
+  { id: 7, nom: "14U" },
+  { id: 8, nom: "15U" },
+  { id: 9, nom: "16U" },
+  { id: 10, nom: "17U" },
+  { id: 11, nom: "18U" },
 ];
 
 export default async function DirectionPage() {

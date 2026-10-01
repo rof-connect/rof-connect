@@ -3,8 +3,16 @@ import { createClient } from "@/lib/supabase/server";
 
 const STATUTS: Record<number, string> = {
   1: "Prospect",
-  2: "Joueur/Joueuse TP",
-  3: "Joueur/Joueuse R",
+  2: "9U",
+  3: "10U",
+  4: "11U",
+  5: "12U",
+  6: "13U",
+  7: "14U",
+  8: "15U",
+  9: "16U",
+  10: "17U",
+  11: "18U",
 };
 
 function ligneCsv(champs: (string | null | undefined)[]): string {

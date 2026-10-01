@@ -6,14 +6,16 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
   prospect: 1,
-  "joueur/joueuse tp": 2,
-  "joueur tp": 2,
-  "joueuse tp": 2,
-  tp: 2,
-  "joueur/joueuse r": 3,
-  "joueur r": 3,
-  "joueuse r": 3,
-  r: 3,
+  "9u": 2,
+  "10u": 3,
+  "11u": 4,
+  "12u": 5,
+  "13u": 6,
+  "14u": 7,
+  "15u": 8,
+  "16u": 9,
+  "17u": 10,
+  "18u": 11,
 };
 
 function normaliser(s: string) {
@@ -122,6 +124,54 @@ export async function importerJoueurs(lignes: Record<string, string>[]) {
 
   revalidatePath("/membres/admin/joueurs");
   return { ok: true, count, erreurs };
+}
+
+export async function inviterJoueuse(formData: FormData) {
+  const moi = await verifierAdmin();
+  if (!moi) return { ok: false, erreur: "Non autorisé." };
+
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const teamId = String(formData.get("team_id") ?? "");
+
+  if (!fullName || !email || !teamId) {
+    return { ok: false, erreur: "Complète le nom, le courriel et sélectionne une équipe." };
+  }
+
+  const admin = createAdminClient();
+
+  let profileId: string;
+  const { data: profilExistant } = await admin.from("profiles").select("id").eq("email", email).maybeSingle();
+  if (profilExistant) {
+    profileId = profilExistant.id;
+  } else {
+    const { data: invite, error } = await admin.auth.admin.inviteUserByEmail(email, {
+      data: { full_name: fullName },
+    });
+    if (error || !invite.user) {
+      return { ok: false, erreur: "Impossible de créer le compte : " + (error?.message ?? "erreur inconnue") };
+    }
+    profileId = invite.user.id;
+    await admin.from("profiles").update({ full_name: fullName }).eq("id", profileId);
+  }
+
+  const { data: membreExistant } = await admin
+    .from("team_members")
+    .select("id")
+    .eq("team_id", teamId)
+    .eq("profile_id", profileId)
+    .maybeSingle();
+  if (!membreExistant) {
+    await admin.from("team_members").insert({
+      team_id: teamId,
+      profile_id: profileId,
+      role_in_team: "athlete",
+      status_id: 1,
+    });
+  }
+
+  revalidatePath("/membres/admin/joueurs");
+  return { ok: true, erreur: null };
 }
 
 export async function changerStatut(formData: FormData) {

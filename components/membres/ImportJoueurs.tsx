@@ -19,7 +19,7 @@ const GABARIT = [
     nom_athlete: "Sam Roy",
     courriel_parent: "parent2@exemple.com",
     equipe: "Softball 14U",
-    statut: "Joueur/Joueuse R",
+    statut: "10U",
     date_naissance: "2012-09-03",
     nom_parent: "",
     telephone_parent: "",
