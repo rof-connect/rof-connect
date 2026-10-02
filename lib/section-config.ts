@@ -25,7 +25,12 @@ export const SECTIONS: Record<string, SectionConfig> = {
     champs: [
       { name: "titre", label: "Titre", required: true, placeholder: "Ex. : Royal 14U — saison 2026" },
       { name: "url", label: "Lien d'équipe GameChanger", type: "url", placeholder: "https://web.gc.com/… (optionnel)" },
-      { name: "embedUrl", label: "Embed Your Team Link", type: "url", placeholder: "Lien d'intégration GameChanger (optionnel)" },
+      {
+        name: "embedCode",
+        label: "Scoreboard Widget (coller le code copié depuis GameChanger → Outils → Create Scoreboard Widget)",
+        type: "textarea",
+        placeholder: "Optionnel — coller ici le code complet du widget",
+      },
       { name: "note", label: "Note", placeholder: "Optionnel" },
     ],
   },

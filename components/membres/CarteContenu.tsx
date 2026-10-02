@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supprimerContenu } from "@/app/membres/[section]/actions";
+import { GameChangerEmbed } from "@/components/membres/GameChangerEmbed";
 import type { SectionConfig } from "@/lib/section-config";
 
 export function CarteContenu({
@@ -60,17 +61,10 @@ export function CarteContenu({
       <span className="rounded-md bg-rof-royal-sombre px-1.5 py-0.5 font-condensed text-xs font-bold text-rof-or">GC</span>
       <div className="mt-1 font-condensed text-xl font-bold uppercase leading-tight text-white">{titre}</div>
       {body.note && <p className="mt-2 text-sm text-rof-texte">{body.note}</p>}
-      {!body.embedUrl && !body.url && (
+      {!body.embedCode && !body.url && (
         <div className="mt-3 rounded-lg bg-rof-craie px-4 py-5 text-sm text-rof-gris">Aucun lien enregistré.</div>
       )}
-      {body.embedUrl && (
-        <iframe
-          src={body.embedUrl}
-          className="mt-3 h-80 w-full rounded-lg border border-rof-ligne"
-          loading="lazy"
-          title={`${titre} — GameChanger`}
-        />
-      )}
+      {body.embedCode && <GameChangerEmbed code={body.embedCode} />}
       {body.url && (
         <a
           href={body.url}
