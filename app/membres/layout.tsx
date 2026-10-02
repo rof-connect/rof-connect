@@ -9,6 +9,7 @@ import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 const ONGLETS: [string, keyof Dictionnaire["nav"]][] = [
   ["/membres", "accueil"],
   ["/membres/agenda", "agenda"],
+  ["/membres/documents", "documents"],
   ["/membres/gc", "gc"],
   ["/membres/messages", "messages"],
 ];

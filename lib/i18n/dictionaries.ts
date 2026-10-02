@@ -5,6 +5,7 @@ export const dictionnaires = {
     nav: {
       accueil: "Accueil",
       agenda: "Agenda",
+      documents: "Documents",
       videos: "Vidéos",
       gc: "GC",
       signaux: "Signaux",
@@ -228,6 +229,7 @@ export const dictionnaires = {
     nav: {
       accueil: "Home",
       agenda: "Schedule",
+      documents: "Documents",
       videos: "Videos",
       gc: "GC",
       signaux: "Signs",
