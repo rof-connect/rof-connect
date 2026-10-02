@@ -65,6 +65,9 @@ export default async function MembresLayout({ children }: { children: React.Reac
         </nav>
       </header>
       <div className="flex flex-1 flex-col">{children}</div>
+      <footer className="border-t border-rof-ligne px-5 py-4 text-center text-xs text-rof-gris">
+        {t.confirmation.depotSoftball}
+      </footer>
     </div>
   );
 }
