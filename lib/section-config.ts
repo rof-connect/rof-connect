@@ -24,8 +24,8 @@ export const SECTIONS: Record<string, SectionConfig> = {
     accesDefaut: 1,
     champs: [
       { name: "titre", label: "Titre", required: true, placeholder: "Ex. : Royal 14U — saison 2026" },
-      { name: "widgetId", label: "Code widget GameChanger", placeholder: "Optionnel" },
       { name: "url", label: "Lien d'équipe GameChanger", type: "url", placeholder: "https://web.gc.com/… (optionnel)" },
+      { name: "embedUrl", label: "Embed Your Team Link", type: "url", placeholder: "Lien d'intégration GameChanger (optionnel)" },
       { name: "note", label: "Note", placeholder: "Optionnel" },
     ],
   },

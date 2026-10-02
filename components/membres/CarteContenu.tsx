@@ -60,15 +60,16 @@ export function CarteContenu({
       <span className="rounded-md bg-rof-royal-sombre px-1.5 py-0.5 font-condensed text-xs font-bold text-rof-or">GC</span>
       <div className="mt-1 font-condensed text-xl font-bold uppercase leading-tight text-white">{titre}</div>
       {body.note && <p className="mt-2 text-sm text-rof-texte">{body.note}</p>}
-      {!body.widgetId && (
-        <div className="mt-3 rounded-lg bg-rof-craie px-4 py-5 text-sm text-rof-gris">
-          {body.url ? "Lien d'équipe — touche le bouton ci-dessous pour ouvrir GameChanger." : "Aucun widget ni lien enregistré."}
-        </div>
+      {!body.embedUrl && !body.url && (
+        <div className="mt-3 rounded-lg bg-rof-craie px-4 py-5 text-sm text-rof-gris">Aucun lien enregistré.</div>
       )}
-      {body.widgetId && (
-        <div className="mt-3 rounded-lg bg-rof-craie px-4 py-5 text-sm text-rof-gris">
-          Identifiant widget : {body.widgetId} — le tableau GameChanger s&apos;affichera une fois le domaine déclaré auprès de GameChanger.
-        </div>
+      {body.embedUrl && (
+        <iframe
+          src={body.embedUrl}
+          className="mt-3 h-80 w-full rounded-lg border border-rof-ligne"
+          loading="lazy"
+          title={`${titre} — GameChanger`}
+        />
       )}
       {body.url && (
         <a
