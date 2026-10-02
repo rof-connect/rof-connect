@@ -35,6 +35,23 @@ export default async function GestionEquipesPage({
     .eq("archived", voirArchives)
     .order("name");
 
+  const teamIds = (teams ?? []).map((t) => t.id);
+  const { data: joueuses } = await supabase
+    .from("team_members")
+    .select("team_id, profiles (full_name)")
+    .eq("role_in_team", "athlete")
+    .in("team_id", teamIds.length ? teamIds : ["00000000-0000-0000-0000-000000000000"]);
+
+  const joueusesParEquipe = new Map<string, string[]>();
+  (joueuses ?? []).forEach((j) => {
+    const p = Array.isArray(j.profiles) ? j.profiles[0] : j.profiles;
+    const liste = joueusesParEquipe.get(j.team_id) ?? [];
+    liste.push(p?.full_name ?? "—");
+    joueusesParEquipe.set(j.team_id, liste);
+  });
+
+  const equipesParSport = { baseball: (teams ?? []).filter((t) => t.sport === "baseball"), softball: (teams ?? []).filter((t) => t.sport === "softball") };
+
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-5 py-10">
       <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Direction</p>
@@ -97,36 +114,63 @@ export default async function GestionEquipesPage({
         </Link>
       </div>
 
-      <div className="mt-3 flex flex-col gap-2">
-        {(teams ?? []).map((t) => (
-          <div
-            key={t.id}
-            className="flex items-center justify-between rounded-xl border border-rof-ligne bg-rof-blanc p-4"
-          >
-            <div>
-              <p className="font-condensed text-lg font-semibold uppercase text-rof-texte">{t.name}</p>
-              <p className="text-sm text-rof-gris">
-                {t.sport} · saison {t.season_year}
-                {t.option && ` · ${LABEL_OPTION[t.option] ?? t.option}`}
-              </p>
+      <div className="mt-3 flex flex-col gap-6">
+        {([
+          ["Baseball", equipesParSport.baseball],
+          ["Softball", equipesParSport.softball],
+        ] as const).map(([titre, groupe]) =>
+          groupe.length > 0 ? (
+            <div key={titre}>
+              <h3 className="mb-2 font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-poudre">{titre}</h3>
+              <div className="flex flex-col gap-2">
+                {groupe.map((t) => {
+                  const liste = joueusesParEquipe.get(t.id) ?? [];
+                  return (
+                    <div key={t.id} className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-condensed text-lg font-semibold uppercase text-rof-texte">{t.name}</p>
+                          <p className="text-sm text-rof-gris">
+                            saison {t.season_year}
+                            {t.option && ` · ${LABEL_OPTION[t.option] ?? t.option}`}
+                            {` · ${liste.length} joueuse${liste.length > 1 ? "s" : ""}`}
+                          </p>
+                        </div>
+                        {voirArchives ? (
+                          <form action={desarchiverEquipe}>
+                            <input type="hidden" name="team_id" value={t.id} />
+                            <button type="submit" className="text-sm text-rof-poudre underline">
+                              Désarchiver
+                            </button>
+                          </form>
+                        ) : (
+                          <form action={archiverEquipe}>
+                            <input type="hidden" name="team_id" value={t.id} />
+                            <button type="submit" className="text-sm text-rof-gris underline">
+                              Archiver
+                            </button>
+                          </form>
+                        )}
+                      </div>
+                      {liste.length > 0 && (
+                        <ul className="mt-3 flex flex-wrap gap-1.5 border-t border-rof-ligne pt-3">
+                          {liste.sort((a, b) => a.localeCompare(b)).map((nom, i) => (
+                            <li
+                              key={i}
+                              className="rounded-full bg-rof-craie px-2.5 py-1 text-xs text-rof-texte"
+                            >
+                              {nom}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            {voirArchives ? (
-              <form action={desarchiverEquipe}>
-                <input type="hidden" name="team_id" value={t.id} />
-                <button type="submit" className="text-sm text-rof-poudre underline">
-                  Désarchiver
-                </button>
-              </form>
-            ) : (
-              <form action={archiverEquipe}>
-                <input type="hidden" name="team_id" value={t.id} />
-                <button type="submit" className="text-sm text-rof-gris underline">
-                  Archiver
-                </button>
-              </form>
-            )}
-          </div>
-        ))}
+          ) : null,
+        )}
         {(teams ?? []).length === 0 && (
           <p className="text-sm text-rof-gris">
             {voirArchives ? "Aucune équipe archivée." : "Aucune équipe active."}
