@@ -28,7 +28,7 @@ export default async function DirectionPage() {
   const { data: teams } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
   const { data: membres } = await supabase
     .from("team_members")
-    .select("team_id, profile_id, status_id, profiles (full_name, created_at), teams!inner (id)")
+    .select("team_id, profile_id, status_id, profiles (full_name, created_at), teams!inner (id, sport)")
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
 
@@ -51,10 +51,21 @@ export default async function DirectionPage() {
     n: (membres ?? []).filter((m) => m.team_id === t.id).length,
   }));
 
-  const parStatut = STATUTS.map((s) => ({
-    ...s,
-    n: (membres ?? []).filter((m) => m.status_id === s.id).length,
-  }));
+  const sportDe = (m: NonNullable<typeof membres>[number]) => {
+    const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
+    return t?.sport;
+  };
+
+  const parStatutParSport = (sport: string) =>
+    STATUTS.map((s) => ({
+      ...s,
+      n: (membres ?? []).filter((m) => m.status_id === s.id && sportDe(m) === sport).length,
+    }));
+
+  const parStatutBaseball = parStatutParSport("baseball");
+  const parStatutSoftball = parStatutParSport("softball");
+  const totalBaseball = (membres ?? []).filter((m) => sportDe(m) === "baseball").length;
+  const totalSoftball = (membres ?? []).filter((m) => sportDe(m) === "softball").length;
 
   const recents = [...(membres ?? [])]
     .sort((a, b) => {
@@ -115,19 +126,9 @@ export default async function DirectionPage() {
 
       <div>
         <h3 className="mb-2 font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">Pipeline de développement</h3>
-        <div className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
-          {parStatut.map((s) => (
-            <div key={s.id} className="mb-2 flex items-center gap-3 last:mb-0">
-              <div className="w-28 shrink-0 text-xs font-semibold uppercase text-rof-gris">{s.nom}</div>
-              <div className="h-3 flex-1 overflow-hidden rounded-full bg-rof-craie">
-                <div
-                  className={`h-full rounded-full ${s.id >= 2 ? "bg-rof-or" : "bg-rof-royal"}`}
-                  style={{ width: total ? `${(s.n / total) * 100}%` : "0%" }}
-                />
-              </div>
-              <div className="w-8 text-right font-bold text-rof-texte">{s.n}</div>
-            </div>
-          ))}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <PipelineSport titre="Baseball" parStatut={parStatutBaseball} total={totalBaseball} />
+          <PipelineSport titre="Softball" parStatut={parStatutSoftball} total={totalSoftball} />
         </div>
       </div>
 
@@ -153,6 +154,36 @@ export default async function DirectionPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+function PipelineSport({
+  titre,
+  parStatut,
+  total,
+}: {
+  titre: string;
+  parStatut: { id: number; nom: string; n: number }[];
+  total: number;
+}) {
+  return (
+    <div className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
+      <p className="mb-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-gris">
+        {titre} <span className="text-rof-texte">({total})</span>
+      </p>
+      {parStatut.map((s) => (
+        <div key={s.id} className="mb-2 flex items-center gap-3 last:mb-0">
+          <div className="w-16 shrink-0 text-xs font-semibold uppercase text-rof-gris">{s.nom}</div>
+          <div className="h-3 flex-1 overflow-hidden rounded-full bg-rof-craie">
+            <div
+              className={`h-full rounded-full ${s.id >= 2 ? "bg-rof-or" : "bg-rof-royal"}`}
+              style={{ width: total ? `${(s.n / total) * 100}%` : "0%" }}
+            />
+          </div>
+          <div className="w-6 text-right font-bold text-rof-texte">{s.n}</div>
+        </div>
+      ))}
+    </div>
   );
 }
 

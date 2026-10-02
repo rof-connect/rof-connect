@@ -44,14 +44,25 @@ export default async function JoueursPage() {
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
 
-  const parJoueur = new Map<string, { nom: string; memberships: Membership[] }>();
+  const profileIds = [...new Set((memberships ?? []).map((m) => m.profile_id))];
+  const { data: fiches } = await supabase
+    .from("athlete_details")
+    .select("profile_id, birth_date")
+    .in("profile_id", profileIds.length ? profileIds : ["00000000-0000-0000-0000-000000000000"]);
+  const naissanceParProfil = new Map((fiches ?? []).map((f) => [f.profile_id, f.birth_date]));
+
+  const parJoueur = new Map<string, { nom: string; naissance: string | null; memberships: Membership[] }>();
   (memberships ?? []).forEach((m) => {
     const p = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
     const existant = parJoueur.get(m.profile_id);
     if (existant) {
       existant.memberships.push(m);
     } else {
-      parJoueur.set(m.profile_id, { nom: p?.full_name ?? "—", memberships: [m] });
+      parJoueur.set(m.profile_id, {
+        nom: p?.full_name ?? "—",
+        naissance: naissanceParProfil.get(m.profile_id) ?? null,
+        memberships: [m],
+      });
     }
   });
 
@@ -78,6 +89,11 @@ export default async function JoueursPage() {
           return (
             <div key={profileId} className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
               <p className="font-condensed text-lg font-bold uppercase text-rof-texte">{j.nom}</p>
+              <p className="text-sm text-rof-gris">
+                {j.naissance
+                  ? `Née le ${new Date(j.naissance + "T12:00:00").toLocaleDateString("fr-CA")}`
+                  : "Date de naissance non fournie"}
+              </p>
 
               <div className="mt-2 flex flex-col gap-2">
                 {j.memberships.map((m) => {
