@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { trouverOuCreerJoueuse } from "@/lib/joueuses";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
   prospect: 1,
@@ -68,21 +69,12 @@ export async function importerJoueurs(lignes: Record<string, string>[]) {
 
     const statusId = STATUT_PAR_LABEL[normaliser(statutLabel)] ?? 1;
 
-    let profileId: string;
-    const { data: profilExistant } = await admin.from("profiles").select("id").eq("email", email).maybeSingle();
-    if (profilExistant) {
-      profileId = profilExistant.id;
-    } else {
-      const { data: invite, error } = await admin.auth.admin.inviteUserByEmail(email, {
-        data: { full_name: nomAthlete },
-      });
-      if (error || !invite.user) {
-        erreurs.push(`Impossible de créer le compte pour ${nomAthlete} (${email}) : ${error?.message ?? "erreur inconnue"}`);
-        continue;
-      }
-      profileId = invite.user.id;
-      await admin.from("profiles").update({ full_name: nomAthlete }).eq("id", profileId);
+    const res = await trouverOuCreerJoueuse(admin, { nom: nomAthlete, email, envoyerInvitation: true });
+    if (!res.ok) {
+      erreurs.push(`Impossible de créer le compte pour ${nomAthlete} (${email}) : ${res.erreur}`);
+      continue;
     }
+    const profileId = res.profileId;
 
     const { data: membreExistant } = await admin
       .from("team_members")
@@ -140,20 +132,9 @@ export async function inviterJoueuse(formData: FormData) {
 
   const admin = createAdminClient();
 
-  let profileId: string;
-  const { data: profilExistant } = await admin.from("profiles").select("id").eq("email", email).maybeSingle();
-  if (profilExistant) {
-    profileId = profilExistant.id;
-  } else {
-    const { data: invite, error } = await admin.auth.admin.inviteUserByEmail(email, {
-      data: { full_name: fullName },
-    });
-    if (error || !invite.user) {
-      return { ok: false, erreur: "Impossible de créer le compte : " + (error?.message ?? "erreur inconnue") };
-    }
-    profileId = invite.user.id;
-    await admin.from("profiles").update({ full_name: fullName }).eq("id", profileId);
-  }
+  const res = await trouverOuCreerJoueuse(admin, { nom: fullName, email, envoyerInvitation: true });
+  if (!res.ok) return { ok: false, erreur: res.erreur };
+  const profileId = res.profileId;
 
   const { data: membreExistant } = await admin
     .from("team_members")
@@ -231,6 +212,72 @@ export async function retirerDeEquipe(formData: FormData) {
 
   const supabase = await createClient();
   await supabase.from("team_members").delete().eq("id", teamMemberId);
+
+  revalidatePath("/membres/admin/joueurs");
+}
+
+function champsFiche(formData: FormData) {
+  const txt = (k: string) => String(formData.get(k) ?? "").trim() || null;
+  return {
+    birth_date: txt("birth_date"),
+    position: txt("position"),
+    throws: txt("throws"),
+    bats: txt("bats"),
+    guardian_name: txt("guardian_name"),
+    guardian_phone: txt("guardian_phone"),
+    guardian_email: txt("guardian_email"),
+    medical_notes: txt("medical_notes"),
+    photo_consent: formData.get("photo_consent") === "on",
+  };
+}
+
+export async function creerProfilJoueuse(formData: FormData) {
+  const moi = await verifierAdmin();
+  if (!moi) return { ok: false, erreur: "Non autorisé." };
+
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const teamId = String(formData.get("team_id") ?? "");
+  const statusId = Number(formData.get("status_id") ?? 1) || 1;
+  const envoyerInvitation = formData.get("envoyer_invitation") === "on";
+
+  if (!fullName) return { ok: false, erreur: "Le nom est obligatoire." };
+
+  const admin = createAdminClient();
+  const res = await trouverOuCreerJoueuse(admin, { nom: fullName, email, envoyerInvitation });
+  if (!res.ok) return { ok: false, erreur: res.erreur };
+
+  await admin.from("athlete_details").upsert({ profile_id: res.profileId, ...champsFiche(formData) }, { onConflict: "profile_id" });
+
+  if (teamId) {
+    const { data: existant } = await admin
+      .from("team_members")
+      .select("id")
+      .eq("team_id", teamId)
+      .eq("profile_id", res.profileId)
+      .maybeSingle();
+    if (existant) await admin.from("team_members").update({ status_id: statusId }).eq("id", existant.id);
+    else
+      await admin
+        .from("team_members")
+        .insert({ team_id: teamId, profile_id: res.profileId, role_in_team: "athlete", status_id: statusId });
+  }
+
+  revalidatePath("/membres/admin/joueurs");
+  return { ok: true, erreur: null };
+}
+
+export async function modifierJoueuse(formData: FormData) {
+  const moi = await verifierAdmin();
+  if (!moi) return;
+
+  const profileId = String(formData.get("profile_id") ?? "");
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  if (!profileId || !fullName) return;
+
+  const admin = createAdminClient();
+  await admin.from("profiles").update({ full_name: fullName }).eq("id", profileId);
+  await admin.from("athlete_details").upsert({ profile_id: profileId, ...champsFiche(formData) }, { onConflict: "profile_id" });
 
   revalidatePath("/membres/admin/joueurs");
 }

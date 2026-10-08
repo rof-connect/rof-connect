@@ -35,7 +35,7 @@ export async function inscrireAthlete(formData: FormData) {
   }
 
   if (signUpData.user!.identities?.length === 0) {
-    redirect("/inscription?erreur=" + encodeURIComponent("Ce courriel a déjà un compte. Connecte-toi, ou utilise « Mot de passe oublié » si tu ne te souviens plus du mot de passe."));
+    redirect("/inscription?erreur=" + encodeURIComponent("Ce courriel a déjà un compte. Connecte-toi, puis utilise « Ajouter une autre joueuse » sur la page d'accueil pour inscrire une joueuse de plus (ou « Mot de passe oublié » si tu ne te souviens plus du mot de passe)."));
   }
 
   const admin = createAdminClient();

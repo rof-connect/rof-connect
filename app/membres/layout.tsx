@@ -4,6 +4,9 @@ import { deconnecter } from "@/app/connexion/actions";
 import { LogoR } from "@/components/LogoR";
 import { getDictionnaire } from "@/lib/i18n/server";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { famille } from "@/lib/joueuses";
+import { changerDeJoueuse } from "@/app/membres/famille/actions";
 import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 
 const ONGLETS: [string, keyof Dictionnaire["nav"]][] = [
@@ -24,6 +27,7 @@ export default async function MembresLayout({ children }: { children: React.Reac
   const estAdmin = profile?.role === "admin";
 
   const { locale, t } = await getDictionnaire();
+  const { membres: famMembres } = await famille(createAdminClient(), user!.id);
 
   return (
     <div className="flex min-h-screen flex-col bg-rof-noir">
@@ -52,6 +56,25 @@ export default async function MembresLayout({ children }: { children: React.Reac
             </form>
           </div>
         </div>
+        {famMembres.length > 1 && (
+          <form action={changerDeJoueuse} className="mx-auto flex max-w-3xl items-center gap-2 px-5 pb-2">
+            <span className="text-xs uppercase tracking-wide text-rof-gris">{t.membres.joueuseActive}</span>
+            <select
+              name="profile_id"
+              defaultValue={user!.id}
+              className="min-w-0 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-sm text-rof-texte"
+            >
+              {famMembres.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.full_name || "—"}
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="text-sm text-rof-poudre underline">
+              {t.membres.changer}
+            </button>
+          </form>
+        )}
         <nav className="mx-auto flex max-w-3xl gap-4 overflow-x-auto px-5 pb-2">
           {ONGLETS.map(([href, cle]) => (
             <Link

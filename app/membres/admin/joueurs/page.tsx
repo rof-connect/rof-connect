@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe } from "./actions";
+import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse } from "./actions";
+import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
 import { FormInviterJoueuse } from "@/components/membres/FormInviterJoueuse";
 
@@ -57,8 +58,9 @@ export default async function JoueursPage({
   const profileIds = [...new Set((memberships ?? []).map((m) => m.profile_id))];
   const { data: fiches } = await supabase
     .from("athlete_details")
-    .select("profile_id, birth_date")
+    .select("profile_id, birth_date, position, throws, bats, guardian_name, guardian_phone, guardian_email, medical_notes, photo_consent")
     .in("profile_id", profileIds.length ? profileIds : ["00000000-0000-0000-0000-000000000000"]);
+  const ficheParProfil = new Map((fiches ?? []).map((f) => [f.profile_id, f]));
   const naissanceParProfil = new Map((fiches ?? []).map((f) => [f.profile_id, f.birth_date]));
 
   const parJoueur = new Map<string, { nom: string; email: string; naissance: string | null; memberships: Membership[] }>();
@@ -104,6 +106,7 @@ export default async function JoueursPage({
         </p>
       </div>
 
+      <FormCreerJoueuse equipes={teams ?? []} statuts={STATUTS} />
       <FormInviterJoueuse equipes={teams ?? []} />
       <ImportJoueurs />
 
@@ -181,6 +184,78 @@ export default async function JoueursPage({
                   ? `Née le ${new Date(j.naissance + "T12:00:00").toLocaleDateString("fr-CA")}`
                   : "Date de naissance non fournie"}
               </p>
+
+              {j.email && <p className="text-sm text-rof-gris">{j.email}</p>}
+
+              <details className="mt-2 rounded-lg border border-rof-ligne p-3">
+                <summary className="cursor-pointer text-sm font-semibold text-rof-poudre">Modifier la fiche</summary>
+                {(() => {
+                  const f = ficheParProfil.get(profileId);
+                  const c = "w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-sm text-rof-texte";
+                  const e = "mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris";
+                  return (
+                    <form action={modifierJoueuse} className="mt-3 flex flex-col gap-3">
+                      <input type="hidden" name="profile_id" value={profileId} />
+                      <div>
+                        <p className={e}>Nom complet</p>
+                        <input name="full_name" required defaultValue={j.nom === "—" ? "" : j.nom} className={c} />
+                      </div>
+                      <div>
+                        <p className={e}>Date de naissance</p>
+                        <input name="birth_date" type="date" defaultValue={f?.birth_date ?? ""} className={c} />
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <p className={e}>Position</p>
+                          <input name="position" defaultValue={f?.position ?? ""} className={c} />
+                        </div>
+                        <div>
+                          <p className={e}>Lance</p>
+                          <select name="throws" defaultValue={f?.throws ?? ""} className={c}>
+                            <option value="">—</option>
+                            <option value="Droite">Droite</option>
+                            <option value="Gauche">Gauche</option>
+                          </select>
+                        </div>
+                        <div>
+                          <p className={e}>Frappe</p>
+                          <select name="bats" defaultValue={f?.bats ?? ""} className={c}>
+                            <option value="">—</option>
+                            <option value="Droite">Droite</option>
+                            <option value="Gauche">Gauche</option>
+                            <option value="Ambidextre">Ambidextre</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <p className={e}>Nom du parent ou tuteur</p>
+                        <input name="guardian_name" defaultValue={f?.guardian_name ?? ""} className={c} />
+                      </div>
+                      <div>
+                        <p className={e}>Téléphone du parent ou tuteur</p>
+                        <input name="guardian_phone" type="tel" defaultValue={f?.guardian_phone ?? ""} className={c} />
+                      </div>
+                      <div>
+                        <p className={e}>Courriel du parent ou tuteur</p>
+                        <input name="guardian_email" type="email" defaultValue={f?.guardian_email ?? ""} className={c} />
+                      </div>
+                      <div>
+                        <p className={e}>Allergies / infos médicales</p>
+                        <input name="medical_notes" defaultValue={f?.medical_notes ?? ""} className={c} />
+                      </div>
+                      <label className="flex items-center gap-2 text-sm text-rof-texte">
+                        <input type="checkbox" name="photo_consent" defaultChecked={f?.photo_consent ?? false} /> Consentement photo / vidéo
+                      </label>
+                      <button
+                        type="submit"
+                        className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+                      >
+                        Enregistrer
+                      </button>
+                    </form>
+                  );
+                })()}
+              </details>
 
               <div className="mt-2 flex flex-col gap-2">
                 {j.memberships.map((m) => {

@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { FormAjouterJoueuse } from "@/components/membres/FormAjouterJoueuse";
 import { getDictionnaire } from "@/lib/i18n/server";
 
 export default async function MembresPage() {
@@ -41,6 +42,18 @@ export default async function MembresPage() {
         })}
         {(memberships ?? []).length === 0 && <p className="text-sm text-rof-gris">{m2.aucuneEquipe}</p>}
       </div>
+
+      {profile?.role === "member" && (
+        <FormAjouterJoueuse
+          libelles={{
+            titre: m2.ajouterJoueuse,
+            nom: m2.nomJoueuse,
+            naissance: m2.naissance,
+            bouton: m2.ajouter,
+            ok: m2.joueuseAjoutee,
+          }}
+        />
+      )}
     </main>
   );
 }
