@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe } from "./actions";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
@@ -23,11 +24,20 @@ type Membership = {
   team_id: string;
   profile_id: string;
   status_id: number;
-  profiles: { full_name: string | null } | { full_name: string | null }[] | null;
-  teams: { name: string } | { name: string }[] | null;
+  profiles: { full_name: string | null; email: string | null } | { full_name: string | null; email: string | null }[] | null;
+  teams: { name: string; sport: string } | { name: string; sport: string }[] | null;
 };
 
-export default async function JoueursPage() {
+function normaliser(s: string) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+export default async function JoueursPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; sport?: string; equipe?: string; statut?: string }>;
+}) {
+  const { q = "", sport = "", equipe = "", statut = "" } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -40,7 +50,7 @@ export default async function JoueursPage() {
 
   const { data: memberships } = await supabase
     .from("team_members")
-    .select("id, team_id, profile_id, status_id, profiles (full_name), teams!inner (name)")
+    .select("id, team_id, profile_id, status_id, profiles (full_name, email), teams!inner (name, sport)")
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
 
@@ -51,7 +61,7 @@ export default async function JoueursPage() {
     .in("profile_id", profileIds.length ? profileIds : ["00000000-0000-0000-0000-000000000000"]);
   const naissanceParProfil = new Map((fiches ?? []).map((f) => [f.profile_id, f.birth_date]));
 
-  const parJoueur = new Map<string, { nom: string; naissance: string | null; memberships: Membership[] }>();
+  const parJoueur = new Map<string, { nom: string; email: string; naissance: string | null; memberships: Membership[] }>();
   (memberships ?? []).forEach((m) => {
     const p = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
     const existant = parJoueur.get(m.profile_id);
@@ -60,13 +70,29 @@ export default async function JoueursPage() {
     } else {
       parJoueur.set(m.profile_id, {
         nom: p?.full_name ?? "—",
+        email: p?.email ?? "",
         naissance: naissanceParProfil.get(m.profile_id) ?? null,
         memberships: [m],
       });
     }
   });
 
-  const joueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
+  const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
+
+  const recherche = normaliser(q.trim());
+  const joueurs = tousLesJoueurs.filter(([, j]) => {
+    if (recherche && !normaliser(j.nom).includes(recherche) && !normaliser(j.email).includes(recherche)) return false;
+    if (!sport && !equipe && !statut) return true;
+    return j.memberships.some((m) => {
+      const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
+      return (
+        (!sport || t?.sport === sport) &&
+        (!equipe || m.team_id === equipe) &&
+        (!statut || String(m.status_id) === statut)
+      );
+    });
+  });
+  const filtreActif = Boolean(q || sport || equipe || statut);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-5 py-10">
@@ -80,6 +106,67 @@ export default async function JoueursPage() {
 
       <FormInviterJoueuse equipes={teams ?? []} />
       <ImportJoueurs />
+
+      <form method="get" className="flex flex-col gap-3 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
+        <p className="font-condensed text-sm font-bold uppercase tracking-wide text-rof-gris">Filtrer la liste</p>
+        <input
+          name="q"
+          defaultValue={q}
+          placeholder="Rechercher un nom ou un courriel…"
+          className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte placeholder:text-rof-gris/60"
+        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <select
+            name="sport"
+            defaultValue={sport}
+            className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-2 text-sm text-rof-texte"
+          >
+            <option value="">Tous les sports</option>
+            <option value="baseball">Baseball</option>
+            <option value="softball">Softball</option>
+          </select>
+          <select
+            name="equipe"
+            defaultValue={equipe}
+            className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-2 text-sm text-rof-texte"
+          >
+            <option value="">Toutes les équipes</option>
+            {(teams ?? []).map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+          <select
+            name="statut"
+            defaultValue={statut}
+            className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-2 text-sm text-rof-texte"
+          >
+            <option value="">Tous les statuts</option>
+            {STATUTS.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.nom}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+          >
+            Filtrer
+          </button>
+          {filtreActif && (
+            <Link href="/membres/admin/joueurs" className="text-sm text-rof-poudre underline">
+              Réinitialiser
+            </Link>
+          )}
+          <span className="ml-auto text-sm text-rof-gris">
+            {joueurs.length} / {tousLesJoueurs.length} joueur{tousLesJoueurs.length > 1 ? "s" : ""}
+          </span>
+        </div>
+      </form>
 
       <div className="flex flex-col gap-4">
         {joueurs.map(([profileId, j]) => {
@@ -174,7 +261,9 @@ export default async function JoueursPage() {
             </div>
           );
         })}
-        {joueurs.length === 0 && <p className="text-sm text-rof-gris">Aucun joueur pour le moment.</p>}
+        {joueurs.length === 0 && (
+          <p className="text-sm text-rof-gris">{filtreActif ? "Aucun joueur ne correspond à ces filtres." : "Aucun joueur pour le moment."}</p>
+        )}
       </div>
     </main>
   );
