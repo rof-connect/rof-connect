@@ -58,12 +58,29 @@ async function EquipeDocuments({
 
   const { data: documents } = await supabase
     .from("contents")
-    .select("id, title, body, created_at")
+    .select("id, title, body, created_at, recipient_ids")
     .eq("team_id", teamId)
     .eq("kind", "document")
     .order("created_at", { ascending: false });
 
   const admin = createAdminClient();
+
+  let joueuses: { id: string; nom: string }[] = [];
+  if (peutEditer) {
+    const { data: athletes } = await admin
+      .from("team_members")
+      .select("profile_id, profiles (full_name)")
+      .eq("team_id", teamId)
+      .eq("role_in_team", "athlete");
+    joueuses = (athletes ?? [])
+      .map((a) => {
+        const p = Array.isArray(a.profiles) ? a.profiles[0] : a.profiles;
+        return { id: a.profile_id, nom: p?.full_name ?? "—" };
+      })
+      .sort((a, b) => a.nom.localeCompare(b.nom));
+  }
+  const nomParId = new Map(joueuses.map((j) => [j.id, j.nom]));
+
   const items = await Promise.all(
     (documents ?? []).map(async (d) => {
       const body = (d.body ?? {}) as DocumentBody;
@@ -80,7 +97,7 @@ async function EquipeDocuments({
     <section className="flex flex-col gap-4">
       <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-white">{teamName}</h2>
 
-      {peutEditer && <FormAjoutDocument teamId={teamId} />}
+      {peutEditer && <FormAjoutDocument teamId={teamId} joueuses={joueuses} />}
 
       <div className="flex flex-col gap-2">
         {items.map((d) => (
@@ -92,6 +109,9 @@ async function EquipeDocuments({
             urlSignee={d.urlSignee}
             cheminFichier={d.body.fichier_path ?? null}
             peutEditer={peutEditer}
+            destinataires={
+              peutEditer && d.recipient_ids ? d.recipient_ids.map((id: string) => nomParId.get(id) ?? "—") : null
+            }
           />
         ))}
         {items.length === 0 && <p className="text-sm text-rof-gris">Aucun document pour le moment.</p>}

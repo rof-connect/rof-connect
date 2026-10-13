@@ -11,6 +11,8 @@ export async function ajouterDocument(formData: FormData) {
   const titre = String(formData.get("titre") ?? "").trim();
   const minStatus = Number(formData.get("min_status") ?? 1);
   const fichier = formData.get("fichier") as File | null;
+  const individuel = formData.get("destination") === "joueuses";
+  const demandes = formData.getAll("destinataires").map(String).filter(Boolean);
 
   if (!teamId || !titre || !fichier || fichier.size === 0) return;
   if (fichier.size > TAILLE_MAX_PDF) return;
@@ -34,6 +36,20 @@ export async function ajouterDocument(formData: FormData) {
   if (!staff && profile?.role !== "admin") return;
 
   const admin = createAdminClient();
+
+  // Partage individuel : seules des joueuses de cette équipe peuvent être destinataires.
+  let recipientIds: string[] | null = null;
+  if (individuel) {
+    const { data: membres } = await admin
+      .from("team_members")
+      .select("profile_id")
+      .eq("team_id", teamId)
+      .eq("role_in_team", "athlete")
+      .in("profile_id", demandes.length ? demandes : ["00000000-0000-0000-0000-000000000000"]);
+    recipientIds = (membres ?? []).map((m) => m.profile_id);
+    if (recipientIds.length === 0) return;
+  }
+
   const cheminFichier = `docs/${teamId}/${crypto.randomUUID()}.pdf`;
   const { error: uploadError } = await admin.storage.from("media").upload(cheminFichier, fichier, {
     contentType: "application/pdf",
@@ -43,7 +59,8 @@ export async function ajouterDocument(formData: FormData) {
   await admin.from("contents").insert({
     team_id: teamId,
     kind: "document",
-    min_status: minStatus,
+    min_status: recipientIds ? 1 : minStatus,
+    recipient_ids: recipientIds,
     title: titre,
     created_by: user.id,
     body: { fichier_path: cheminFichier, fichier_nom: fichier.name },

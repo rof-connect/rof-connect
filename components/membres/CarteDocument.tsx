@@ -9,6 +9,7 @@ export function CarteDocument({
   urlSignee,
   cheminFichier,
   peutEditer,
+  destinataires,
 }: {
   id: string;
   titre: string;
@@ -16,12 +17,16 @@ export function CarteDocument({
   urlSignee: string | null;
   cheminFichier: string | null;
   peutEditer: boolean;
+  destinataires?: string[] | null;
 }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
       <div className="min-w-0">
         <span className="rounded-md bg-rof-royal-sombre px-1.5 py-0.5 font-condensed text-xs font-bold text-rof-or">PDF</span>
         <div className="mt-1 truncate font-condensed text-lg font-bold uppercase leading-tight text-white">{titre}</div>
+        {destinataires && destinataires.length > 0 && (
+          <p className="truncate text-xs text-rof-or">Privé · {destinataires.join(", ")}</p>
+        )}
         {nomFichier && <p className="truncate text-xs text-rof-gris">{nomFichier}</p>}
       </div>
       <div className="flex shrink-0 items-center gap-3">

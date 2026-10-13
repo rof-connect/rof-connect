@@ -5,7 +5,8 @@ import { ajouterDocument } from "@/app/membres/documents/actions";
 
 const TAILLE_MAX_PDF = 20 * 1024 * 1024;
 
-export function FormAjoutDocument({ teamId }: { teamId: string }) {
+export function FormAjoutDocument({ teamId, joueuses }: { teamId: string; joueuses: { id: string; nom: string }[] }) {
+  const [destination, setDestination] = useState<"equipe" | "joueuses">("equipe");
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState("");
   const [enCours, startTransition] = useTransition();
@@ -25,6 +26,10 @@ export function FormAjoutDocument({ teamId }: { teamId: string }) {
     }
     if (fichier.size > TAILLE_MAX_PDF) {
       setErreur("Le fichier dépasse 20 Mo.");
+      return;
+    }
+    if (formData.get("destination") === "joueuses" && formData.getAll("destinataires").length === 0) {
+      setErreur("Choisis au moins une joueuse.");
       return;
     }
     startTransition(async () => {
@@ -74,6 +79,32 @@ export function FormAjoutDocument({ teamId }: { teamId: string }) {
       </div>
 
       <div>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Partager avec</p>
+        <select
+          name="destination"
+          value={destination}
+          onChange={(e) => setDestination(e.target.value as "equipe" | "joueuses")}
+          className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte"
+        >
+          <option value="equipe">Toute l&apos;équipe</option>
+          <option value="joueuses">Certaines joueuses seulement</option>
+        </select>
+      </div>
+
+      {destination === "joueuses" ? (
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Joueuses destinataires</p>
+          <div className="flex max-h-48 flex-col gap-1 overflow-y-auto rounded-lg border border-rof-ligne bg-rof-craie p-2">
+            {joueuses.map((j) => (
+              <label key={j.id} className="flex items-center gap-2 text-sm text-rof-texte">
+                <input type="checkbox" name="destinataires" value={j.id} /> {j.nom}
+              </label>
+            ))}
+            {joueuses.length === 0 && <p className="text-sm text-rof-gris">Aucune joueuse dans cette équipe.</p>}
+          </div>
+        </div>
+      ) : (
+      <div>
         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Statut minimum requis pour voir</p>
         <select
           name="min_status"
@@ -93,6 +124,7 @@ export function FormAjoutDocument({ teamId }: { teamId: string }) {
           <option value="11">11 — 18U</option>
         </select>
       </div>
+      )}
 
       <div className="mt-1 flex gap-2">
         <button
