@@ -4,6 +4,7 @@ export const dictionnaires = {
   fr: {
     nav: {
       accueil: "Accueil",
+      parcours: "Parcours",
       agenda: "Agenda",
       documents: "Documents",
       videos: "Vidéos",
@@ -149,6 +150,7 @@ export const dictionnaires = {
       erreur: "Courriel ou mot de passe incorrect.",
       motDePasseOublie: "Mot de passe oublié ?",
       aVenir: "À venir",
+      parcours: "Questionnaire de parcours NCAA",
     },
     motDePasseOublie: {
       titre: "Mot de passe oublié",
@@ -235,6 +237,7 @@ export const dictionnaires = {
   en: {
     nav: {
       accueil: "Home",
+      parcours: "Pathway",
       agenda: "Schedule",
       documents: "Documents",
       videos: "Videos",
@@ -380,6 +383,7 @@ export const dictionnaires = {
       erreur: "Incorrect email or password.",
       motDePasseOublie: "Forgot your password?",
       aVenir: "Coming soon",
+      parcours: "NCAA pathway questionnaire (French)",
     },
     motDePasseOublie: {
       titre: "Forgot password",
