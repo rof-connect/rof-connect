@@ -79,7 +79,7 @@ export default async function ParcoursAdminPage({ searchParams }: { searchParams
                 <p className="text-xs text-rof-gris">{new Date(d.created_at).toLocaleDateString("fr-CA")}</p>
               </div>
               <p className="text-sm text-rof-gris">
-                Date repère : automne {d.resultat?.repere ?? "—"} · Parcours : {(d.resultat?.candidats ?? []).join(", ") || "—"}
+                Date repère : automne {d.resultat?.repere ?? "—"} · Options selon ses choix : {(d.resultat?.candidats ?? []).join(", ") || "—"}
               </p>
               <p className="text-sm text-rof-gris">
                 {rep.parent || "Parent"} · <a href={`mailto:${rep.courrielParent}`} className="text-rof-poudre underline">{rep.courrielParent}</a>

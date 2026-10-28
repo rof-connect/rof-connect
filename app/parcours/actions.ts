@@ -108,7 +108,7 @@ async function traiter(b: Record<string, unknown>, profileId: string | null): Pr
       "Bilan-Parcours-" +
       (`${i.prenom}-${i.nom}`.normalize("NFD").replace(/[^\w-]+/g, "").replace(/-+/g, "-").replace(/^-|-$/g, "") || "joueuse") +
       ".pdf";
-    const parcours = r.candidats.map((o) => `${o.k} · ${o.n}`).join(", ");
+    const parcours = r.parcours.map((o) => `${o.k} · ${o.n}`).join(", ");
     const prenom = esc(i.prenom);
 
     const rep = await resend.emails.send({
@@ -121,8 +121,8 @@ async function traiter(b: Record<string, unknown>, profileId: string | null): Pr
         `<div style="background:#000;color:#fff;padding:18px 22px"><div style="color:#D9B44A;font-size:12px;letter-spacing:2px">ROYAL SOFTBALL ON FIELD</div>` +
         `<div style="font-size:20px;font-weight:bold;margin-top:4px">Bilan de parcours de ${prenom}</div></div>` +
         `<div style="padding:18px 22px;border:1px solid #ddd;border-top:0"><p>Bonjour,</p>` +
-        `<p>Merci d'avoir rempli le questionnaire de parcours pour ${prenom}. Son bilan est en pièce jointe : sa date repère (<strong>automne ${r.repere}</strong>), la comparaison des parcours et les prochaines étapes.</p>` +
-        `<p><strong>Parcours ${r.multi ? "à comparer" : "suggéré"} :</strong> ${esc(parcours)}</p>` +
+        `<p>Merci d'avoir rempli le questionnaire de parcours pour ${prenom}. Son bilan est en pièce jointe : sa date repère (<strong>automne ${r.repere}</strong>), la présentation des parcours possibles et les prochaines étapes.</p>` +
+        `<p><strong>Les parcours présentés :</strong> ${esc(parcours)}</p>` +
         `<p style="font-size:13px;color:#666">Ce bilan est établi automatiquement à partir de vos réponses. Il ne remplace ni une décision d'admissibilité du NCAA, ni le plan individuel complet. Nous communiquerons avec vous pour planifier une rencontre.</p>` +
         `<p style="margin-bottom:0">Royal Softball On Field · Repentigny, Lanaudière</p></div></div>`,
       attachments: [{ filename: nomPdf, content: pdf }],

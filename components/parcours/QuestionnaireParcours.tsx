@@ -131,13 +131,13 @@ export function QuestionnaireParcours({ membre = false, initial = {} }: { membre
             <div className="qp-full"><span className="qp-lab">Quel projet scolaire lui parle le plus?</span>
               <Choix name="projet" valeur={f.projet} onChange={(v) => setF((s) => ({ ...s, projet: v }))} options={[
                 ['dip', 'Un diplôme québécois (DEC)', 'Études en personne, filet de sécurité si le plan américain change.'],
-                ['direct', 'La voie la plus directe vers les États-Unis', '12e année, puis le collège américain.'],
-                ['idk', 'Pas décidé entre le DEC et la 12e année', 'Nous comparerons les deux parcours à la rencontre.']]} /></div>
+                ['direct', '12e année en ligne', "Latitude pour l'entraînement, les voyages (tournois, camps) et le développement, puis le collège américain."],
+                ['idk', 'Pas décidé entre le DEC et la 12e année en ligne', 'Tous les parcours sont présentés ci-dessous.']]} /></div>
             <div className="qp-full"><span className="qp-lab">Combien de temps pour se développer avant l'arrivée?</span>
               <Choix name="duree" valeur={f.duree} onChange={(v) => setF((s) => ({ ...s, duree: v }))} options={[
                 ['1', 'Un an suffit', 'Niveau et dossier déjà bien avancés.'],
                 ['2', 'Deux ans, pour bâtir un dossier solide', 'Développement physique et technique, vidéos, visites.'],
-                ['idk', 'Pas encore décidé : 1 an ou 2 ans', 'Le dossier présentera plusieurs options de parcours.']]} /></div>
+                ['idk', 'Pas encore décidé : 1 an ou 2 ans', 'Tous les parcours sont présentés ci-dessous.']]} /></div>
           </div>
         </section>
 
@@ -160,20 +160,17 @@ export function QuestionnaireParcours({ membre = false, initial = {} }: { membre
             <div className="qp-clock"><div className="qp-kick">Sa date repère</div><div className="qp-big">Automne {r.repere}</div>
               <p style={{ margin: 0, fontSize: 14.5 }}>{f.prenom.trim() || 'La joueuse'} atteint 19 ans le {fmtDate(r.anniversaire19)}. L'horloge de cinq ans démarre au plus tard à la rentrée de septembre {r.repere}, même sans études collégiales.</p></div>
             {r.alertes.map((a: string, n: number) => <div key={n} className="qp-alert">{a}</div>)}
-            <h2 style={{ marginBottom: 10 }}>Les parcours pour sa situation</h2>
+            <h2 style={{ marginBottom: 10 }}>Les parcours possibles</h2>
             {r.parcours.map((o) => {
-              const c = r.candidats.includes(o);
-              const tag = c ? (r.multi ? 'À comparer' : 'Suggéré') : o.worst >= 5 ? '5 saisons' : o.worst < o.best ? 'À valider' : '';
-              const cls = c ? '' : o.worst >= 5 ? ' ok' : ' risk';
               let why = ''; let w = false;
               if (o.ceg && o.worst < o.best) { why = 'Selon la lecture du NCAA, le cégep peut démarrer l\'horloge dès l\'entrée (automne ' + r.fin + ') : ' + o.worst + ' saison' + (o.worst > 1 ? 's' : '') + ' au lieu de ' + o.best + '. À confirmer par écrit avant l\'inscription.'; w = true; }
               else if (!o.ceg && o.marge < 0) { why = 'L\'arrivée tombe après la date repère : ' + (5 - o.worst) + ' saison(s) perdue(s).'; w = true; }
               else if (!o.ceg && o.marge > 0) why = 'Cinq saisons garanties, avec une année de marge si le plan change.';
               else if (!o.ceg) why = 'Cinq saisons, mais sans marge : tout allongement coûte une saison.';
               return (
-                <div key={o.k} className={'qp-pc' + (c ? ' best' : '')}>
+                <div key={o.k} className="qp-pc">
                   <div className="qp-L">{o.k}</div>
-                  <div><h3>{o.n}{tag && <span className={'qp-tag' + cls}>{tag}</span>}</h3><div className="qp-note">{o.len}</div></div>
+                  <div><h3>{o.n}</h3><div className="qp-note">{o.len}</div></div>
                   <dl>
                     <dt>Arrivée au NCAA</dt><dd>Automne {o.entree}</dd>
                     <dt>Saisons</dt><dd><b>{plage(o.worst, o.best)} sur 5</b></dd>
