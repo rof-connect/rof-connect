@@ -181,6 +181,8 @@ export function QuestionnaireParcours({ membre = false, initial = {} }: { membre
                     {o.sram && (<><dt>Demande SRAM</dt><dd>{o.sram} <i className="qp-note">(à confirmer)</i></dd></>)}
                   </dl>
                   {why && <p className={'qp-why' + (w ? ' w' : '')}>{why}</p>}
+                  {o.plus && <p className="qp-why"><b>Avantage :</b> {o.plus}</p>}
+                  {o.moins && <p className="qp-why w"><b>À considérer :</b> {o.moins}</p>}
                 </div>
               );
             })}
