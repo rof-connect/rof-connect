@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { FormAjouterJoueuse } from "@/components/membres/FormAjouterJoueuse";
+import { chargerMessagesTous } from "@/lib/messages-tous";
 import { getDictionnaire } from "@/lib/i18n/server";
 
 export default async function MembresPage() {
@@ -9,7 +10,7 @@ export default async function MembresPage() {
   } = await supabase.auth.getUser();
 
   const { data: profile } = await supabase.from("profiles").select("full_name, role").eq("id", user!.id).single();
-  const { t } = await getDictionnaire();
+  const { t, locale } = await getDictionnaire();
   const m2 = t.membres;
 
   const { data: memberships } = await supabase
@@ -17,6 +18,13 @@ export default async function MembresPage() {
     .select("status_id, role_in_team, teams!inner (id, name, sport)")
     .eq("profile_id", user!.id)
     .eq("teams.archived", false);
+
+  const messages = await chargerMessagesTous(locale === "en" ? "en" : "fr");
+  const aSelection = (memberships ?? []).some((m) => m.role_in_team === "athlete" && m.status_id > 1);
+  const messagesAffiches = [
+    profile?.role === "member" ? (aSelection ? messages.selection : messages.prospect) : "",
+    messages.general,
+  ].filter((m) => m.trim());
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-5 py-10">
@@ -27,6 +35,17 @@ export default async function MembresPage() {
       <p className="mt-2 text-sm text-rof-gris">
         {m2.role} : <span className="text-rof-texte">{profile?.role}</span>
       </p>
+
+      {messagesAffiches.length > 0 && (
+        <section className="mt-6 flex flex-col gap-2 rounded-xl border border-rof-or bg-rof-blanc p-4">
+          <p className="font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-or">{m2.messageATous}</p>
+          {messagesAffiches.map((m, i) => (
+            <p key={i} className="whitespace-pre-line text-base text-rof-texte">
+              {m}
+            </p>
+          ))}
+        </section>
+      )}
 
       <div className="mt-6 flex flex-col gap-3">
         {(memberships ?? []).map((m, i) => {

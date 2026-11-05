@@ -57,7 +57,10 @@ export default async function JoueursPage({
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
 
-  const profileIds = [...new Set((memberships ?? []).map((m) => m.profile_id))];
+  // Toutes les joueuses inscrites à la plateforme, avec ou sans équipe.
+  const { data: tousProfils } = await supabase.from("profiles").select("id, full_name, email").eq("role", "member");
+
+  const profileIds = [...new Set([...(memberships ?? []).map((m) => m.profile_id), ...(tousProfils ?? []).map((p) => p.id)])];
   const { data: fiches } = await supabase
     .from("athlete_details")
     .select("profile_id, birth_date, position, throws, bats, guardian_name, guardian_phone, guardian_email, medical_notes, photo_consent")
@@ -81,11 +84,23 @@ export default async function JoueursPage({
     }
   });
 
+  (tousProfils ?? []).forEach((p) => {
+    if (!parJoueur.has(p.id)) {
+      parJoueur.set(p.id, {
+        nom: p.full_name ?? "—",
+        email: p.email ?? "",
+        naissance: naissanceParProfil.get(p.id) ?? null,
+        memberships: [],
+      });
+    }
+  });
+
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
 
   const recherche = normaliser(q.trim());
   const joueurs = tousLesJoueurs.filter(([, j]) => {
     if (recherche && !normaliser(j.nom).includes(recherche) && !normaliser(j.email).includes(recherche)) return false;
+    if (equipe === "aucune") return j.memberships.length === 0;
     if (!sport && !equipe && !statut) return true;
     return j.memberships.some((m) => {
       const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
@@ -136,6 +151,7 @@ export default async function JoueursPage({
             className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-2 text-sm text-rof-texte"
           >
             <option value="">Toutes les équipes</option>
+            <option value="aucune">Sans équipe</option>
             {(teams ?? []).map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
@@ -258,6 +274,8 @@ export default async function JoueursPage({
                   );
                 })()}
               </details>
+
+              {j.memberships.length === 0 && <p className="mt-2 text-sm text-rof-gris">Aucune équipe pour le moment.</p>}
 
               <div className="mt-2 flex flex-col gap-2">
                 {j.memberships.map((m) => {

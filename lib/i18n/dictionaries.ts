@@ -70,7 +70,7 @@ export const dictionnaires = {
       voiesKicker: "Voies de développement",
       voiesTitre: "Un parcours. Une destination.",
       voiesIntro:
-        "Chaque groupe d'âge s'inscrit dans un plan de développement continu qui vise les plus grandes scènes du baseball et de la softball mineurs.",
+        "Chaque groupe d'âge s'inscrit dans un plan de développement continu qui vise les plus grandes scènes du baseball et du softball mineurs.",
       parcours: [
         {
           sport: "Baseball",
@@ -161,7 +161,7 @@ export const dictionnaires = {
       envoyer: "Envoyer le lien",
       retour: "Retour à la connexion",
       confirmationTitre: "Vérifie ton courriel",
-      confirmationTexte: "Un courriel a été envoyé pour changer votre mot de passe.",
+      confirmationTexte: "Un courriel a été envoyé pour changer ton mot de passe.",
     },
     nouveauMotDePasse: {
       titre: "Nouveau mot de passe",
@@ -233,6 +233,7 @@ export const dictionnaires = {
       ajouter: "Ajouter",
       joueuseAjoutee: "Joueuse ajoutée. Utilise le sélecteur en haut pour changer de joueuse.",
       joueuseActive: "Joueuse",
+      messageATous: "Message à tous",
       changer: "Changer",
     },
   },
@@ -441,7 +442,7 @@ export const dictionnaires = {
       typeCompte: "Account type",
       typeAthlete: "Athlete",
       typeEntraineur: "Coach",
-      entraineurIntro: "Sign up as a coach — direction will confirm your team and activate your access.",
+      entraineurIntro: "Sign up as a coach — our staff will confirm your team and activate your access.",
       nomEntraineur: "Full name",
       courrielEntraineur: "Email",
       sinscrireEntraineur: "Sign up as a coach",
@@ -449,7 +450,7 @@ export const dictionnaires = {
     confirmation: {
       titre: "Check your email",
       texteEntraineur:
-        "Your account has been created. Direction will confirm your team and activate your access — you'll be notified once assigned.",
+        "Your account has been created. Our staff will confirm your team and activate your access — you'll be notified once assigned.",
       depotSoftball:
         "A $500 deposit is required to finalize your registration, by Interac e-transfer to softballfeminin@gmail.com. Contact François Martel for the 2027 season payment schedule.",
       depotBaseball:
@@ -467,6 +468,7 @@ export const dictionnaires = {
       ajouter: "Add",
       joueuseAjoutee: "Player added. Use the selector at the top to switch players.",
       joueuseActive: "Player",
+      messageATous: "Message to everyone",
       changer: "Switch",
     },
   },

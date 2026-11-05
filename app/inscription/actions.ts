@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { envoyerADirection, echapper } from "@/lib/notifier-direction";
 
 export async function inscrireAthlete(formData: FormData) {
   const fullName = String(formData.get("full_name") ?? "").trim();
@@ -41,7 +42,7 @@ export async function inscrireAthlete(formData: FormData) {
   const admin = createAdminClient();
   const profileId = signUpData.user!.id;
 
-  const { data: equipe } = await admin.from("teams").select("sport").eq("id", teamId).single();
+  const { data: equipe } = await admin.from("teams").select("name, sport").eq("id", teamId).single();
 
   const { error: teamMemberError } = await admin.from("team_members").insert({
     team_id: teamId,
@@ -66,6 +67,25 @@ export async function inscrireAthlete(formData: FormData) {
   if (teamMemberError || athleteDetailsError) {
     redirect("/inscription?erreur=" + encodeURIComponent("Compte créé, mais la fiche n'a pas pu être complétée. Contacte un entraîneur."));
   }
+
+  const ligne = (label: string, valeur: string) =>
+    valeur ? `<tr><td style="padding:3px 14px 3px 0;color:#666">${label}</td><td style="padding:3px 0"><b>${echapper(valeur)}</b></td></tr>` : "";
+  await envoyerADirection(
+    `Nouvelle inscription : ${fullName}`,
+    `<div style="font-family:Arial,sans-serif;color:#111;max-width:560px;line-height:1.5">` +
+      `<div style="background:#000;color:#fff;padding:16px 20px"><div style="color:#D9B44A;font-size:12px;letter-spacing:2px">ROF CONNECT · NOUVELLE INSCRIPTION</div>` +
+      `<div style="font-size:19px;font-weight:bold;margin-top:4px">${echapper(fullName)}</div></div>` +
+      `<div style="padding:16px 20px;border:1px solid #ddd;border-top:0"><table style="border-collapse:collapse;font-size:14px">` +
+      ligne("Équipe", equipe?.name ?? "") +
+      ligne("Sport", equipe?.sport ?? "") +
+      ligne("Courriel", email) +
+      ligne("Naissance", birthDate) +
+      ligne("Position", position) +
+      ligne("Parent / tuteur", guardianName) +
+      ligne("Téléphone", guardianPhone) +
+      ligne("Courriel du parent", guardianEmail) +
+      `</table></div></div>`,
+  );
 
   redirect("/inscription/confirmation?sport=" + (equipe?.sport ?? ""));
 }
@@ -98,6 +118,11 @@ export async function inscrireEntraineur(formData: FormData) {
 
   const admin = createAdminClient();
   await admin.from("profiles").update({ role: "coach", full_name: fullName }).eq("id", signUpData.user!.id);
+
+  await envoyerADirection(
+    `Nouvelle inscription entraîneur : ${fullName}`,
+    `<p style="font-family:Arial,sans-serif"><b>${echapper(fullName)}</b> (${echapper(email)}) s'est inscrit·e comme entraîneur. À assigner à une équipe dans Direction.</p>`,
+  );
 
   redirect("/inscription/confirmation?type=entraineur");
 }

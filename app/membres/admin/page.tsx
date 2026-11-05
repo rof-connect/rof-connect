@@ -34,6 +34,8 @@ export default async function DirectionPage() {
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
 
+  const { count: nbComptes } = await supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "member");
+
   const profileIds = (membres ?? []).map((m) => m.profile_id);
   const { data: fiches } = await supabase
     .from("athlete_details")
@@ -97,6 +99,9 @@ export default async function DirectionPage() {
           <Link href="/membres/admin/joueurs" className="text-sm text-rof-poudre underline">
             Gérer les joueurs
           </Link>
+          <Link href="/membres/admin/messages" className="text-sm text-rof-poudre underline">
+            Messages à tous
+          </Link>
           <Link href="/membres/admin/sondages" className="text-sm text-rof-poudre underline">
             Sondages
           </Link>
@@ -110,7 +115,7 @@ export default async function DirectionPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Tuile n={total} l="Inscriptions totales" />
+        <Tuile n={nbComptes ?? total} l="Joueuses inscrites" />
         <Tuile n={(teams ?? []).length} l="Équipes actives" />
         <Tuile n={consentements} l="Consentements photo" couleur="text-rof-gazon" />
         <Tuile n={sansFiche} l="Fiches incomplètes" couleur={sansFiche > 0 ? "text-rof-rouge" : "text-rof-gazon"} />
