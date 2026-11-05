@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { chargerSondages } from "@/lib/sondages";
+import { BoutonConfirmation } from "@/components/membres/BoutonConfirmation";
 import { voter } from "./actions";
 
 export default async function SondagesPage() {
@@ -45,14 +46,7 @@ export default async function SondagesPage() {
                   </label>
                 ))}
               </div>
-              {!s.closed && (
-                <button
-                  type="submit"
-                  className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
-                >
-                  {s.maDates.length ? "Modifier" : "Enregistrer"}
-                </button>
-              )}
+              {!s.closed && <BoutonConfirmation libelle={s.maDates.length ? "Modifier" : "Enregistrer"} />}
               {s.maDates.length > 0 && (
                 <p className="text-xs text-rof-gazon">
                   Enregistré :{" "}
@@ -96,7 +90,7 @@ export default async function SondagesPage() {
                       <img src={o.imageUrl} alt={o.label} className="aspect-square w-full rounded-md object-cover" />
                     )}
                     <span className="flex items-center gap-2 text-rof-texte">
-                      <input type="radio" name="option_id" value={o.id} defaultChecked={choisi} disabled={s.closed} required />
+                      <input type="radio" name="option_id" value={o.id} data-label={o.label} defaultChecked={choisi} disabled={s.closed} required />
                       <span className="font-semibold">{o.label}</span>
                     </span>
                     {resultats && (
@@ -114,14 +108,7 @@ export default async function SondagesPage() {
               })}
             </div>
 
-            {!s.closed && (
-              <button
-                type="submit"
-                className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
-              >
-                {s.monVote ? "Changer mon vote" : "Voter"}
-              </button>
-            )}
+            {!s.closed && <BoutonConfirmation libelle={s.monVote ? "Changer mon vote" : "Voter"} />}
             {resultats && (
               <p className="text-xs text-rof-gris">
                 {s.total} vote{s.total > 1 ? "s" : ""} au total

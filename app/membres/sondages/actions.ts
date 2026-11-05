@@ -25,14 +25,17 @@ export async function voter(formData: FormData) {
   const sondage = visibles.find((s) => s.id === pollId);
   if (!sondage || sondage.closed) return;
 
-  let action: ActionVote;
+  let action: ActionVote | null;
   if (sondage.kind === "date") {
     const valides = [...new Set(datesDemandees)]
       .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(d)))
       .sort()
       .slice(0, sondage.maxDates);
     const admin = createAdminClient();
-    if (valides.length === 0) {
+    const inchangee = valides.join(",") === sondage.maDates.join(",");
+    if (inchangee) {
+      action = null;
+    } else if (valides.length === 0) {
       // Réponse facultative : aucune date = on retire la réponse.
       await admin.from("poll_votes").delete().eq("poll_id", pollId).eq("profile_id", user.id);
       action = { type: "retrait" };
@@ -47,13 +50,17 @@ export async function voter(formData: FormData) {
     }
   } else {
     if (!optionId || !sondage.options.some((o) => o.id === optionId)) return;
+    if (sondage.monVote === optionId) {
+      revalidatePath("/membres/sondages");
+      return; // même réponse : rien à enregistrer ni à signaler
+    }
     await createAdminClient()
       .from("poll_votes")
       .upsert({ poll_id: pollId, option_id: optionId, profile_id: user.id }, { onConflict: "poll_id,profile_id" });
     action = { type: "choix", option: sondage.options.find((o) => o.id === optionId)!.label };
   }
 
-  await notifierReponseSondage(pollId, profile?.full_name || user.email || "Un membre", action);
+  if (action) await notifierReponseSondage(pollId, profile?.full_name || user.email || "Un membre", action);
 
   revalidatePath("/membres/sondages");
 }
