@@ -95,6 +95,9 @@ export default async function DirectionPage() {
           <Link href="/membres/admin/joueurs" className="text-sm text-rof-poudre underline">
             Gérer les joueurs
           </Link>
+          <Link href="/membres/admin/sondages" className="text-sm text-rof-poudre underline">
+            Sondages
+          </Link>
           <Link href="/membres/admin/parcours" className="text-sm text-rof-poudre underline">
             Questionnaires de parcours
           </Link>

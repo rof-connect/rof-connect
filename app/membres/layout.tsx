@@ -13,6 +13,7 @@ const ONGLETS: [string, keyof Dictionnaire["nav"]][] = [
   ["/membres", "accueil"],
   ["/membres/agenda", "agenda"],
   ["/membres/documents", "documents"],
+  ["/membres/sondages", "sondages"],
   ["/membres/parcours", "parcours"],
   ["/membres/gc", "gc"],
   ["/membres/messages", "messages"],
