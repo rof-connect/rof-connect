@@ -32,6 +32,11 @@ export default async function SondagesPage() {
               </p>
             </div>
 
+            {s.imageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={s.imageUrl} alt={s.title} className="w-full rounded-lg" />
+            )}
+
             <div className={`grid gap-3 ${s.options.some((o) => o.imageUrl) ? "grid-cols-2" : "grid-cols-1"}`}>
               {s.options.map((o) => {
                 const pct = s.total ? Math.round((o.votes / s.total) * 100) : 0;

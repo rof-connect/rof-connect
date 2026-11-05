@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerSondages } from "@/lib/sondages";
+import { FormImageSondage } from "@/components/membres/FormImageSondage";
 import { FormOptionSondage } from "@/components/membres/FormOptionSondage";
 import { creerSondage, ajouterOptionSondage, basculerSondage, supprimerSondage } from "./actions";
 
@@ -79,6 +80,8 @@ export default async function SondagesAdminPage() {
               </p>
             </div>
             {s.description && <p className="text-sm text-rof-gris">{s.description}</p>}
+
+            <FormImageSondage pollId={s.id} imageUrl={s.imageUrl} />
 
             <div className="grid gap-3 sm:grid-cols-2">
               {s.options.map((o) => (

@@ -112,3 +112,21 @@ export async function supprimerSondage(formData: FormData) {
   if (chemins.length) await admin.storage.from("media").remove(chemins);
   rafraichir();
 }
+
+export async function majImageSondage(formData: FormData) {
+  if (!(await verifierAdmin())) return;
+  const pollId = String(formData.get("poll_id") ?? "");
+  const photo = formData.get("photo") as File | null;
+  if (!pollId || !photo || photo.size === 0) return;
+  if (photo.size > TAILLE_MAX_IMAGE || !photo.type.startsWith("image/")) return;
+
+  const admin = createAdminClient();
+  const { data: poll } = await admin.from("polls").select("image_path").eq("id", pollId).single();
+  if (!poll) return;
+  const chemin = `sondages/${pollId}/${crypto.randomUUID()}.${photo.type === "image/png" ? "png" : "jpg"}`;
+  const { error } = await admin.storage.from("media").upload(chemin, photo, { contentType: photo.type });
+  if (error) return;
+  if (poll.image_path) await admin.storage.from("media").remove([poll.image_path]);
+  await admin.from("polls").update({ image_path: chemin }).eq("id", pollId);
+  rafraichir();
+}

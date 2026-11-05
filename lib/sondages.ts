@@ -6,6 +6,7 @@ export type Sondage = {
   id: string;
   title: string;
   description: string | null;
+  imageUrl: string | null;
   closed: boolean;
   teamId: string | null;
   teamName: string | null;
@@ -20,7 +21,7 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
   const admin = createAdminClient();
   const { data: polls } = await admin
     .from("polls")
-    .select("id, title, description, closed, team_id, teams (name)")
+    .select("id, title, description, image_path, closed, team_id, teams (name)")
     .order("created_at", { ascending: false });
 
   let mesEquipes = new Set<string>();
@@ -43,6 +44,15 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
     .in("poll_id", ids);
 
   const urls = new Map<string, string>();
+  const urlsSondages = new Map<string, string>();
+  await Promise.all(
+    visibles
+      .filter((p) => p.image_path)
+      .map(async (p) => {
+        const { data } = await admin.storage.from("media").createSignedUrl(p.image_path!, 60 * 60);
+        if (data?.signedUrl) urlsSondages.set(p.id, data.signedUrl);
+      }),
+  );
   await Promise.all(
     (options ?? [])
       .filter((o) => o.image_path)
@@ -59,6 +69,7 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
       id: p.id,
       title: p.title,
       description: p.description,
+      imageUrl: urlsSondages.get(p.id) ?? null,
       closed: p.closed,
       teamId: p.team_id,
       teamName: team?.name ?? null,
