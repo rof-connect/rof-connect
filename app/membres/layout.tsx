@@ -17,6 +17,7 @@ const ONGLETS: [string, keyof Dictionnaire["nav"]][] = [
   ["/membres/parcours", "parcours"],
   ["/membres/gc", "gc"],
   ["/membres/messages", "messages"],
+  ["/membres/contact", "contact"],
 ];
 
 export default async function MembresLayout({ children }: { children: React.ReactNode }) {
