@@ -31,16 +31,19 @@ export async function creerSondage(formData: FormData) {
     .map((o) => o.trim())
     .filter(Boolean)
     .slice(0, 12);
-  if (!titre || options.length < 2) return;
+  const kind = String(formData.get("kind") ?? "choix") === "date" ? "date" : "choix";
+  if (!titre || (kind === "choix" && options.length < 2)) return;
 
   const admin = createAdminClient();
   const { data: poll } = await admin
     .from("polls")
-    .insert({ title: titre, description, team_id: teamId })
+    .insert({ title: titre, description, team_id: teamId, kind })
     .select("id")
     .single();
   if (!poll) return;
-  await admin.from("poll_options").insert(options.map((label, i) => ({ poll_id: poll.id, label, position: i })));
+  if (kind === "choix") {
+    await admin.from("poll_options").insert(options.map((label, i) => ({ poll_id: poll.id, label, position: i })));
+  }
   rafraichir();
 }
 

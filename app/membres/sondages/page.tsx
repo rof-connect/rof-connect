@@ -20,6 +20,45 @@ export default async function SondagesPage() {
       {sondages.length === 0 && <p className="text-sm text-rof-gris">Aucun sondage pour le moment.</p>}
 
       {sondages.map((s) => {
+        if (s.kind === "date") {
+          return (
+            <form key={s.id} action={voter} className="flex flex-col gap-3 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
+              <input type="hidden" name="poll_id" value={s.id} />
+              <div>
+                <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-texte">{s.title}</h2>
+                {s.description && <p className="mt-1 text-sm text-rof-gris">{s.description}</p>}
+                <p className="mt-1 text-xs text-rof-gris">
+                  {s.teamName ? s.teamName : "Tout le monde"} · {s.closed ? "Fermé" : "Ouvert"}
+                </p>
+              </div>
+              <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">
+                Ta date
+                <input
+                  type="date"
+                  name="reponse_date"
+                  required
+                  defaultValue={s.maDate ?? ""}
+                  disabled={s.closed}
+                  className="w-full max-w-xs rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-base font-normal normal-case text-rof-texte"
+                />
+              </label>
+              {!s.closed && (
+                <button
+                  type="submit"
+                  className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+                >
+                  {s.maDate ? "Modifier ma date" : "Enregistrer ma date"}
+                </button>
+              )}
+              {s.maDate && (
+                <p className="text-xs text-rof-gazon">
+                  Date enregistrée : {new Date(s.maDate + "T12:00:00").toLocaleDateString("fr-CA", { dateStyle: "long" })}
+                </p>
+              )}
+            </form>
+          );
+        }
+
         const resultats = s.monVote !== null || s.closed;
         return (
           <form key={s.id} action={voter} className="flex flex-col gap-3 rounded-xl border border-rof-ligne bg-rof-blanc p-4">

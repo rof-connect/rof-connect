@@ -47,8 +47,15 @@ export default async function SondagesAdminPage() {
             <input name="description" className={champ} />
           </div>
           <div>
-            <p className={etiquette}>Choix (un par ligne, minimum 2)</p>
-            <textarea name="options" required rows={4} className={champ} placeholder={"Floride\nTexas"} />
+            <p className={etiquette}>Type de réponse</p>
+            <select name="kind" className={champ}>
+              <option value="choix">Choix (les membres votent pour une option)</option>
+              <option value="date">Une date (les membres inscrivent leur date)</option>
+            </select>
+          </div>
+          <div>
+            <p className={etiquette}>Choix (un par ligne, minimum 2) : seulement pour le type « Choix »</p>
+            <textarea name="options" rows={4} className={champ} placeholder={"Floride\nTexas"} />
           </div>
           <div>
             <p className={etiquette}>Pour qui</p>
@@ -81,23 +88,40 @@ export default async function SondagesAdminPage() {
             </div>
             {s.description && <p className="text-sm text-rof-gris">{s.description}</p>}
 
-            <FormImageSondage pollId={s.id} imageUrl={s.imageUrl} />
+            {s.kind === "date" ? (
+              <div className="rounded-lg border border-rof-ligne bg-rof-craie p-3 text-sm">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rof-gris">
+                  Dates reçues ({s.dates.length})
+                </p>
+                {s.dates.length === 0 && <p className="text-rof-gris">Aucune réponse pour le moment.</p>}
+                {s.dates.map((d, n) => (
+                  <p key={n} className="text-rof-texte">
+                    {new Date(d.date + "T12:00:00").toLocaleDateString("fr-CA", { dateStyle: "long" })}{" "}
+                    <span className="text-rof-gris">· {d.nom}</span>
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <>
+                <FormImageSondage pollId={s.id} imageUrl={s.imageUrl} />
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              {s.options.map((o) => (
-                <FormOptionSondage key={o.id} optionId={o.id} label={o.label} imageUrl={o.imageUrl} votes={o.votes} />
-              ))}
-            </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {s.options.map((o) => (
+                    <FormOptionSondage key={o.id} optionId={o.id} label={o.label} imageUrl={o.imageUrl} votes={o.votes} />
+                  ))}
+                </div>
 
-            <form action={ajouterOptionSondage} className="flex items-center gap-2">
-              <input type="hidden" name="poll_id" value={s.id} />
-              <input name="label" required placeholder="Ajouter un choix…" className={champ} />
-              <button type="submit" className="shrink-0 text-sm text-rof-poudre underline">
-                Ajouter
-              </button>
-            </form>
+                <form action={ajouterOptionSondage} className="flex items-center gap-2">
+                  <input type="hidden" name="poll_id" value={s.id} />
+                  <input name="label" required placeholder="Ajouter un choix…" className={champ} />
+                  <button type="submit" className="shrink-0 text-sm text-rof-poudre underline">
+                    Ajouter
+                  </button>
+                </form>
+              </>
+            )}
 
-            {s.total > 0 && (
+            {s.total > 0 && s.kind !== "date" && (
               <details>
                 <summary className="cursor-pointer text-sm font-semibold text-rof-poudre">Qui a voté quoi</summary>
                 <div className="mt-2 flex flex-col gap-2 text-sm">

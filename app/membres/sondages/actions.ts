@@ -8,7 +8,8 @@ import { chargerSondages } from "@/lib/sondages";
 export async function voter(formData: FormData) {
   const pollId = String(formData.get("poll_id") ?? "");
   const optionId = String(formData.get("option_id") ?? "");
-  if (!pollId || !optionId) return;
+  const dateReponse = String(formData.get("reponse_date") ?? "");
+  if (!pollId) return;
 
   const supabase = await createClient();
   const {
@@ -17,14 +18,22 @@ export async function voter(formData: FormData) {
   if (!user) return;
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
 
-  // Le sondage doit être visible pour cet utilisateur, ouvert, et l'option doit en faire partie.
+  // Le sondage doit être visible pour cet utilisateur et ouvert.
   const visibles = await chargerSondages(user.id, profile?.role === "admin");
   const sondage = visibles.find((s) => s.id === pollId);
-  if (!sondage || sondage.closed || !sondage.options.some((o) => o.id === optionId)) return;
+  if (!sondage || sondage.closed) return;
 
-  await createAdminClient()
-    .from("poll_votes")
-    .upsert({ poll_id: pollId, option_id: optionId, profile_id: user.id }, { onConflict: "poll_id,profile_id" });
+  if (sondage.kind === "date") {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateReponse) || Number.isNaN(Date.parse(dateReponse))) return;
+    await createAdminClient()
+      .from("poll_votes")
+      .upsert({ poll_id: pollId, option_id: null, reponse_date: dateReponse, profile_id: user.id }, { onConflict: "poll_id,profile_id" });
+  } else {
+    if (!optionId || !sondage.options.some((o) => o.id === optionId)) return;
+    await createAdminClient()
+      .from("poll_votes")
+      .upsert({ poll_id: pollId, option_id: optionId, profile_id: user.id }, { onConflict: "poll_id,profile_id" });
+  }
 
   revalidatePath("/membres/sondages");
 }
