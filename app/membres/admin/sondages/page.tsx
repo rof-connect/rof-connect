@@ -3,6 +3,7 @@ import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerSondages } from "@/lib/sondages";
+import { TableauSondages } from "@/components/membres/TableauSondages";
 import { FormImageSondage } from "@/components/membres/FormImageSondage";
 import { FormOptionSondage } from "@/components/membres/FormOptionSondage";
 import { creerSondage, ajouterOptionSondage, basculerSondage, supprimerSondage } from "./actions";
@@ -34,6 +35,8 @@ export default async function SondagesAdminPage() {
           </Link>
         </p>
       </div>
+
+      <TableauSondages sondages={sondages} />
 
       <details className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
         <summary className="cursor-pointer font-condensed text-lg font-bold uppercase tracking-wide text-rof-texte">

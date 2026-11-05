@@ -4,8 +4,6 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { chargerSondages } from "@/lib/sondages";
-import { notifierReponseSondage } from "@/lib/sondages-notif";
-import type { ActionVote } from "@/lib/sondages-courriel";
 
 export async function voter(formData: FormData) {
   const pollId = String(formData.get("poll_id") ?? "");
@@ -25,7 +23,6 @@ export async function voter(formData: FormData) {
   const sondage = visibles.find((s) => s.id === pollId);
   if (!sondage || sondage.closed) return;
 
-  let action: ActionVote | null;
   if (sondage.kind === "date") {
     const valides = [...new Set(datesDemandees)]
       .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(d)))
@@ -34,11 +31,10 @@ export async function voter(formData: FormData) {
     const admin = createAdminClient();
     const inchangee = valides.join(",") === sondage.maDates.join(",");
     if (inchangee) {
-      action = null;
+      // rien à faire
     } else if (valides.length === 0) {
       // Réponse facultative : aucune date = on retire la réponse.
       await admin.from("poll_votes").delete().eq("poll_id", pollId).eq("profile_id", user.id);
-      action = { type: "retrait" };
     } else {
       await admin
         .from("poll_votes")
@@ -46,7 +42,6 @@ export async function voter(formData: FormData) {
           { poll_id: pollId, option_id: null, reponse_date: valides[0], reponse_dates: valides, profile_id: user.id },
           { onConflict: "poll_id,profile_id" },
         );
-      action = { type: "dates", dates: valides };
     }
   } else {
     if (!optionId || !sondage.options.some((o) => o.id === optionId)) return;
@@ -57,10 +52,7 @@ export async function voter(formData: FormData) {
     await createAdminClient()
       .from("poll_votes")
       .upsert({ poll_id: pollId, option_id: optionId, profile_id: user.id }, { onConflict: "poll_id,profile_id" });
-    action = { type: "choix", option: sondage.options.find((o) => o.id === optionId)!.label };
   }
-
-  if (action) await notifierReponseSondage(pollId, profile?.full_name || user.email || "Un membre", action);
 
   revalidatePath("/membres/sondages");
 }
