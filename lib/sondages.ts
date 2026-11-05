@@ -8,23 +8,31 @@ export type Sondage = {
   description: string | null;
   imageUrl: string | null;
   kind: string;
+  maxDates: number;
   closed: boolean;
   teamId: string | null;
   teamName: string | null;
   options: OptionSondage[];
   total: number;
   monVote: string | null;
-  maDate: string | null;
+  maDates: string[];
   votants: { optionId: string; nom: string }[];
   dates: { nom: string; date: string }[];
 };
+
+type Vote = { reponse_date: string | null; reponse_dates: string[] | null };
+function datesDe(v?: Vote): string[] {
+  if (!v) return [];
+  if (v.reponse_dates && v.reponse_dates.length) return v.reponse_dates;
+  return v.reponse_date ? [v.reponse_date] : [];
+}
 
 /** Sondages visibles par l'utilisateur : « tous » ou ceux de ses équipes (la direction voit tout). */
 export async function chargerSondages(userId: string, estAdmin: boolean): Promise<Sondage[]> {
   const admin = createAdminClient();
   const { data: polls } = await admin
     .from("polls")
-    .select("id, title, description, image_path, kind, closed, team_id, teams (name)")
+    .select("id, title, description, image_path, kind, max_dates, closed, team_id, teams (name)")
     .order("created_at", { ascending: false });
 
   let mesEquipes = new Set<string>();
@@ -43,7 +51,7 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
     .order("position");
   const { data: votes } = await admin
     .from("poll_votes")
-    .select("poll_id, option_id, reponse_date, profile_id, profiles (full_name)")
+    .select("poll_id, option_id, reponse_date, reponse_dates, profile_id, profiles (full_name)")
     .in("poll_id", ids);
 
   const urls = new Map<string, string>();
@@ -74,6 +82,7 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
       description: p.description,
       imageUrl: urlsSondages.get(p.id) ?? null,
       kind: p.kind,
+      maxDates: p.max_dates ?? 1,
       closed: p.closed,
       teamId: p.team_id,
       teamName: team?.name ?? null,
@@ -87,7 +96,7 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
         })),
       total: vp.length,
       monVote: vp.find((v) => v.profile_id === userId)?.option_id ?? null,
-      maDate: vp.find((v) => v.profile_id === userId)?.reponse_date ?? null,
+      maDates: datesDe(vp.find((v) => v.profile_id === userId)),
       votants: estAdmin
         ? vp.filter((v) => v.option_id).map((v) => {
             const pr = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles;
@@ -96,10 +105,9 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
         : [],
       dates: estAdmin
         ? vp
-            .filter((v) => v.reponse_date)
-            .map((v) => {
+            .flatMap((v) => {
               const pr = Array.isArray(v.profiles) ? v.profiles[0] : v.profiles;
-              return { nom: pr?.full_name ?? "—", date: v.reponse_date as string };
+              return datesDe(v).map((date) => ({ nom: pr?.full_name ?? "—", date }));
             })
             .sort((a, b) => a.date.localeCompare(b.date))
         : [],

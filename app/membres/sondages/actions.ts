@@ -8,7 +8,7 @@ import { chargerSondages } from "@/lib/sondages";
 export async function voter(formData: FormData) {
   const pollId = String(formData.get("poll_id") ?? "");
   const optionId = String(formData.get("option_id") ?? "");
-  const dateReponse = String(formData.get("reponse_date") ?? "");
+  const datesDemandees = formData.getAll("reponse_date").map((d) => String(d).trim()).filter(Boolean);
   if (!pollId) return;
 
   const supabase = await createClient();
@@ -24,10 +24,22 @@ export async function voter(formData: FormData) {
   if (!sondage || sondage.closed) return;
 
   if (sondage.kind === "date") {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateReponse) || Number.isNaN(Date.parse(dateReponse))) return;
-    await createAdminClient()
-      .from("poll_votes")
-      .upsert({ poll_id: pollId, option_id: null, reponse_date: dateReponse, profile_id: user.id }, { onConflict: "poll_id,profile_id" });
+    const valides = [...new Set(datesDemandees)]
+      .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(d)))
+      .sort()
+      .slice(0, sondage.maxDates);
+    const admin = createAdminClient();
+    if (valides.length === 0) {
+      // Réponse facultative : aucune date = on retire la réponse.
+      await admin.from("poll_votes").delete().eq("poll_id", pollId).eq("profile_id", user.id);
+    } else {
+      await admin
+        .from("poll_votes")
+        .upsert(
+          { poll_id: pollId, option_id: null, reponse_date: valides[0], reponse_dates: valides, profile_id: user.id },
+          { onConflict: "poll_id,profile_id" },
+        );
+    }
   } else {
     if (!optionId || !sondage.options.some((o) => o.id === optionId)) return;
     await createAdminClient()

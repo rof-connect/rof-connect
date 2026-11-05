@@ -37,6 +37,14 @@ export default function ContactPage() {
         </div>
       </section>
 
+      <section className="flex flex-col gap-3 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
+        <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-or">Préparation physique</h2>
+        <div className="rounded-lg bg-rof-craie p-3">
+          <p className="font-condensed text-lg font-bold uppercase text-rof-texte">Alexandra Granger</p>
+          <p className="text-sm text-rof-gris">Information à venir</p>
+        </div>
+      </section>
+
       <section className="flex flex-col gap-2 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
         <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-or">NPU 12e année</h2>
         <p className="text-sm text-rof-gris">Information à suivre</p>

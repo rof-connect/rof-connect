@@ -32,12 +32,13 @@ export async function creerSondage(formData: FormData) {
     .filter(Boolean)
     .slice(0, 12);
   const kind = String(formData.get("kind") ?? "choix") === "date" ? "date" : "choix";
+  const maxDates = Math.min(5, Math.max(1, Number(formData.get("max_dates") ?? 1) || 1));
   if (!titre || (kind === "choix" && options.length < 2)) return;
 
   const admin = createAdminClient();
   const { data: poll } = await admin
     .from("polls")
-    .insert({ title: titre, description, team_id: teamId, kind })
+    .insert({ title: titre, description, team_id: teamId, kind, max_dates: maxDates })
     .select("id")
     .single();
   if (!poll) return;

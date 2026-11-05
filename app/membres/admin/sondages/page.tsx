@@ -54,6 +54,10 @@ export default async function SondagesAdminPage() {
             </select>
           </div>
           <div>
+            <p className={etiquette}>Type « Une date » : nombre de dates possibles par personne (facultatives)</p>
+            <input name="max_dates" type="number" min={1} max={5} defaultValue={1} className={champ} />
+          </div>
+          <div>
             <p className={etiquette}>Choix (un par ligne, minimum 2) : seulement pour le type « Choix »</p>
             <textarea name="options" rows={4} className={champ} placeholder={"Floride\nTexas"} />
           </div>

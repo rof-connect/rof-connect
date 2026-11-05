@@ -31,28 +31,34 @@ export default async function SondagesPage() {
                   {s.teamName ? s.teamName : "Tout le monde"} · {s.closed ? "Fermé" : "Ouvert"}
                 </p>
               </div>
-              <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">
-                Ta date
-                <input
-                  type="date"
-                  name="reponse_date"
-                  required
-                  defaultValue={s.maDate ?? ""}
-                  disabled={s.closed}
-                  className="w-full max-w-xs rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-base font-normal normal-case text-rof-texte"
-                />
-              </label>
+              <div className="flex flex-col gap-3">
+                {Array.from({ length: s.maxDates }, (_, n) => (
+                  <label key={n} className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">
+                    {s.maxDates > 1 ? `Date ${n + 1} (facultatif)` : "Ta date (facultatif)"}
+                    <input
+                      type="date"
+                      name="reponse_date"
+                      defaultValue={s.maDates[n] ?? ""}
+                      disabled={s.closed}
+                      className="w-full max-w-xs rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-base font-normal normal-case text-rof-texte"
+                    />
+                  </label>
+                ))}
+              </div>
               {!s.closed && (
                 <button
                   type="submit"
                   className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
                 >
-                  {s.maDate ? "Modifier ma date" : "Enregistrer ma date"}
+                  {s.maDates.length ? "Modifier" : "Enregistrer"}
                 </button>
               )}
-              {s.maDate && (
+              {s.maDates.length > 0 && (
                 <p className="text-xs text-rof-gazon">
-                  Date enregistrée : {new Date(s.maDate + "T12:00:00").toLocaleDateString("fr-CA", { dateStyle: "long" })}
+                  Enregistré :{" "}
+                  {s.maDates
+                    .map((d) => new Date(d + "T12:00:00").toLocaleDateString("fr-CA", { dateStyle: "long" }))
+                    .join(" · ")}
                 </p>
               )}
             </form>
