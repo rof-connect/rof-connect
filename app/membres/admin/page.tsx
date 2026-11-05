@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
@@ -25,7 +26,8 @@ export default async function DirectionPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
   if (profile?.role !== "admin") redirect("/membres");
 
-  const { data: teams } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
+  const { data: teamsBrut } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
+  const teams = trierEquipes(teamsBrut);
   const { data: membres } = await supabase
     .from("team_members")
     .select("team_id, profile_id, status_id, profiles (full_name, created_at), teams!inner (id, sport)")

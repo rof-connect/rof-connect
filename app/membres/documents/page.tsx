@@ -1,3 +1,4 @@
+import { comparerEquipes } from "@/lib/equipes";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CarteDocument } from "@/components/membres/CarteDocument";
@@ -34,7 +35,13 @@ export default async function DocumentsPage() {
         <p className="text-sm text-rof-gris">Aucune équipe assignée pour le moment.</p>
       )}
 
-      {(memberships ?? []).map((m) => {
+      {[...(memberships ?? [])]
+        .sort((x, y) => {
+          const nx = Array.isArray(x.teams) ? x.teams[0]?.name : (x.teams as { name: string } | null)?.name;
+          const ny = Array.isArray(y.teams) ? y.teams[0]?.name : (y.teams as { name: string } | null)?.name;
+          return comparerEquipes({ name: nx ?? "" }, { name: ny ?? "" });
+        })
+        .map((m) => {
         const team = Array.isArray(m.teams) ? m.teams[0] : m.teams;
         const peutEditer = estAdmin || m.role_in_team === "coach";
         return (

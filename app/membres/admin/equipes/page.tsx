@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { creerEquipe, archiverEquipe, desarchiverEquipe } from "./actions";
@@ -29,11 +30,11 @@ export default async function GestionEquipesPage({
   if (profile?.role !== "admin") redirect("/membres");
 
   const { data: org } = await supabase.from("organizations").select("id, name").limit(1).single();
-  const { data: teams } = await supabase
+  const { data: teamsBrut } = await supabase
     .from("teams")
     .select("id, name, sport, season_year, option, archived")
-    .eq("archived", voirArchives)
-    .order("name");
+    .eq("archived", voirArchives);
+  const teams = trierEquipes(teamsBrut);
 
   const teamIds = (teams ?? []).map((t) => t.id);
   const { data: joueuses } = await supabase

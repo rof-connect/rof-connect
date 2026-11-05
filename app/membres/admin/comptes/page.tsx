@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { trierEquipes } from "@/lib/equipes";
 import { createClient } from "@/lib/supabase/server";
 import { FormInviterEntraineur } from "@/components/membres/FormInviterEntraineur";
 import { FormInviterDirection } from "@/components/membres/FormInviterDirection";
@@ -13,7 +14,8 @@ export default async function ComptesPage() {
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
   if (profile?.role !== "admin") redirect("/membres");
 
-  const { data: equipes } = await supabase.from("teams").select("id, name").eq("archived", false).order("name");
+  const { data: equipesBrut } = await supabase.from("teams").select("id, name").eq("archived", false);
+  const equipes = trierEquipes(equipesBrut);
 
   const { data: admins } = await supabase.from("profiles").select("id, full_name, email").eq("role", "admin");
 

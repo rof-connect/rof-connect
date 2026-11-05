@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse } from "./actions";
@@ -47,7 +48,8 @@ export default async function JoueursPage({
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
   if (profile?.role !== "admin") redirect("/membres");
 
-  const { data: teams } = await supabase.from("teams").select("id, name").eq("archived", false).order("name");
+  const { data: teamsBrut } = await supabase.from("teams").select("id, name").eq("archived", false);
+  const teams = trierEquipes(teamsBrut);
 
   const { data: memberships } = await supabase
     .from("team_members")

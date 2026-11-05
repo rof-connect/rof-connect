@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { getDictionnaire } from "@/lib/i18n/server";
 import { LanguageToggle } from "@/components/i18n/LanguageToggle";
@@ -13,11 +14,8 @@ export default async function InscriptionPage({
   const { locale, t } = await getDictionnaire();
   const i = t.inscription;
   const admin = createAdminClient();
-  const { data: teams } = await admin
-    .from("teams")
-    .select("id, name, sport")
-    .eq("archived", false)
-    .order("name");
+  const { data: teamsBrut } = await admin.from("teams").select("id, name, sport").eq("archived", false);
+  const teams = trierEquipes(teamsBrut);
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col px-5 py-10">
