@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse } from "./actions";
+import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse } from "./actions";
+import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
 import { FormInviterJoueuse } from "@/components/membres/FormInviterJoueuse";
@@ -95,11 +96,15 @@ export default async function JoueursPage({
     }
   });
 
+  const archivees = await chargerArchivees();
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
+  const nbArchivees = tousLesJoueurs.filter(([id]) => archivees.has(id)).length;
 
   const recherche = normaliser(q.trim());
-  const joueurs = tousLesJoueurs.filter(([, j]) => {
+  const joueurs = tousLesJoueurs.filter(([id, j]) => {
     if (recherche && !normaliser(j.nom).includes(recherche) && !normaliser(j.email).includes(recherche)) return false;
+    if (equipe === "archivees") return archivees.has(id);
+    if (archivees.has(id)) return false;
     if (equipe === "aucune") return j.memberships.length === 0;
     if (!sport && !equipe && !statut) return true;
     return j.memberships.some((m) => {
@@ -152,6 +157,7 @@ export default async function JoueursPage({
           >
             <option value="">Toutes les équipes</option>
             <option value="aucune">Sans équipe</option>
+            <option value="archivees">Archivées ({nbArchivees})</option>
             {(teams ?? []).map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
@@ -184,7 +190,7 @@ export default async function JoueursPage({
             </Link>
           )}
           <span className="ml-auto text-sm text-rof-gris">
-            {joueurs.length} / {tousLesJoueurs.length} joueur{tousLesJoueurs.length > 1 ? "s" : ""}
+            {joueurs.length} / {tousLesJoueurs.length - nbArchivees} joueur{tousLesJoueurs.length - nbArchivees > 1 ? "s" : ""}
           </span>
         </div>
       </form>
@@ -196,7 +202,21 @@ export default async function JoueursPage({
 
           return (
             <div key={profileId} className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
-              <p className="font-condensed text-lg font-bold uppercase text-rof-texte">{j.nom}</p>
+              <div className="flex items-start justify-between gap-2">
+                <p className="font-condensed text-lg font-bold uppercase text-rof-texte">
+                  {j.nom}
+                  {archivees.has(profileId) && (
+                    <span className="ml-2 rounded-md bg-rof-craie px-1.5 py-0.5 text-xs font-semibold normal-case text-rof-gris">Archivée</span>
+                  )}
+                </p>
+                <form action={archiverJoueuse}>
+                  <input type="hidden" name="profile_id" value={profileId} />
+                  <input type="hidden" name="archiver" value={archivees.has(profileId) ? "0" : "1"} />
+                  <button type="submit" className="text-xs text-rof-poudre underline">
+                    {archivees.has(profileId) ? "Désarchiver" : "Archiver"}
+                  </button>
+                </form>
+              </div>
               <p className="text-sm text-rof-gris">
                 {j.naissance
                   ? `Née le ${new Date(j.naissance + "T12:00:00").toLocaleDateString("fr-CA")}`
@@ -275,7 +295,9 @@ export default async function JoueursPage({
                 })()}
               </details>
 
-              {j.memberships.length === 0 && <p className="mt-2 text-sm text-rof-gris">Aucune équipe pour le moment.</p>}
+              {j.memberships.length === 0 && (
+                <p className="mt-2 text-sm text-rof-gris">Aucune équipe pour le moment · statut Prospect. Ajoute-la à une équipe pour changer son statut.</p>
+              )}
 
               <div className="mt-2 flex flex-col gap-2">
                 {j.memberships.map((m) => {
@@ -345,6 +367,17 @@ export default async function JoueursPage({
                     {equipesDisponibles.map((t) => (
                       <option key={t.id} value={t.id}>
                         {t.name}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    name="status_id"
+                    defaultValue={1}
+                    className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-xs text-rof-texte"
+                  >
+                    {STATUTS.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.nom}
                       </option>
                     ))}
                   </select>

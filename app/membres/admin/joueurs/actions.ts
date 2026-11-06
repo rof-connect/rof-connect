@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { trouverOuCreerJoueuse } from "@/lib/joueuses";
+import { definirArchivee } from "@/lib/joueuses-archivees";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
   prospect: 1,
@@ -169,6 +170,7 @@ export async function changerStatut(formData: FormData) {
 export async function ajouterAEquipe(formData: FormData) {
   const profileId = String(formData.get("profile_id") ?? "");
   const teamId = String(formData.get("team_id") ?? "");
+  const statusId = Number(formData.get("status_id") ?? 1) || 1;
   if (!profileId || !teamId) return;
 
   const supabase = await createClient();
@@ -176,7 +178,7 @@ export async function ajouterAEquipe(formData: FormData) {
     team_id: teamId,
     profile_id: profileId,
     role_in_team: "athlete",
-    status_id: 1,
+    status_id: statusId,
   });
 
   revalidatePath("/membres/admin/joueurs");
@@ -280,4 +282,15 @@ export async function modifierJoueuse(formData: FormData) {
   await admin.from("athlete_details").upsert({ profile_id: profileId, ...champsFiche(formData) }, { onConflict: "profile_id" });
 
   revalidatePath("/membres/admin/joueurs");
+}
+
+/** Archive (ou désarchive) une joueuse : elle disparaît des listes de la Direction, mais son compte et ses données sont conservés. */
+export async function archiverJoueuse(formData: FormData) {
+  const moi = await verifierAdmin();
+  if (!moi) return;
+  const profileId = String(formData.get("profile_id") ?? "");
+  if (!profileId) return;
+  await definirArchivee(profileId, formData.get("archiver") === "1");
+  revalidatePath("/membres/admin/joueurs");
+  revalidatePath("/membres/admin");
 }

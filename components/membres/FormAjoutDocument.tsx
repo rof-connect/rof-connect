@@ -1,11 +1,19 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { ajouterDocument } from "@/app/membres/documents/actions";
+import { ajouterDocument, ajouterDocumentGeneral } from "@/app/membres/documents/actions";
 
 const TAILLE_MAX_PDF = 20 * 1024 * 1024;
 
-export function FormAjoutDocument({ teamId, joueuses }: { teamId: string; joueuses: { id: string; nom: string }[] }) {
+export function FormAjoutDocument({
+  teamId = "",
+  joueuses = [],
+  general = false,
+}: {
+  teamId?: string;
+  joueuses?: { id: string; nom: string }[];
+  general?: boolean;
+}) {
   const [destination, setDestination] = useState<"equipe" | "joueuses">("equipe");
   const [ouvert, setOuvert] = useState(false);
   const [erreur, setErreur] = useState("");
@@ -28,12 +36,12 @@ export function FormAjoutDocument({ teamId, joueuses }: { teamId: string; joueus
       setErreur("Le fichier dépasse 20 Mo.");
       return;
     }
-    if (formData.get("destination") === "joueuses" && formData.getAll("destinataires").length === 0) {
+    if (!general && formData.get("destination") === "joueuses" && formData.getAll("destinataires").length === 0) {
       setErreur("Choisis au moins une joueuse.");
       return;
     }
     startTransition(async () => {
-      await ajouterDocument(formData);
+      await (general ? ajouterDocumentGeneral(formData) : ajouterDocument(formData));
       setOuvert(false);
     });
   }
@@ -55,7 +63,7 @@ export function FormAjoutDocument({ teamId, joueuses }: { teamId: string; joueus
       className="flex flex-col gap-3 rounded-xl border-2 border-dashed border-rof-or bg-rof-carte-haut p-4"
     >
       <div className="font-condensed text-lg font-bold uppercase tracking-wide text-white">Nouveau document</div>
-      <input type="hidden" name="team_id" value={teamId} />
+      {!general && <input type="hidden" name="team_id" value={teamId} />}
 
       <div>
         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Titre</p>
@@ -78,6 +86,20 @@ export function FormAjoutDocument({ teamId, joueuses }: { teamId: string; joueus
         {erreur && <p className="mt-1 text-xs text-rof-rouge">{erreur}</p>}
       </div>
 
+      {general ? (
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Visible par</p>
+          <select
+            name="min_status"
+            defaultValue="2"
+            className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte"
+          >
+            <option value="2">Toutes les joueuses, sauf les Prospect</option>
+            <option value="1">Tout le monde, même les Prospect</option>
+          </select>
+        </div>
+      ) : (
+        <>
       <div>
         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Partager avec</p>
         <select
@@ -124,6 +146,8 @@ export function FormAjoutDocument({ teamId, joueuses }: { teamId: string; joueus
           <option value="11">11 — 18U</option>
         </select>
       </div>
+      )}
+        </>
       )}
 
       <div className="mt-1 flex gap-2">

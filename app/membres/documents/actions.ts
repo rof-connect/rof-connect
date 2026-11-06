@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { chargerDocumentsGeneraux, enregistrerDocumentsGeneraux } from "@/lib/documents-generaux";
 
 const TAILLE_MAX_PDF = 20 * 1024 * 1024; // 20 Mo
 
@@ -66,6 +67,54 @@ export async function ajouterDocument(formData: FormData) {
     body: { fichier_path: cheminFichier, fichier_nom: fichier.name },
   });
 
+  revalidatePath("/membres/documents");
+}
+
+/** Document pour toute l'académie (Direction seulement). Par défaut : tout le monde sauf les Prospect. */
+export async function ajouterDocumentGeneral(formData: FormData) {
+  const titre = String(formData.get("titre") ?? "").trim();
+  const minStatus = Number(formData.get("min_status") ?? 2) === 1 ? 1 : 2;
+  const fichier = formData.get("fichier") as File | null;
+  if (!titre || !fichier || fichier.size === 0) return;
+  if (fichier.size > TAILLE_MAX_PDF) return;
+  if (fichier.type && fichier.type !== "application/pdf") return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (profile?.role !== "admin") return;
+
+  const admin = createAdminClient();
+  const chemin = `docs/generaux/${crypto.randomUUID()}.pdf`;
+  const { error } = await admin.storage.from("media").upload(chemin, fichier, { contentType: "application/pdf" });
+  if (error) return;
+
+  const liste = await chargerDocumentsGeneraux();
+  liste.unshift({ id: crypto.randomUUID(), titre, path: chemin, nom: fichier.name, min_status: minStatus });
+  await enregistrerDocumentsGeneraux(liste);
+  revalidatePath("/membres/documents");
+}
+
+export async function supprimerDocumentGeneral(formData: FormData) {
+  const id = String(formData.get("content_id") ?? "");
+  if (!id) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (profile?.role !== "admin") return;
+
+  const liste = await chargerDocumentsGeneraux();
+  const cible = liste.find((d) => d.id === id);
+  if (!cible) return;
+  await enregistrerDocumentsGeneraux(liste.filter((d) => d.id !== id));
+  await createAdminClient().storage.from("media").remove([cible.path]);
   revalidatePath("/membres/documents");
 }
 

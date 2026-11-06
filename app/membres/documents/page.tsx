@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CarteDocument } from "@/components/membres/CarteDocument";
 import { FormAjoutDocument } from "@/components/membres/FormAjoutDocument";
+import { chargerDocumentsGeneraux } from "@/lib/documents-generaux";
 
 type DocumentBody = {
   fichier_path?: string | null;
@@ -24,6 +25,22 @@ export default async function DocumentsPage() {
     .eq("profile_id", user!.id)
     .eq("teams.archived", false);
 
+  // Documents pour toute l'académie : la Direction et les entraîneurs voient tout ; une joueuse seulement si elle n'est plus Prospect (sauf document ouvert à tous).
+  const { data: statuts } = await supabase
+    .from("team_members")
+    .select("status_id, role_in_team")
+    .eq("profile_id", user!.id);
+  const estStaff = estAdmin || (statuts ?? []).some((s) => s.role_in_team === "coach");
+  const statutMax = Math.max(1, ...(statuts ?? []).filter((s) => s.role_in_team === "athlete").map((s) => s.status_id ?? 1));
+  const generaux = (await chargerDocumentsGeneraux()).filter((d) => estStaff || statutMax >= (d.min_status ?? 2));
+  const adminStorage = createAdminClient();
+  const generauxAvecUrl = await Promise.all(
+    generaux.map(async (d) => {
+      const { data } = await adminStorage.storage.from("media").createSignedUrl(d.path, 60 * 60);
+      return { ...d, urlSignee: data?.signedUrl ?? null };
+    }),
+  );
+
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-10 px-5 py-10">
       <div>
@@ -31,7 +48,30 @@ export default async function DocumentsPage() {
         <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">Documents</h1>
       </div>
 
-      {(memberships ?? []).length === 0 && (
+      {(generauxAvecUrl.length > 0 || estAdmin) && (
+        <section className="flex flex-col gap-4">
+          <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-white">Pour toutes les joueuses</h2>
+          {estAdmin && <FormAjoutDocument general />}
+          <div className="flex flex-col gap-2">
+            {generauxAvecUrl.map((d) => (
+              <CarteDocument
+                key={d.id}
+                id={d.id}
+                titre={d.titre}
+                nomFichier={d.nom}
+                urlSignee={d.urlSignee}
+                cheminFichier={d.path}
+                peutEditer={estAdmin}
+                general
+                etiquette={estAdmin ? ((d.min_status ?? 2) === 1 ? "Visible par tout le monde" : "Visible sauf Prospect") : undefined}
+              />
+            ))}
+            {generauxAvecUrl.length === 0 && <p className="text-sm text-rof-gris">Aucun document pour le moment.</p>}
+          </div>
+        </section>
+      )}
+
+      {(memberships ?? []).length === 0 && generauxAvecUrl.length === 0 && (
         <p className="text-sm text-rof-gris">Aucune équipe assignée pour le moment.</p>
       )}
 

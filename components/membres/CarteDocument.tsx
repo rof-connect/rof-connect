@@ -1,6 +1,6 @@
 "use client";
 
-import { supprimerDocument } from "@/app/membres/documents/actions";
+import { supprimerDocument, supprimerDocumentGeneral } from "@/app/membres/documents/actions";
 
 export function CarteDocument({
   id,
@@ -10,6 +10,8 @@ export function CarteDocument({
   cheminFichier,
   peutEditer,
   destinataires,
+  general = false,
+  etiquette,
 }: {
   id: string;
   titre: string;
@@ -18,6 +20,8 @@ export function CarteDocument({
   cheminFichier: string | null;
   peutEditer: boolean;
   destinataires?: string[] | null;
+  general?: boolean;
+  etiquette?: string;
 }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
@@ -27,6 +31,7 @@ export function CarteDocument({
         {destinataires && destinataires.length > 0 && (
           <p className="truncate text-xs text-rof-or">Privé · {destinataires.join(", ")}</p>
         )}
+        {etiquette && <p className="truncate text-xs text-rof-or">{etiquette}</p>}
         {nomFichier && <p className="truncate text-xs text-rof-gris">{nomFichier}</p>}
       </div>
       <div className="flex shrink-0 items-center gap-3">
@@ -41,7 +46,7 @@ export function CarteDocument({
           </a>
         )}
         {peutEditer && (
-          <form action={supprimerDocument}>
+          <form action={general ? supprimerDocumentGeneral : supprimerDocument}>
             <input type="hidden" name="content_id" value={id} />
             <input type="hidden" name="fichier_path" value={cheminFichier ?? ""} />
             <button type="submit" className="text-sm text-rof-rouge underline">

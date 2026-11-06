@@ -3,6 +3,7 @@ import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerSondages } from "@/lib/sondages";
+import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { TableauSondages } from "@/components/membres/TableauSondages";
 
 const STATUTS = [
@@ -30,14 +31,17 @@ export default async function DirectionPage() {
 
   const { data: teamsBrut } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
   const teams = trierEquipes(teamsBrut);
-  const { data: membres } = await supabase
+  const archivees = await chargerArchivees();
+  const { data: membresBrut } = await supabase
     .from("team_members")
     .select("team_id, profile_id, status_id, profiles (full_name, created_at), teams!inner (id, sport)")
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
+  const membres = (membresBrut ?? []).filter((m) => !archivees.has(m.profile_id));
 
   const sondages = await chargerSondages(user!.id, true);
-  const { count: nbComptes } = await supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "member");
+  const { data: comptes } = await supabase.from("profiles").select("id").eq("role", "member");
+  const nbComptes = (comptes ?? []).filter((c) => !archivees.has(c.id)).length;
 
   const profileIds = (membres ?? []).map((m) => m.profile_id);
   const { data: fiches } = await supabase
