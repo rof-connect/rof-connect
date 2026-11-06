@@ -2,9 +2,7 @@ import { redirect } from "next/navigation";
 import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { chargerSondages } from "@/lib/sondages";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
-import { TableauSondages } from "@/components/membres/TableauSondages";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
@@ -39,7 +37,6 @@ export default async function DirectionPage() {
     .eq("teams.archived", false);
   const membres = (membresBrut ?? []).filter((m) => !archivees.has(m.profile_id));
 
-  const sondages = await chargerSondages(user!.id, true);
   const { data: comptes } = await supabase.from("profiles").select("id").eq("role", "member");
   const nbComptes = (comptes ?? []).filter((c) => !archivees.has(c.id)).length;
 
@@ -127,8 +124,6 @@ export default async function DirectionPage() {
         <Tuile n={consentements} l="Consentements photo" couleur="text-rof-gazon" />
         <Tuile n={sansFiche} l="Fiches incomplètes" couleur={sansFiche > 0 ? "text-rof-rouge" : "text-rof-gazon"} />
       </div>
-
-      <TableauSondages sondages={sondages} />
 
       <div>
         <h3 className="mb-2 font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">Effectifs par équipe</h3>
