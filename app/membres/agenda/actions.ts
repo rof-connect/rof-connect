@@ -22,6 +22,7 @@ export async function repondre(formData: FormData) {
   );
 
   revalidatePath("/membres/agenda");
+  revalidatePath("/membres");
 }
 
 const TYPES_VALIDES = ["Pratique", "Match", "Tournoi", "Autre"];
