@@ -243,6 +243,10 @@ export const dictionnaires = {
       demain: "Demain",
     },
     fiche: {
+      ajouterPhoto: "Ajouter une photo",
+      changerPhoto: "Changer la photo",
+      retirerPhoto: "Retirer la photo",
+      photoIllisible: "Image illisible.",
       titre: "Fiche athlète",
       position: "Position",
       lance: "Lance",
@@ -556,6 +560,10 @@ export const dictionnaires = {
       demain: "Tomorrow",
     },
     fiche: {
+      ajouterPhoto: "Add a photo",
+      changerPhoto: "Change photo",
+      retirerPhoto: "Remove photo",
+      photoIllisible: "Unreadable image.",
       titre: "Athlete profile",
       position: "Position",
       lance: "Throws",

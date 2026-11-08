@@ -3,6 +3,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { PARCOURS } from "@/lib/parcours/calcul";
 import { modifierMaFiche } from "@/app/membres/moi/actions";
 import type { Dictionnaire } from "@/lib/i18n/dictionaries";
+import { urlPhotoProfil } from "@/lib/photo-profil";
+import { FormPhotoProfil } from "@/components/membres/FormPhotoProfil";
 
 type Resultat = {
   repere?: number;
@@ -92,6 +94,7 @@ export async function FicheAthlete({
     }
   }
 
+  const photoUrl = await urlPhotoProfil(profileId);
   const nom = profile?.full_name || profile?.email || "";
   const initiales = nom
     .split(/\s+/)
@@ -124,8 +127,13 @@ export async function FicheAthlete({
       <div>
         <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">{f.titre}</p>
         <div className="mt-2 flex items-center gap-3">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-rof-or bg-rof-royal-sombre font-condensed text-2xl font-bold text-rof-poudre">
-            {initiales}
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-rof-or bg-rof-royal-sombre font-condensed text-2xl font-bold text-rof-poudre">
+            {photoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photoUrl} alt={nom} className="h-full w-full object-cover" />
+            ) : (
+              initiales
+            )}
           </div>
           <div className="min-w-0">
             <h1 className="font-condensed text-3xl font-bold uppercase leading-none text-rof-texte">{nom}</h1>
@@ -137,6 +145,12 @@ export async function FicheAthlete({
             )}
           </div>
         </div>
+        {mode === "moi" && (
+          <FormPhotoProfil
+            aPhoto={Boolean(photoUrl)}
+            libelles={{ changer: f.changerPhoto, ajouter: f.ajouterPhoto, retirer: f.retirerPhoto, illisible: f.photoIllisible }}
+          />
+        )}
         {equipes.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
             {equipes.map((e) => (
