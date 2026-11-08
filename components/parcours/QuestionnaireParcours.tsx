@@ -50,13 +50,13 @@ const CSS = `
 `;
 
 type Formulaire = {
-  prenom: string; nom: string; dob: string; position: string; equipe: string; fin: string; niveau: string; projet: string; duree: string;
+  prenom: string; nom: string; dob: string; position: string; equipe: string; fin: string; niveau: string; projet: string; duree: string; choix: string;
   divisions: string[]; anglais: string; domaine: string; objectifs: string; parent: string; courrielParent: string; telephone: string;
   consentement: boolean; siteweb: string;
 };
 
 const VIDE: Formulaire = {
-  prenom: '', nom: '', dob: '', position: '', equipe: '', fin: '', niveau: '', projet: 'idk', duree: 'idk',
+  prenom: '', nom: '', dob: '', position: '', equipe: '', fin: '', niveau: '', projet: 'idk', duree: 'idk', choix: '',
   divisions: [], anglais: '', domaine: '', objectifs: '', parent: '', courrielParent: '', telephone: '',
   consentement: false, siteweb: '',
 };
@@ -186,6 +186,13 @@ export function QuestionnaireParcours({ membre = false, initial = {} }: { membre
                 </div>
               );
             })}
+            <section className="qp-sec">
+              <h2>Mon parcours choisi</h2>
+              <p className="qp-hint">Choisis le parcours qui te convient : le bilan inclura tes étapes et ton calendrier. Tu pourras changer d'idée plus tard dans l'application et le calendrier sera recalculé.</p>
+              <Choix name="choix" valeur={f.choix} onChange={(v) => setF((s) => ({ ...s, choix: v }))} options={[
+                ...r.parcours.map((o) => [o.k, o.k + ' · ' + o.n, 'Arrivée au NCAA : automne ' + o.entree] as string[]),
+                ['', 'Pas encore décidé', "Le bilan présente les premières étapes; tu choisiras plus tard."]]} />
+            </section>
             <p className="qp-note">D3, NAIA et NJCAA : contacts permis en tout temps. Grande fenêtre de contact d'été : du 12 juin au 31 juillet. Ces indications servent à la discussion et ne remplacent pas le plan individuel.</p>
           </div>
         )}

@@ -59,18 +59,22 @@ export function FormCreerJoueuse({ equipes, statuts }: { equipes: Equipe[]; stat
 
         <Champ label="Date de naissance" name="birth_date" type="date" />
 
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <Etiquette texte="Position" />
-            <select name="position" className={champ}>
-              <option value="">—</option>
-              {POSITIONS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
+        <div>
+          <Etiquette texte="Positions (jusqu'à 3)" />
+          <div className="grid grid-cols-3 gap-3">
+            {["position", "position2", "position3"].map((nom) => (
+              <select key={nom} name={nom} className={champ}>
+                <option value="">—</option>
+                {POSITIONS.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            ))}
           </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <Etiquette texte="Lance" />
             <select name="throws" className={champ}>

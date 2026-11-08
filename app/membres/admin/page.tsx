@@ -37,8 +37,15 @@ export default async function DirectionPage() {
     .eq("teams.archived", false);
   const membres = (membresBrut ?? []).filter((m) => !archivees.has(m.profile_id));
 
-  const { data: comptes } = await supabase.from("profiles").select("id").eq("role", "member");
-  const nbComptes = (comptes ?? []).filter((c) => !archivees.has(c.id)).length;
+  const { data: comptes } = await supabase.from("profiles").select("id, full_name, email, created_at").eq("role", "member");
+  const comptesActifs = (comptes ?? []).filter((c) => !archivees.has(c.id));
+  const nbComptes = comptesActifs.length;
+
+  // Nouvelles connexions à gérer : Prospect = aucune équipe, ou seulement le statut Prospect.
+  const placees = new Set(membres.filter((m) => m.status_id > 1).map((m) => m.profile_id));
+  const aGerer = comptesActifs
+    .filter((c) => !placees.has(c.id))
+    .sort((a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime());
 
   const profileIds = (membres ?? []).map((m) => m.profile_id);
   const { data: fiches } = await supabase
@@ -74,14 +81,6 @@ export default async function DirectionPage() {
   const parStatutSoftball = parStatutParSport("softball");
   const totalBaseball = (membres ?? []).filter((m) => sportDe(m) === "baseball").length;
   const totalSoftball = (membres ?? []).filter((m) => sportDe(m) === "softball").length;
-
-  const recents = [...(membres ?? [])]
-    .sort((a, b) => {
-      const pa = Array.isArray(a.profiles) ? a.profiles[0] : a.profiles;
-      const pb = Array.isArray(b.profiles) ? b.profiles[0] : b.profiles;
-      return new Date(pb?.created_at ?? 0).getTime() - new Date(pa?.created_at ?? 0).getTime();
-    })
-    .slice(0, 5);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-5 py-10">
@@ -126,16 +125,56 @@ export default async function DirectionPage() {
       </div>
 
       <div>
+        <div className="mb-2 flex items-end justify-between gap-3">
+          <h3 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">
+            Nouvelles connexions à gérer <span className="text-rof-or">({aGerer.length})</span>
+          </h3>
+          <Link href="/membres/admin/joueurs?equipe=aucune" className="text-sm text-rof-poudre underline">
+            Voir tous
+          </Link>
+        </div>
+        <div className="grid gap-2">
+          {aGerer.slice(0, 10).map((c) => (
+            <Link
+              key={c.id}
+              href={`/membres/admin/joueurs?id=${c.id}`}
+              className="flex items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-2.5 hover:border-rof-or"
+            >
+              <div className="min-w-0">
+                <span className="font-semibold text-rof-texte">{c.full_name || c.email || "—"}</span>
+                <span className="ml-2 rounded-md bg-rof-craie px-1.5 py-0.5 text-xs text-rof-gris">Prospect</span>
+              </div>
+              <span className="flex shrink-0 items-center gap-2 text-xs text-rof-gris">
+                {c.created_at ? new Date(c.created_at).toLocaleDateString("fr-CA") : ""}
+                <span aria-hidden>›</span>
+              </span>
+            </Link>
+          ))}
+          {aGerer.length === 0 && <p className="text-sm text-rof-gris">Aucune nouvelle connexion à gérer.</p>}
+          {aGerer.length > 10 && <p className="text-xs text-rof-gris">+ {aGerer.length - 10} autres : « Voir tous ».</p>}
+        </div>
+      </div>
+
+      <div>
         <h3 className="mb-2 font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">Effectifs par équipe</h3>
         <div className="grid gap-2">
           {parEquipe.map((t) => (
-            <div key={t.id} className="flex items-center justify-between rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-3">
+            <Link
+              key={t.id}
+              href={`/membres/admin/equipes/${t.id}`}
+              className="flex items-center justify-between rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-3 hover:border-rof-or"
+            >
               <div>
                 <span className="font-semibold text-rof-texte">{t.name}</span>
                 <span className="ml-2 text-xs text-rof-gris">{t.sport}</span>
               </div>
-              <span className={`font-condensed text-2xl font-bold ${t.n > 0 ? "text-rof-or" : "text-rof-gris"}`}>{t.n}</span>
-            </div>
+              <span className="flex items-center gap-2">
+                <span className={`font-condensed text-2xl font-bold ${t.n > 0 ? "text-rof-or" : "text-rof-gris"}`}>{t.n}</span>
+                <span className="text-rof-gris" aria-hidden>
+                  ›
+                </span>
+              </span>
+            </Link>
           ))}
           {parEquipe.length === 0 && <p className="text-sm text-rof-gris">Aucune équipe.</p>}
         </div>
@@ -149,27 +188,6 @@ export default async function DirectionPage() {
         </div>
       </div>
 
-      <div>
-        <h3 className="mb-2 font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">Dernières inscriptions</h3>
-        <div className="grid gap-2">
-          {recents.map((m, i) => {
-            const p = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
-            const team = (teams ?? []).find((t) => t.id === m.team_id);
-            return (
-              <div key={i} className="flex items-center justify-between rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-2.5">
-                <div>
-                  <span className="font-semibold text-rof-texte">{p?.full_name}</span>
-                  <span className="ml-2 text-xs text-rof-gris">{team?.name}</span>
-                </div>
-                <span className="text-xs text-rof-gris">
-                  {p?.created_at ? new Date(p.created_at).toLocaleDateString("fr-CA") : ""}
-                </span>
-              </div>
-            );
-          })}
-          {recents.length === 0 && <p className="text-sm text-rof-gris">Aucune inscription pour l&apos;instant.</p>}
-        </div>
-      </div>
     </main>
   );
 }

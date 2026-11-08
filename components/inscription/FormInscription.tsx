@@ -4,14 +4,10 @@ import { useState } from "react";
 import { inscrireAthlete, inscrireEntraineur } from "@/app/inscription/actions";
 import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 
-type Equipe = { id: string; name: string; sport: string };
-
 export function FormInscription({
-  teams,
   i,
   typeInitial = "athlete",
 }: {
-  teams: Equipe[];
   i: Dictionnaire["inscription"];
   typeInitial?: "athlete" | "entraineur";
 }) {
@@ -49,33 +45,22 @@ export function FormInscription({
           <Champ label={i.courrielParent} name="email" type="email" required placeholder="parent@courriel.com" />
           <Champ label={i.motDePasse} name="password" type="password" required minLength={8} />
 
-          <div>
-            <Etiquette texte={i.equipe} />
-            <select
-              name="team_id"
-              required
-              className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte"
-            >
-              {teams.map((tm) => (
-                <option key={tm.id} value={tm.id}>
-                  {tm.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <Champ label={i.dateNaissance} name="birth_date" type="date" />
 
           <div>
             <Etiquette texte={i.position} />
-            <select name="position" className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte">
-              <option value="">{i.choisir}</option>
-              {i.positions.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
+            <div className="flex flex-col gap-2">
+              {["position", "position2", "position3"].map((nom) => (
+                <select key={nom} name={nom} className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte">
+                  <option value="">{i.choisir}</option>
+                  {i.positions.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
               ))}
-            </select>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

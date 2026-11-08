@@ -4,8 +4,18 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { cheminPhotoProfil } from "@/lib/photo-profil";
+import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 
 const txt = (v: FormDataEntryValue | null, max: number) => String(v ?? "").trim().slice(0, max);
+
+/** Jusqu'à 3 positions, enregistrées dans le même champ, séparées par des virgules. */
+function positions(formData: FormData) {
+  const liste = [1, 2, 3]
+    .map((n) => txt(formData.get(`position${n}`), 40).replace(/,/g, " "))
+    .filter(Boolean)
+    .filter((p, i, a) => a.findIndex((x) => x.toLowerCase() === p.toLowerCase()) === i);
+  return liste.join(", ") || null;
+}
 
 export async function modifierMaFiche(formData: FormData) {
   const supabase = await createClient();
@@ -18,7 +28,7 @@ export async function modifierMaFiche(formData: FormData) {
   if (fieldlevel && !/^https:\/\//i.test(fieldlevel)) fieldlevel = "https://" + fieldlevel.replace(/^http:\/\//i, "");
 
   const donnees = {
-    position: txt(formData.get("position"), 40) || null,
+    position: positions(formData),
     throws: txt(formData.get("throws"), 10) || null,
     bats: txt(formData.get("bats"), 10) || null,
     fieldlevel_url: fieldlevel || null,
@@ -26,6 +36,7 @@ export async function modifierMaFiche(formData: FormData) {
 
   // RLS : la joueuse ne peut écrire que sa propre fiche.
   await supabase.from("athlete_details").upsert({ profile_id: user.id, ...donnees }, { onConflict: "profile_id" });
+  await definirLiens(user.id, liensDuFormulaire(formData));
   revalidatePath("/membres/moi");
 }
 

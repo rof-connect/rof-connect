@@ -130,7 +130,9 @@ export default async function GestionEquipesPage({
                     <div key={t.id} className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-condensed text-lg font-semibold uppercase text-rof-texte">{t.name}</p>
+                          <Link href={`/membres/admin/equipes/${t.id}`} className="font-condensed text-lg font-semibold uppercase text-rof-texte underline decoration-rof-or">
+                            {t.name}
+                          </Link>
                           <p className="text-sm text-rof-gris">
                             saison {t.season_year}
                             {t.option && ` · ${LABEL_OPTION[t.option] ?? t.option}`}

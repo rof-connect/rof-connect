@@ -188,7 +188,7 @@ export const dictionnaires = {
       motDePasse: "Mot de passe",
       equipe: "Équipe",
       dateNaissance: "Date de naissance",
-      position: "Position principale",
+      position: "Positions (jusqu'à 3)",
       choisir: "— Choisir —",
       lance: "Lance",
       frappe: "Frappe",
@@ -223,6 +223,8 @@ export const dictionnaires = {
         "Un dépôt de 100 $ est demandé pour finaliser ton inscription, par virement Interac à royal@lentrepotdubaseball.com.",
       texte:
         "Ton compte a été créé. Clique sur le lien de confirmation qu'on vient de t'envoyer par courriel pour pouvoir te connecter.",
+      activation:
+        "Ton compte est créé avec le statut Prospect. Un administrateur de Royal On Field va activer ta plateforme et te contactera : tu pourras alors accéder à ton équipe.",
       retour: "Retour à la connexion",
     },
     accueilJour: {
@@ -243,6 +245,7 @@ export const dictionnaires = {
       demain: "Demain",
     },
     fiche: {
+      positions: "Positions (jusqu'à 3)",
       ajouterPhoto: "Ajouter une photo",
       changerPhoto: "Changer la photo",
       retirerPhoto: "Retirer la photo",
@@ -506,7 +509,7 @@ export const dictionnaires = {
       motDePasse: "Password",
       equipe: "Team",
       dateNaissance: "Date of birth",
-      position: "Primary position",
+      position: "Positions (up to 3)",
       choisir: "— Choose —",
       lance: "Throws",
       frappe: "Bats",
@@ -540,6 +543,8 @@ export const dictionnaires = {
       depotBaseball:
         "A $100 deposit is required to finalize your registration, by Interac e-transfer to royal@lentrepotdubaseball.com.",
       texte: "Your account has been created. Click the confirmation link we just sent you by email to log in.",
+      activation:
+        "Your account has been created with the Prospect status. A Royal On Field administrator will activate your platform and contact you, then you will get access to your team.",
       retour: "Back to log in",
     },
     accueilJour: {
@@ -560,6 +565,7 @@ export const dictionnaires = {
       demain: "Tomorrow",
     },
     fiche: {
+      positions: "Positions (up to 3)",
       ajouterPhoto: "Add a photo",
       changerPhoto: "Change photo",
       retirerPhoto: "Remove photo",

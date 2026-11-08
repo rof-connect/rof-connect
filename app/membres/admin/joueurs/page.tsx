@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse } from "./actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
+import { chargerTousLiens } from "@/lib/liens-sociaux";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
 import { FormInviterJoueuse } from "@/components/membres/FormInviterJoueuse";
@@ -38,9 +39,9 @@ function normaliser(s: string) {
 export default async function JoueursPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sport?: string; equipe?: string; statut?: string }>;
+  searchParams: Promise<{ q?: string; sport?: string; equipe?: string; statut?: string; id?: string }>;
 }) {
-  const { q = "", sport = "", equipe = "", statut = "" } = await searchParams;
+  const { q = "", sport = "", equipe = "", statut = "", id = "" } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -97,14 +98,16 @@ export default async function JoueursPage({
   });
 
   const archivees = await chargerArchivees();
+  const tousLiens = await chargerTousLiens();
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
-  const nbArchivees = tousLesJoueurs.filter(([id]) => archivees.has(id)).length;
+  const nbArchivees = tousLesJoueurs.filter(([pid]) => archivees.has(pid)).length;
 
   const recherche = normaliser(q.trim());
-  const joueurs = tousLesJoueurs.filter(([id, j]) => {
+  const joueurs = tousLesJoueurs.filter(([pid, j]) => {
+    if (id) return pid === id;
     if (recherche && !normaliser(j.nom).includes(recherche) && !normaliser(j.email).includes(recherche)) return false;
-    if (equipe === "archivees") return archivees.has(id);
-    if (archivees.has(id)) return false;
+    if (equipe === "archivees") return archivees.has(pid);
+    if (archivees.has(pid)) return false;
     if (equipe === "aucune") return j.memberships.length === 0;
     if (!sport && !equipe && !statut) return true;
     return j.memberships.some((m) => {
@@ -116,7 +119,7 @@ export default async function JoueursPage({
       );
     });
   });
-  const filtreActif = Boolean(q || sport || equipe || statut);
+  const filtreActif = Boolean(q || sport || equipe || statut || id);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-5 py-10">
@@ -225,7 +228,7 @@ export default async function JoueursPage({
 
               {j.email && <p className="text-sm text-rof-gris">{j.email}</p>}
 
-              <details className="mt-2 rounded-lg border border-rof-ligne p-3">
+              <details open={Boolean(id)} className="mt-2 rounded-lg border border-rof-ligne p-3">
                 <summary className="cursor-pointer text-sm font-semibold text-rof-poudre">Modifier la fiche</summary>
                 {(() => {
                   const f = ficheParProfil.get(profileId);
@@ -242,11 +245,15 @@ export default async function JoueursPage({
                         <p className={e}>Date de naissance</p>
                         <input name="birth_date" type="date" defaultValue={f?.birth_date ?? ""} className={c} />
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div>
-                          <p className={e}>Position</p>
-                          <input name="position" defaultValue={f?.position ?? ""} className={c} />
+                      <div>
+                        <p className={e}>Positions (jusqu&apos;à 3)</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          {["position", "position2", "position3"].map((nom, n) => (
+                            <input key={nom} name={nom} defaultValue={(f?.position ?? "").split(",")[n]?.trim() ?? ""} className={c} />
+                          ))}
                         </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
                         <div>
                           <p className={e}>Lance</p>
                           <select name="throws" defaultValue={f?.throws ?? ""} className={c}>
@@ -281,6 +288,12 @@ export default async function JoueursPage({
                         <p className={e}>Allergies / infos médicales</p>
                         <input name="medical_notes" defaultValue={f?.medical_notes ?? ""} className={c} />
                       </div>
+                      {(["instagram", "youtube", "x"] as const).map((r) => (
+                        <div key={r}>
+                          <p className={e}>{r === "x" ? "X" : r === "youtube" ? "YouTube" : "Instagram"}</p>
+                          <input name={r} defaultValue={tousLiens[profileId]?.[r] ?? ""} placeholder="https://… ou @nom" className={c} />
+                        </div>
+                      ))}
                       <label className="flex items-center gap-2 text-sm text-rof-texte">
                         <input type="checkbox" name="photo_consent" defaultChecked={f?.photo_consent ?? false} /> Consentement photo / vidéo
                       </label>

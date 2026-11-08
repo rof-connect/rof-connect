@@ -9,9 +9,12 @@ export async function inscrireAthlete(formData: FormData) {
   const fullName = String(formData.get("full_name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  const teamId = String(formData.get("team_id") ?? "");
   const birthDate = String(formData.get("birth_date") ?? "");
-  const position = String(formData.get("position") ?? "").trim();
+  const position = [formData.get("position"), formData.get("position2"), formData.get("position3")]
+    .map((v) => String(v ?? "").trim().replace(/,/g, " ").slice(0, 40))
+    .filter(Boolean)
+    .filter((p, n, a) => a.indexOf(p) === n)
+    .join(", ");
   const throwsHand = String(formData.get("throws") ?? "").trim();
   const bats = String(formData.get("bats") ?? "").trim();
   const guardianName = String(formData.get("guardian_name") ?? "").trim();
@@ -20,8 +23,8 @@ export async function inscrireAthlete(formData: FormData) {
   const medicalNotes = String(formData.get("medical_notes") ?? "").trim();
   const photoConsent = formData.get("photo_consent") === "on";
 
-  if (!fullName || !email || !password || !teamId) {
-    redirect("/inscription?erreur=" + encodeURIComponent("Complète au minimum le nom, le courriel, le mot de passe et l'équipe."));
+  if (!fullName || !email || !password) {
+    redirect("/inscription?erreur=" + encodeURIComponent("Complète au minimum le nom, le courriel et le mot de passe."));
   }
 
   const supabase = await createClient();
@@ -42,15 +45,6 @@ export async function inscrireAthlete(formData: FormData) {
   const admin = createAdminClient();
   const profileId = signUpData.user!.id;
 
-  const { data: equipe } = await admin.from("teams").select("name, sport").eq("id", teamId).single();
-
-  const { error: teamMemberError } = await admin.from("team_members").insert({
-    team_id: teamId,
-    profile_id: profileId,
-    role_in_team: "athlete",
-    status_id: 1,
-  });
-
   const { error: athleteDetailsError } = await admin.from("athlete_details").insert({
     profile_id: profileId,
     birth_date: birthDate || null,
@@ -64,7 +58,7 @@ export async function inscrireAthlete(formData: FormData) {
     photo_consent: photoConsent,
   });
 
-  if (teamMemberError || athleteDetailsError) {
+  if (athleteDetailsError) {
     redirect("/inscription?erreur=" + encodeURIComponent("Compte créé, mais la fiche n'a pas pu être complétée. Contacte un entraîneur."));
   }
 
@@ -76,18 +70,17 @@ export async function inscrireAthlete(formData: FormData) {
       `<div style="background:#000;color:#fff;padding:16px 20px"><div style="color:#D9B44A;font-size:12px;letter-spacing:2px">ROF CONNECT · NOUVELLE INSCRIPTION</div>` +
       `<div style="font-size:19px;font-weight:bold;margin-top:4px">${echapper(fullName)}</div></div>` +
       `<div style="padding:16px 20px;border:1px solid #ddd;border-top:0"><table style="border-collapse:collapse;font-size:14px">` +
-      ligne("Équipe", equipe?.name ?? "") +
-      ligne("Sport", equipe?.sport ?? "") +
+      ligne("Statut", "Prospect — à activer dans Direction") +
       ligne("Courriel", email) +
       ligne("Naissance", birthDate) +
-      ligne("Position", position) +
+      ligne("Positions", position) +
       ligne("Parent / tuteur", guardianName) +
       ligne("Téléphone", guardianPhone) +
       ligne("Courriel du parent", guardianEmail) +
       `</table></div></div>`,
   );
 
-  redirect("/inscription/confirmation?sport=" + (equipe?.sport ?? ""));
+  redirect("/inscription/confirmation");
 }
 
 export async function inscrireEntraineur(formData: FormData) {

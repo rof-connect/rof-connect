@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { PARCOURS } from "@/lib/parcours/calcul";
+import { PARCOURS, calculer, etapes as calculerEtapes } from "@/lib/parcours/calcul";
+import { PlanParcours } from "@/components/membres/PlanParcours";
 import { modifierMaFiche } from "@/app/membres/moi/actions";
 import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 import { urlPhotoProfil } from "@/lib/photo-profil";
+import { liensDe } from "@/lib/liens-sociaux";
 import { FormPhotoProfil } from "@/components/membres/FormPhotoProfil";
 
 type Resultat = {
@@ -94,7 +96,7 @@ export async function FicheAthlete({
     }
   }
 
-  const photoUrl = await urlPhotoProfil(profileId);
+  const [photoUrl, liens] = await Promise.all([urlPhotoProfil(profileId), liensDe(profileId)]);
   const nom = profile?.full_name || profile?.email || "";
   const initiales = nom
     .split(/\s+/)
@@ -113,6 +115,12 @@ export async function FicheAthlete({
       return calc && def ? { ...calc, nom: def.n } : null;
     })
     .filter((x): x is NonNullable<typeof x> => x !== null);
+
+  // Plan d'action : recalculé à chaque visite à partir du dernier questionnaire.
+  const reponsesBilan = (bilan?.reponses ?? null) as (Record<string, unknown> & { choix?: string; faites?: string[] }) | null;
+  const calc = reponsesBilan ? calculer(reponsesBilan as never, new Date()) : null;
+  const choixParcours = reponsesBilan?.choix && PARCOURS.some((p) => p.k === reponsesBilan.choix) ? reponsesBilan.choix : "";
+  const planEtapes = calc ? calculerEtapes(calc, choixParcours, new Date(), reponsesBilan?.faites ?? []) : [];
 
   const details = [
     fiche?.position ? `${f.position} : ${fiche.position}` : null,
@@ -225,6 +233,10 @@ export async function FicheAthlete({
         )}
       </section>
 
+      {mode === "moi" && calc && (
+        <PlanParcours choix={choixParcours} parcours={PARCOURS.map((p) => ({ k: p.k, n: p.n }))} etapes={planEtapes} />
+      )}
+
       <section className={carte}>
         <p className={`${titreSection} text-rof-gris`}>{f.presences}</p>
         {stats.total > 0 ? (
@@ -253,6 +265,25 @@ export async function FicheAthlete({
         ) : (
           <p className="mt-1 text-sm text-rof-gris">{mode === "moi" ? f.aucunFieldLevel : f.nonRenseigne}</p>
         )}
+        {(liens.instagram || liens.youtube || liens.x) && (
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            {liens.instagram && (
+              <a href={liens.instagram} target="_blank" rel="noopener noreferrer nofollow" className="text-rof-poudre underline">
+                Instagram ↗
+              </a>
+            )}
+            {liens.youtube && (
+              <a href={liens.youtube} target="_blank" rel="noopener noreferrer nofollow" className="text-rof-poudre underline">
+                YouTube ↗
+              </a>
+            )}
+            {liens.x && (
+              <a href={liens.x} target="_blank" rel="noopener noreferrer nofollow" className="text-rof-poudre underline">
+                X ↗
+              </a>
+            )}
+          </div>
+        )}
       </section>
 
       <section className={carte}>
@@ -277,15 +308,25 @@ export async function FicheAthlete({
         <details className={carte}>
           <summary className="cursor-pointer font-condensed text-sm font-bold uppercase tracking-wide text-rof-poudre">{f.modifier}</summary>
           <form action={modifierMaFiche} className="mt-3 flex flex-col gap-3">
-            <label className="flex flex-col gap-1 text-xs text-rof-gris">
-              {f.position}
-              <input name="position" list="positions" defaultValue={fiche?.position ?? ""} maxLength={40} className={champ} />
+            <div className="flex flex-col gap-1 text-xs text-rof-gris">
+              <span>{f.positions}</span>
+              {[0, 1, 2].map((n) => (
+                <input
+                  key={n}
+                  name={`position${n + 1}`}
+                  list="positions"
+                  defaultValue={(fiche?.position ?? "").split(",")[n]?.trim() ?? ""}
+                  maxLength={40}
+                  placeholder={`${f.position} ${n + 1}`}
+                  className={champ}
+                />
+              ))}
               <datalist id="positions">
                 {["Lanceuse", "Receveuse", "Avant-champ", "Voltigeuse", "Polyvalente", "Lanceur", "Receveur", "Voltigeur"].map((p) => (
                   <option key={p} value={p} />
                 ))}
               </datalist>
-            </label>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <label className="flex flex-col gap-1 text-xs text-rof-gris">
                 {f.lance}
@@ -300,6 +341,12 @@ export async function FicheAthlete({
               {f.lienFieldLevel}
               <input name="fieldlevel_url" type="url" defaultValue={fiche?.fieldlevel_url ?? ""} placeholder="https://www.fieldlevel.com/app/profile/…" className={champ} />
             </label>
+            {(["instagram", "youtube", "x"] as const).map((r) => (
+              <label key={r} className="flex flex-col gap-1 text-xs text-rof-gris">
+                {r === "x" ? "X" : r === "youtube" ? "YouTube" : "Instagram"}
+                <input name={r} defaultValue={liens[r]} placeholder="https://… ou @nom" className={champ} />
+              </label>
+            ))}
             <button type="submit" className="self-start rounded-full bg-rof-royal px-5 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
               {f.enregistrer}
             </button>

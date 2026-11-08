@@ -58,6 +58,7 @@ async function traiter(b: Record<string, unknown>, profileId: string | null): Pr
     dob: txt(b.dob, 10),
     fin: Number(b.fin),
     niveau: NIVEAUX.includes(niveau) ? niveau : "",
+    choix: ["A", "B", "C", "D"].includes(String(b.choix)) ? String(b.choix) : "",
     projet: txt(b.projet, 6),
     duree: txt(b.duree, 3),
     position: txt(b.position, 40),
@@ -79,11 +80,26 @@ async function traiter(b: Record<string, unknown>, profileId: string | null): Pr
   if (!r) return { ok: false, erreur: "La date de naissance ou l'année de fin du secondaire est invalide." };
 
   const admin = createAdminClient();
+
+  // Refaire le questionnaire ne fait pas perdre les étapes déjà cochées.
+  let faites: string[] = [];
+  if (profileId) {
+    const { data: precedente } = await admin
+      .from("parcours_demandes")
+      .select("reponses")
+      .eq("profile_id", profileId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const anciennes = (precedente?.reponses as { faites?: unknown } | null)?.faites;
+    if (Array.isArray(anciennes)) faites = anciennes.map(String);
+  }
+
   const { data: ligne, error } = await admin
     .from("parcours_demandes")
     .insert({
       profile_id: profileId,
-      reponses: i,
+      reponses: { ...i, faites },
       resultat: {
         repere: r.repere,
         candidats: r.candidats.map((o) => o.k),
@@ -123,6 +139,7 @@ async function traiter(b: Record<string, unknown>, profileId: string | null): Pr
         `<div style="padding:18px 22px;border:1px solid #ddd;border-top:0"><p>Bonjour,</p>` +
         `<p>Merci d'avoir rempli le questionnaire de parcours pour ${prenom}. Son bilan est en pièce jointe : sa date repère (<strong>automne ${r.repere}</strong>), la présentation des parcours possibles et les prochaines étapes.</p>` +
         `<p><strong>Les parcours présentés :</strong> ${esc(parcours)}</p>` +
+        `<p>Le bilan contient aussi un plan d'action avec un calendrier d'étapes et notre suggestion de faire appel à Athlete Recruiting Centre pour le volet scolaire. ${prenom} peut changer son choix de parcours en tout temps dans l'application ROF Connect : le calendrier est alors recalculé.</p>` +
         `<p style="font-size:13px;color:#666">Ce bilan est établi automatiquement à partir de vos réponses. Il ne remplace ni une décision d'admissibilité du NCAA, ni le plan individuel complet. Nous communiquerons avec vous pour planifier une rencontre.</p>` +
         `<p style="margin-bottom:0">Royal Softball On Field · Repentigny, Lanaudière</p></div></div>`,
       attachments: [{ filename: nomPdf, content: pdf }],

@@ -5,9 +5,9 @@ import { LanguageToggle } from "@/components/i18n/LanguageToggle";
 export default async function ConfirmationInscriptionPage({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string; sport?: string }>;
+  searchParams: Promise<{ type?: string }>;
 }) {
-  const { type, sport } = await searchParams;
+  const { type } = await searchParams;
   const { locale, t } = await getDictionnaire();
   const c = t.confirmation;
   const texte = type === "entraineur" ? c.texteEntraineur : c.texte;
@@ -21,7 +21,7 @@ export default async function ConfirmationInscriptionPage({
       <p className="mt-3 text-rof-gris">{texte}</p>
       {type !== "entraineur" && (
         <p className="mt-4 rounded-lg bg-rof-or/10 px-4 py-3 text-sm text-rof-or">
-          {sport === "baseball" ? c.depotBaseball : c.depotSoftball}
+          {c.activation}
         </p>
       )}
       <Link href="/connexion" className="mt-6 text-rof-poudre">

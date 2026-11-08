@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { trouverOuCreerJoueuse } from "@/lib/joueuses";
 import { definirArchivee } from "@/lib/joueuses-archivees";
+import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
   prospect: 1,
@@ -222,7 +223,11 @@ function champsFiche(formData: FormData) {
   const txt = (k: string) => String(formData.get(k) ?? "").trim() || null;
   return {
     birth_date: txt("birth_date"),
-    position: txt("position"),
+    position:
+      [formData.get("position"), formData.get("position2"), formData.get("position3")]
+        .map((v) => String(v ?? "").trim().replace(/,/g, " ").slice(0, 40))
+        .filter(Boolean)
+        .join(", ") || null,
     throws: txt("throws"),
     bats: txt("bats"),
     guardian_name: txt("guardian_name"),
@@ -280,6 +285,7 @@ export async function modifierJoueuse(formData: FormData) {
   const admin = createAdminClient();
   await admin.from("profiles").update({ full_name: fullName }).eq("id", profileId);
   await admin.from("athlete_details").upsert({ profile_id: profileId, ...champsFiche(formData) }, { onConflict: "profile_id" });
+  await definirLiens(profileId, liensDuFormulaire(formData));
 
   revalidatePath("/membres/admin/joueurs");
 }

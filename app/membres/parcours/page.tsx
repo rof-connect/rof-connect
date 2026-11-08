@@ -45,7 +45,7 @@ export default async function ParcoursMembrePage() {
           prenom,
           nom: reste.join(" "),
           dob: fiche?.birth_date ?? "",
-          position: POSITIONS.includes(fiche?.position ?? "") ? fiche!.position! : "",
+          position: POSITIONS.includes((fiche?.position ?? "").split(",")[0].trim()) ? (fiche!.position as string).split(",")[0].trim() : "",
           equipe: (equipes ?? [])
             .map((e) => (Array.isArray(e.teams) ? e.teams[0]?.name : (e.teams as { name: string } | null)?.name))
             .filter(Boolean)

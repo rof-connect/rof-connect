@@ -50,3 +50,18 @@ export async function desarchiverEquipe(formData: FormData) {
 
   revalidatePath("/membres/admin/equipes");
 }
+
+export async function modifierEquipe(formData: FormData) {
+  const teamId = String(formData.get("team_id") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const seasonYear = Number(formData.get("season_year") ?? 0);
+  const option = String(formData.get("option") ?? "") || null;
+  if (!teamId || !name || !Number.isInteger(seasonYear)) return;
+
+  const supabase = await createClient();
+  await supabase.from("teams").update({ name, season_year: seasonYear, option }).eq("id", teamId);
+
+  revalidatePath("/membres/admin/equipes");
+  revalidatePath(`/membres/admin/equipes/${teamId}`);
+  revalidatePath("/membres/admin");
+}
