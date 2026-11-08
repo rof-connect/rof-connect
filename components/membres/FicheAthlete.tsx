@@ -6,6 +6,8 @@ import { modifierMaFiche } from "@/app/membres/moi/actions";
 import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 import { urlPhotoProfil } from "@/lib/photo-profil";
 import { liensDe } from "@/lib/liens-sociaux";
+import { presentationDe } from "@/lib/presentation";
+import { CartePresentation } from "@/components/membres/CartePresentation";
 import { FormPhotoProfil } from "@/components/membres/FormPhotoProfil";
 
 type Resultat = {
@@ -41,13 +43,18 @@ export async function FicheAthlete({
   t,
   locale,
   mode,
+  apercu = false,
 }: {
   client: SupabaseClient;
   profileId: string;
   t: Dictionnaire;
   locale: string;
   mode: "moi" | "staff";
+  /** Direction : voir la fiche exactement comme la joueuse la voit, en lecture seule (aucun formulaire actif). */
+  apercu?: boolean;
 }) {
+  const vue = mode === "moi" || apercu; // contenu tel que la joueuse le voit
+  const editable = mode === "moi" && !apercu; // formulaires actifs
   const f = t.fiche;
   const loc = locale === "en" ? "en-CA" : "fr-CA";
 
@@ -96,7 +103,11 @@ export async function FicheAthlete({
     }
   }
 
-  const [photoUrl, liens] = await Promise.all([urlPhotoProfil(profileId), liensDe(profileId)]);
+  const [photoUrl, liens, presentation] = await Promise.all([
+    urlPhotoProfil(profileId),
+    liensDe(profileId),
+    vue ? presentationDe(profileId) : Promise.resolve(null),
+  ]);
   const nom = profile?.full_name || profile?.email || "";
   const initiales = nom
     .split(/\s+/)
@@ -153,7 +164,7 @@ export async function FicheAthlete({
             )}
           </div>
         </div>
-        {mode === "moi" && (
+        {editable && (
           <FormPhotoProfil
             aPhoto={Boolean(photoUrl)}
             libelles={{ changer: f.changerPhoto, ajouter: f.ajouterPhoto, retirer: f.retirerPhoto, illisible: f.photoIllisible }}
@@ -212,13 +223,13 @@ export async function FicheAthlete({
                 {resultat.alertes!.length} {f.alertes}
               </p>
             )}
-            {mode === "moi" && (
+            {vue && (
               <Link href="/membres/parcours" className="mt-3 inline-block text-sm text-rof-poudre underline">
                 {f.refaire}
               </Link>
             )}
           </>
-        ) : mode === "moi" ? (
+        ) : vue ? (
           <>
             <p className="mt-1 text-sm text-rof-gris">{f.aucunParcours}</p>
             <Link
@@ -233,8 +244,8 @@ export async function FicheAthlete({
         )}
       </section>
 
-      {mode === "moi" && calc && (
-        <PlanParcours choix={choixParcours} parcours={PARCOURS.map((p) => ({ k: p.k, n: p.n }))} etapes={planEtapes} />
+      {vue && calc && (
+        <PlanParcours lectureSeule={!editable} choix={choixParcours} parcours={PARCOURS.map((p) => ({ k: p.k, n: p.n }))} etapes={planEtapes} />
       )}
 
       <section className={carte}>
@@ -263,7 +274,7 @@ export async function FicheAthlete({
             {f.voirFieldLevel} ↗
           </a>
         ) : (
-          <p className="mt-1 text-sm text-rof-gris">{mode === "moi" ? f.aucunFieldLevel : f.nonRenseigne}</p>
+          <p className="mt-1 text-sm text-rof-gris">{vue ? f.aucunFieldLevel : f.nonRenseigne}</p>
         )}
         {(liens.instagram || liens.youtube || liens.x) && (
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
@@ -304,7 +315,9 @@ export async function FicheAthlete({
         )}
       </section>
 
-      {mode === "moi" && (
+      {vue && <CartePresentation reglages={presentation} lectureSeule={!editable} />}
+
+      {editable && (
         <details className={carte}>
           <summary className="cursor-pointer font-condensed text-sm font-bold uppercase tracking-wide text-rof-poudre">{f.modifier}</summary>
           <form action={modifierMaFiche} className="mt-3 flex flex-col gap-3">

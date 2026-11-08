@@ -3,6 +3,7 @@ import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
+import { chargerDepots } from "@/lib/depots";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
@@ -46,6 +47,38 @@ export default async function DirectionPage() {
   const aGerer = comptesActifs
     .filter((c) => !placees.has(c.id))
     .sort((a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime());
+
+  // À faire : tout ce qui attend une action de la Direction. Ajouter ici chaque nouvelle tâche.
+  const { count: nbParcoursNouveaux } = await supabase
+    .from("parcours_demandes")
+    .select("id", { count: "exact", head: true })
+    .eq("statut", "nouveau");
+  const il_y_a_30j = new Date(Date.now() - 30 * 86400000).toISOString();
+  const { data: privesRecents } = await supabase
+    .from("messages")
+    .select("thread_profile_id, author_id, created_at")
+    .eq("channel", "private")
+    .gte("created_at", il_y_a_30j)
+    .order("created_at", { ascending: false });
+  // Une conversation privée attend une réponse quand son dernier message vient de la joueuse.
+  const dernierParFil = new Map<string, string>();
+  (privesRecents ?? []).forEach((m) => {
+    if (m.thread_profile_id && !dernierParFil.has(m.thread_profile_id)) dernierParFil.set(m.thread_profile_id, m.author_id);
+  });
+  const nbMessagesEnAttente = [...dernierParFil.entries()].filter(([fil, auteur]) => fil === auteur).length;
+
+  // Dépôts de 500 $ (softball, statut autre que Prospect) : à confirmer / en attente.
+  const depots = await chargerDepots();
+  const devantDepot = new Set(
+    membres
+      .filter((m) => {
+        const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
+        return t?.sport === "softball" && m.status_id > 1;
+      })
+      .map((m) => m.profile_id),
+  );
+  const nbDepotsAConfirmer = [...devantDepot].filter((id) => depots[id] === "envoye").length;
+  const nbDepotsEnAttente = [...devantDepot].filter((id) => !depots[id]).length;
 
   const profileIds = (membres ?? []).map((m) => m.profile_id);
   const { data: fiches } = await supabase
@@ -117,6 +150,37 @@ export default async function DirectionPage() {
         </div>
       </div>
 
+      <section className="rounded-2xl border-2 border-rof-or bg-rof-blanc p-4">
+        <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-or">À faire</h2>
+        <ul className="mt-2 flex flex-col divide-y divide-rof-ligne">
+          {[
+            { n: aGerer.length, texte: "nouvelle(s) connexion(s) Prospect à gérer", href: "#prospects" },
+            { n: nbMessagesEnAttente, texte: "conversation(s) privée(s) en attente de réponse", href: "/membres/messages" },
+            { n: nbDepotsAConfirmer, texte: "dépôt(s) de 500 $ envoyé(s) à confirmer", href: "/membres/admin/joueurs?sport=softball" },
+            { n: nbDepotsEnAttente, texte: "joueuse(s) de softball qui n'ont pas encore envoyé leur dépôt de 500 $", href: "/membres/admin/joueurs?sport=softball" },
+            { n: nbParcoursNouveaux ?? 0, texte: "questionnaire(s) de parcours à traiter", href: "/membres/admin/parcours" },
+            { n: sansFiche, texte: "fiche(s) de joueuse incomplète(s)", href: "/membres/admin/joueurs" },
+          ]
+            .filter((t) => t.n > 0)
+            .map((t) => (
+              <li key={t.texte}>
+                <Link href={t.href} className="flex items-center justify-between gap-3 py-2.5 hover:text-rof-or">
+                  <span className="text-rof-texte">
+                    <span className="mr-2 font-condensed text-2xl font-bold text-rof-or">{t.n}</span>
+                    {t.texte}
+                  </span>
+                  <span className="text-rof-gris" aria-hidden>
+                    ›
+                  </span>
+                </Link>
+              </li>
+            ))}
+        </ul>
+        {aGerer.length + nbMessagesEnAttente + nbDepotsAConfirmer + nbDepotsEnAttente + (nbParcoursNouveaux ?? 0) + sansFiche === 0 && (
+          <p className="mt-2 text-sm text-rof-gris">Rien à faire pour le moment. ✓</p>
+        )}
+      </section>
+
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Tuile n={nbComptes ?? total} l="Joueuses inscrites" />
         <Tuile n={(teams ?? []).length} l="Équipes actives" />
@@ -124,7 +188,9 @@ export default async function DirectionPage() {
         <Tuile n={sansFiche} l="Fiches incomplètes" couleur={sansFiche > 0 ? "text-rof-rouge" : "text-rof-gazon"} />
       </div>
 
-      <div>
+
+
+      <div id="prospects">
         <div className="mb-2 flex items-end justify-between gap-3">
           <h3 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">
             Nouvelles connexions à gérer <span className="text-rof-or">({aGerer.length})</span>

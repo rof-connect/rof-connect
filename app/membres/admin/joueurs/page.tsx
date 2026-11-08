@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse } from "./actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
+import { chargerDepots } from "@/lib/depots";
+import { confirmerDepot } from "@/app/membres/depot/actions";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
 import { FormInviterJoueuse } from "@/components/membres/FormInviterJoueuse";
@@ -99,6 +101,7 @@ export default async function JoueursPage({
 
   const archivees = await chargerArchivees();
   const tousLiens = await chargerTousLiens();
+  const depots = await chargerDepots();
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
   const nbArchivees = tousLesJoueurs.filter(([pid]) => archivees.has(pid)).length;
 
@@ -212,6 +215,10 @@ export default async function JoueursPage({
                     <span className="ml-2 rounded-md bg-rof-craie px-1.5 py-0.5 text-xs font-semibold normal-case text-rof-gris">Archivée</span>
                   )}
                 </p>
+                <div className="flex shrink-0 items-center gap-3">
+                <Link href={`/membres/admin/joueurs/${profileId}`} className="text-xs font-semibold text-rof-or underline">
+                  Voir son profil
+                </Link>
                 <form action={archiverJoueuse}>
                   <input type="hidden" name="profile_id" value={profileId} />
                   <input type="hidden" name="archiver" value={archivees.has(profileId) ? "0" : "1"} />
@@ -219,6 +226,7 @@ export default async function JoueursPage({
                     {archivees.has(profileId) ? "Désarchiver" : "Archiver"}
                   </button>
                 </form>
+                </div>
               </div>
               <p className="text-sm text-rof-gris">
                 {j.naissance
@@ -307,6 +315,25 @@ export default async function JoueursPage({
                   );
                 })()}
               </details>
+
+              {j.memberships.some((m) => {
+                const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
+                return t?.sport === "softball" && m.status_id > 1;
+              }) && (
+                <div className="mt-2 flex flex-wrap items-center gap-3 rounded-lg bg-rof-craie p-3 text-sm">
+                  <span className="font-semibold text-rof-texte">Dépôt de 500 $ :</span>
+                  <span className={depots[profileId] === "recu" ? "text-rof-gazon" : depots[profileId] === "envoye" ? "text-rof-or" : "text-rof-rouge"}>
+                    {depots[profileId] === "recu" ? "Reçu" : depots[profileId] === "envoye" ? "Envoyé par la joueuse, à confirmer" : "En attente"}
+                  </span>
+                  <form action={confirmerDepot}>
+                    <input type="hidden" name="profile_id" value={profileId} />
+                    <input type="hidden" name="etat" value={depots[profileId] === "recu" ? "" : "recu"} />
+                    <button type="submit" className="text-xs text-rof-poudre underline">
+                      {depots[profileId] === "recu" ? "Remettre en attente" : "Marquer comme reçu"}
+                    </button>
+                  </form>
+                </div>
+              )}
 
               {j.memberships.length === 0 && (
                 <p className="mt-2 text-sm text-rof-gris">Aucune équipe pour le moment · statut Prospect. Ajoute-la à une équipe pour changer son statut.</p>
