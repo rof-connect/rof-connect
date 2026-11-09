@@ -3,7 +3,6 @@ import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
-import { chargerDepots } from "@/lib/depots";
 import { chargerStatutsJoueuses, statutSelonNaissance } from "@/lib/statuts";
 import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
 
@@ -77,19 +76,6 @@ export default async function DirectionPage() {
     if (m.thread_profile_id && !dernierParFil.has(m.thread_profile_id)) dernierParFil.set(m.thread_profile_id, m.author_id);
   });
   const nbMessagesEnAttente = [...dernierParFil.entries()].filter(([fil, auteur]) => fil === auteur).length;
-
-  // Dépôts de 500 $ (softball, statut autre que Prospect) : à confirmer / en attente.
-  const depots = await chargerDepots();
-  const devantDepot = new Set(
-    membres
-      .filter((m) => {
-        const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
-        return t?.sport === "softball" && m.status_id > 1;
-      })
-      .map((m) => m.profile_id),
-  );
-  const nbDepotsAConfirmer = [...devantDepot].filter((id) => depots[id] === "envoye").length;
-  const nbDepotsEnAttente = [...devantDepot].filter((id) => !depots[id]).length;
 
   const profileIds = (membres ?? []).map((m) => m.profile_id);
   const { data: fiches } = await supabase
@@ -167,8 +153,6 @@ export default async function DirectionPage() {
           {[
             { n: aGerer.length, texte: "joueuse(s) Prospect (sans statut) à accepter", href: "#prospects" },
             { n: nbMessagesEnAttente, texte: "conversation(s) privée(s) en attente de réponse", href: "/membres/messages" },
-            { n: nbDepotsAConfirmer, texte: "dépôt(s) de 500 $ envoyé(s) à confirmer", href: "/membres/admin/joueurs?sport=softball" },
-            { n: nbDepotsEnAttente, texte: "joueuse(s) de softball qui n'ont pas encore envoyé leur dépôt de 500 $", href: "/membres/admin/joueurs?sport=softball" },
             { n: nbParcoursNouveaux ?? 0, texte: "questionnaire(s) de parcours à traiter", href: "/membres/admin/parcours" },
             { n: sansFiche, texte: "fiche(s) de joueuse incomplète(s)", href: "/membres/admin/joueurs" },
           ]
@@ -187,7 +171,7 @@ export default async function DirectionPage() {
               </li>
             ))}
         </ul>
-        {aGerer.length + nbMessagesEnAttente + nbDepotsAConfirmer + nbDepotsEnAttente + (nbParcoursNouveaux ?? 0) + sansFiche === 0 && (
+        {aGerer.length + nbMessagesEnAttente + (nbParcoursNouveaux ?? 0) + sansFiche === 0 && (
           <p className="mt-2 text-sm text-rof-gris">Rien à faire pour le moment. ✓</p>
         )}
       </section>

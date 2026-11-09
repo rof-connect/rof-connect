@@ -5,9 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse, changerStatutJoueuse } from "./actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
-import { chargerDepots } from "@/lib/depots";
 import { chargerStatutsJoueuses, premierSeptembre, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
-import { confirmerDepot } from "@/app/membres/depot/actions";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
 import { FormInviterJoueuse } from "@/components/membres/FormInviterJoueuse";
@@ -102,7 +100,6 @@ export default async function JoueursPage({
 
   const archivees = await chargerArchivees();
   const tousLiens = await chargerTousLiens();
-  const depots = await chargerDepots();
   const statutsJoueuses = await chargerStatutsJoueuses();
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
   const nbArchivees = tousLesJoueurs.filter(([pid]) => archivees.has(pid)).length;
@@ -320,25 +317,6 @@ export default async function JoueursPage({
                   );
                 })()}
               </details>
-
-              {j.memberships.some((m) => {
-                const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
-                return t?.sport === "softball" && m.status_id > 1;
-              }) && (
-                <div className="mt-2 flex flex-wrap items-center gap-3 rounded-lg bg-rof-craie p-3 text-sm">
-                  <span className="font-semibold text-rof-texte">Dépôt de 500 $ :</span>
-                  <span className={depots[profileId] === "recu" ? "text-rof-gazon" : depots[profileId] === "envoye" ? "text-rof-or" : "text-rof-rouge"}>
-                    {depots[profileId] === "recu" ? "Reçu" : depots[profileId] === "envoye" ? "Envoyé par la joueuse, à confirmer" : "En attente"}
-                  </span>
-                  <form action={confirmerDepot}>
-                    <input type="hidden" name="profile_id" value={profileId} />
-                    <input type="hidden" name="etat" value={depots[profileId] === "recu" ? "" : "recu"} />
-                    <button type="submit" className="text-xs text-rof-poudre underline">
-                      {depots[profileId] === "recu" ? "Remettre en attente" : "Marquer comme reçu"}
-                    </button>
-                  </form>
-                </div>
-              )}
 
               {/* 1) Statut : propre à la joueuse, indépendant de ses équipes */}
               <div className="mt-3 rounded-lg border border-rof-ligne p-3">

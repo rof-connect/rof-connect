@@ -5,9 +5,7 @@ import { chargerMessagesTous } from "@/lib/messages-tous";
 import { chargerSondages } from "@/lib/sondages";
 import { getDictionnaire } from "@/lib/i18n/server";
 import { repondre } from "@/app/membres/agenda/actions";
-import { chargerDepots, doitDepot } from "@/lib/depots";
 import { chargerStatutsJoueuses } from "@/lib/statuts";
-import { marquerDepotEnvoye } from "@/app/membres/depot/actions";
 
 type EvenementBody = { type?: string; heure?: string | null; lieu?: string | null };
 
@@ -74,10 +72,7 @@ export default async function MembresPage() {
   const sondages = await chargerSondages(user!.id, estAdmin);
   const sondagesAFaire = sondages.filter((s) => !s.closed && !s.monVote && s.maDates.length === 0).length;
 
-  // Dépôt de 500 $ : seulement pour le softball, dès que le statut n'est plus Prospect.
-  const etatDepot = (await chargerDepots())[user!.id];
-  const depotDu = doitDepot(equipes.map((e) => ({ role_in_team: e.role_in_team, status_id: e.status_id, sport: e.team?.sport }))) && etatDepot !== "recu";
-  const nbAFaire = sondagesAFaire + (depotDu && etatDepot !== "envoye" ? 1 : 0);
+  const nbAFaire = sondagesAFaire;
 
   const messages = await chargerMessagesTous(locale === "en" ? "en" : "fr");
   const statutPropre = (await chargerStatutsJoueuses())[user!.id] ?? 1;
@@ -162,7 +157,7 @@ export default async function MembresPage() {
           </p>
           <p className="text-xs text-rof-gris">
             {nbAFaire
-              ? [sondagesAFaire ? `${sondagesAFaire} ${a.sondagesAFaire}` : "", depotDu && etatDepot !== "envoye" ? a.depotAFaire : ""].filter(Boolean).join(" · ")
+              ? `${sondagesAFaire} ${a.sondagesAFaire}`
               : a.toutEstFait}
           </p>
         </Link>
@@ -172,22 +167,6 @@ export default async function MembresPage() {
           <p className="text-xs text-rof-gris">{a.evenements}</p>
         </Link>
       </div>
-
-      {depotDu && (
-        <section className="mt-3 rounded-xl border border-rof-or bg-rof-blanc p-4">
-          <p className="font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">{a.depotTitre}</p>
-          <p className="mt-1 text-sm text-rof-texte">{a.depotTexte}</p>
-          {etatDepot === "envoye" ? (
-            <p className="mt-3 text-sm text-rof-gazon">{a.depotVerification}</p>
-          ) : (
-            <form action={marquerDepotEnvoye} className="mt-3">
-              <button type="submit" className="rounded-full bg-rof-or px-5 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-black">
-                {a.depotEnvoye}
-              </button>
-            </form>
-          )}
-        </section>
-      )}
 
       {messagesAffiches.length > 0 && (
         <section className="mt-3 flex flex-col gap-2 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
