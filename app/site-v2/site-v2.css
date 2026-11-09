@@ -442,3 +442,17 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .centre-photo{position:relative;aspect-ratio:16/8;border-radius:8px;overflow:hidden;background:var(--navy)}
 .v2 .centre-photo img{object-fit:cover}
 @media (max-width:800px){.v2 .centre-photo{aspect-ratio:4/3}}
+
+/* Volet scolaire : PSES et Collège L'Assomption côte à côte */
+.v2 .volet{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px 48px}
+.v2 .volet>h3{flex:0 0 100%;margin-bottom:0}
+.v2 .volet-groupe{margin-bottom:0;flex:0 1 auto;max-width:100%}
+.v2 .teams.teams-volet{display:flex;flex-wrap:wrap;gap:10px;overflow:visible}
+.v2 .teams.teams-volet .team{flex:0 0 140px;width:140px}
+@media (max-width:700px){.v2 .teams.teams-volet .team{flex-basis:calc(50% - 5px);width:auto}}
+
+/* Menu principal : une seule ligne (7 liens) */
+.v2 nav.primary{gap:0;flex-wrap:nowrap}
+.v2 nav.primary a{white-space:nowrap;padding:10px 9px;font-size:12px;letter-spacing:.05em}
+.v2 nav.primary a.cta{margin-left:6px}
+.v2 header.main .wrap{gap:16px}
