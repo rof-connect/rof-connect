@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, PARTENAIRES, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, FIELDLEVEL, GALERIES, HERO, NB_JOUEUSES_AFFICHE, NIVEAUX, PARTENAIRES, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +22,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
   const stats: [string, string][] = [...c.stats];
   if (equipes.length > 0) {
     const mot = sport === "softball" ? "Joueuses" : "Joueurs";
-    if (sport === "softball") stats.push([String(nbJoueurs), `${mot} · ${equipes.length} équipe${equipes.length > 1 ? "s" : ""}`]);
+    if (sport === "softball") stats.push([String(NB_JOUEUSES_AFFICHE.softball ?? nbJoueurs), `${mot} · ${equipes.length} équipe${equipes.length > 1 ? "s" : ""}`]);
     else stats.unshift([String(equipes.length), "Équipes"]);
   }
   const qEquipes = equipes.length ? `${equipes.length} équipe${equipes.length > 1 ? "s" : ""} · ${NIVEAUX[sport]}` : NIVEAUX[sport];
@@ -158,9 +158,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           <div className="wrap">
             <div className="head">
               <h2>
-                Calendrier
-                <br />
-                <em>{c.saison}</em>
+                Calendrier <em>{c.saison}</em>
               </h2>
               <span className="pill">{c.noteCalendrier}</span>
             </div>
@@ -194,30 +192,34 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           <div className="wrap">
             <div className="head">
               <h2>
-                Le palmarès
-                <br />
-                <em>parle.</em>
+                Le palmarès <em>parle.</em>
               </h2>
             </div>
-            <div className="honors">
-              {c.palmares.length > 0 ? (
-                c.palmares.map((h) => (
-                  <div className="honor" key={h.y}>
-                    <div className="yr">{h.y}</div>
+            {c.palmares.length > 0 ? (
+              <div className="palmares">
+                {c.palmares.map((h, i) => (
+                  <details className="annee" key={h.y} open={i === 0}>
+                    <summary>
+                      <span className="yr">{h.y}</span>
+                      <span className="nb-titres">{h.l.length} résultat{h.l.length > 1 ? "s" : ""}</span>
+                      <svg className="chev" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </summary>
                     <ul>
                       {h.l.map((x) => (
                         <li key={x}>{x}</li>
                       ))}
                     </ul>
-                  </div>
-                ))
-              ) : (
-                <div className="honor" style={{ gridColumn: "1/-1", textAlign: "center", borderTopColor: "var(--accent)" }}>
-                  <div className="yr" style={{ fontSize: 56 }}>Le prochain chapitre s&apos;écrit.</div>
-                  <p style={{ marginTop: 12, color: "#4A5570" }}>{c.videPalmares}</p>
-                </div>
-              )}
-            </div>
+                  </details>
+                ))}
+              </div>
+            ) : (
+              <div className="honor" style={{ textAlign: "center", borderTopColor: "var(--accent)" }}>
+                <div className="yr" style={{ fontSize: 44 }}>Le prochain chapitre s&apos;écrit.</div>
+                <p style={{ marginTop: 10, color: "#4A5570" }}>{c.videPalmares}</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -267,9 +269,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           <div className="wrap">
             <div className="head">
               <h2>
-                Committed.
-                <br />
-                <em>{c.engagementsSous}</em>
+                Committed. <em>{c.engagementsSous}</em>
               </h2>
               <span className="pill hl">#EarnTheCrown</span>
             </div>
@@ -313,9 +313,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           <div className="wrap">
             <div className="head">
               <h2>
-                En
-                <br />
-                <em>images</em>
+                En <em>images</em>
               </h2>
             </div>
             <div className={`gallery${GALERIES[sport].length > 5 ? " gallery-auto" : ""}`}>
@@ -363,9 +361,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           <div className="wrap">
             <div className="head">
               <h2>
-                Nos
-                <br />
-                <em>partenaires</em>
+                Nos <em>partenaires</em>
               </h2>
             </div>
             <div className="partners">

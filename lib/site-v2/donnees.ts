@@ -267,3 +267,9 @@ export const NIVEAU_PROVISOIRE: Record<string, string> = {
   "18U - Di Peco": "VARSITY",
   "16U - Bertrand": "JV",
 };
+
+/**
+ * Nombre de joueuses affiché dans le bandeau de chiffres, fixé par la Direction. null = nombre calculé depuis ROF Connect
+ * (joueuses acceptées, statut autre que Prospect).
+ */
+export const NB_JOUEUSES_AFFICHE: Record<Sport, number | null> = { softball: 108, baseball: null };
