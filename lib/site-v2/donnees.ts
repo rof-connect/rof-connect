@@ -21,7 +21,8 @@ type Contenu = {
   lead: string;
   etapes: { n: string; t: string; d: string }[];
   academique: { t: string; d: string; lien?: string }[]; // parcours académique (propre au sport)
-  aVenir?: { etiquette: string; titre: string; sous: string; details: string[] }; // programme annoncé (carte dans Équipes) // parcours Royal
+  volet?: { titre: string; groupes: { nom: string; equipes: string[] }[] }; // volet scolaire (sous les équipes)
+  aVenir?: { etiquette: string; niveau: string; nom: string; titre: string; sous: string; details: string[]; intro: string }; // programme annoncé (carte dans Équipes) // parcours Royal
   stats: [string, string][]; // chiffres fixes (les chiffres tirés de ROF Connect s'ajoutent)
   calendrier: Evenement[];
   palmares: Palmares[];
@@ -56,9 +57,12 @@ export const CONTENU: Record<Sport, Contenu> = {
     ],
     aVenir: {
       etiquette: "À VENIR",
+      niveau: "Varsity", // grand titre de la carte (même format que les autres équipes)
+      nom: "Royal On Field", // petit nom sous le niveau
       titre: "Royal On Field Varsity/JV",
       sous: "Automne 2027",
       details: ["12 mois par année", "École en ligne", "18U · 16U"],
+      intro: "Un nouveau programme Varsity/JV, à l'année, qui combine softball de haut niveau et école en ligne.",
     },
     stats: [
       ["9", "Titres canadiens"],
@@ -111,6 +115,13 @@ export const CONTENU: Record<Sport, Contenu> = {
       { n: "04", t: "Collège américain", d: "La signature : parcours 12e année ou cégep, dossier, vidéos et contacts avec les entraîneurs." },
     ],
     academique: [],
+    volet: {
+      titre: "Volet scolaire",
+      groupes: [
+        { nom: "PSES", equipes: ["Équipe 1", "Équipe 2"] },
+        { nom: "Collège L'Assomption", equipes: ["Équipe Secondaire 1", "Équipe Secondaire 2-3", "Équipe Secondaire 4-5"] },
+      ],
+    },
     stats: [
       ["4", "Titres provinciaux"],
       ["2", "Titres Can-Am United"],

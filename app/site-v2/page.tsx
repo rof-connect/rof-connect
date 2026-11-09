@@ -127,6 +127,17 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             {equipes.length > 0 ? (
               <>
               <div className="teams">
+                {c.aVenir && (
+                  <Link className="team team-avenir" href="/site-v2/varsity">
+                    <div className="big" aria-hidden>V</div>
+                    <span className="team-tags">
+                      <span className="team-tag">{c.aVenir.etiquette}</span>
+                    </span>
+                    <div className="lvl">{c.aVenir.niveau}</div>
+                    <div className="team-nom">{c.aVenir.nom}</div>
+                    <div className="meta">{c.aVenir.sous}</div>
+                  </Link>
+                )}
                 {equipes.map((t) => (
                   <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href={t.roster || t.matchs ? `/site-v2/equipes/${t.id}` : "/inscription"}>
                     <div className="big" aria-hidden>{niveauNom(t.nom).niveau.replace("Varsity", "V")}</div>
@@ -145,25 +156,27 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                     )}
                   </Link>
                 ))}
-                {c.aVenir && (
-                  <Link className="team team-avenir" href="/inscription">
-                    <span className="team-tags">
-                      <span className="team-tag">{c.aVenir.etiquette}</span>
-                    </span>
-                    <div className="lvl">{c.aVenir.titre}</div>
-                    <div className="team-nom">{c.aVenir.sous}</div>
-                    <div className="bar" />
-                    <ul className="avenir-liste">
-                      {c.aVenir.details.map((d) => (
-                        <li key={d}>{d}</li>
-                      ))}
-                    </ul>
-                  </Link>
-                )}
               </div>
               </>
             ) : (
               <p style={{ color: "#4A5570" }}>Les équipes {c.mot.toLowerCase()} de la saison seront publiées ici bientôt.</p>
+            )}
+            {c.volet && (
+              <div className="volet">
+                <h3>{c.volet.titre}</h3>
+                <div className="volet-groupes">
+                  {c.volet.groupes.map((g) => (
+                    <div className="volet-groupe" key={g.nom}>
+                      <h4>{g.nom}</h4>
+                      <ul>
+                        {g.equipes.map((e) => (
+                          <li key={e}>{e}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </section>

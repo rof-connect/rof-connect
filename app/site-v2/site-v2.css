@@ -409,15 +409,22 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .acad a{display:inline-flex;align-items:center;min-height:44px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--royal)}
 @media (max-width:1000px){.v2 .acad{grid-template-columns:1fr}}
 
-/* Carte « À venir » dans la rangée d'équipes */
-.v2 .team.team-avenir{border:2px dashed var(--accent);background:var(--navy);grid-column:auto}
-.v2 .team.team-avenir::before{background:linear-gradient(160deg,var(--royal-deep) 0%,var(--navy) 100%)}
-.v2 .team.team-avenir .lvl{font-size:26px;line-height:.95}
-.v2 .avenir-liste{list-style:none;display:grid;gap:3px;font-size:12px;color:#C9D4EE;line-height:1.35}
-.v2 .avenir-liste li::before{content:"· "}
-@media (min-width:1101px){.v2 .teams:has(.team-avenir){grid-auto-columns:minmax(0,1fr)}.v2 .team.team-avenir{min-width:0}}
-/* Carte « À venir » : plus large, texte sous l'étiquette */
-@media (min-width:1101px){.v2 .teams:has(.team-avenir){grid-auto-columns:minmax(0,1fr)}.v2 .team.team-avenir{grid-column:span 2;min-width:0;justify-content:flex-end;padding-top:44px}}
-.v2 .team.team-avenir .lvl{font-size:24px;line-height:1;margin-top:0}
-.v2 .team.team-avenir .team-tags{top:12px}
-@media (max-width:1100px){.v2 .team.team-avenir{min-width:220px}}
+
+
+/* Page Royal On Field Varsity/JV */
+.v2 .avenir-points{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.v2 .avenir-points li{border:1px solid var(--line);border-top:4px solid var(--mark);border-radius:6px;padding:20px;background:#fff;font-family:var(--display);font-size:30px;line-height:1;color:var(--royal-deep)}
+
+/* Volet scolaire (sous les équipes baseball) */
+.v2 .volet{margin-top:28px}
+.v2 .volet>h3{font-family:var(--display);font-size:32px;font-weight:400;color:var(--royal-deep);margin-bottom:12px}
+.v2 .volet-groupes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.v2 .volet-groupe{border:1px solid var(--line);border-top:4px solid var(--mark);border-radius:6px;padding:16px 20px;background:#fff}
+.v2 .volet-groupe h4{font-family:var(--display);font-size:26px;font-weight:400;color:var(--royal);line-height:1}
+.v2 .volet-groupe ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.v2 .volet-groupe li{background:var(--mist);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--royal-deep)}
+
+/* Carte Varsity : le titre doit tenir dans le carré */
+.v2 .team.team-avenir .lvl{font-size:clamp(20px,2vw,28px);line-height:.9;max-width:100%;overflow-wrap:anywhere}
+.v2 .team.team-avenir .team-nom{font-size:11px;letter-spacing:.06em}
+.v2 .team.team-avenir .meta{margin-top:4px}
