@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, FIELDLEVEL, GALERIES, HERO, LEGENDE_NIVEAUX, NIVEAUX, PARTENAIRES_PAR_SPORT, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, PARTENAIRES_PAR_SPORT, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -145,8 +145,22 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                     )}
                   </Link>
                 ))}
+                {c.aVenir && (
+                  <Link className="team team-avenir" href="/inscription">
+                    <span className="team-tags">
+                      <span className="team-tag">{c.aVenir.etiquette}</span>
+                    </span>
+                    <div className="lvl">{c.aVenir.titre}</div>
+                    <div className="team-nom">{c.aVenir.sous}</div>
+                    <div className="bar" />
+                    <ul className="avenir-liste">
+                      {c.aVenir.details.map((d) => (
+                        <li key={d}>{d}</li>
+                      ))}
+                    </ul>
+                  </Link>
+                )}
               </div>
-              {LEGENDE_NIVEAUX[sport] && equipes.some((t) => t.categorie) && <p className="legende-niveaux">{LEGENDE_NIVEAUX[sport]}</p>}
               </>
             ) : (
               <p style={{ color: "#4A5570" }}>Les équipes {c.mot.toLowerCase()} de la saison seront publiées ici bientôt.</p>

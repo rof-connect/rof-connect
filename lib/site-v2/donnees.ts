@@ -20,7 +20,8 @@ type Contenu = {
   engagementsSous: string;
   lead: string;
   etapes: { n: string; t: string; d: string }[];
-  academique: { t: string; d: string; lien?: string }[]; // parcours académique (propre au sport) // parcours Royal
+  academique: { t: string; d: string; lien?: string }[]; // parcours académique (propre au sport)
+  aVenir?: { etiquette: string; titre: string; sous: string; details: string[] }; // programme annoncé (carte dans Équipes) // parcours Royal
   stats: [string, string][]; // chiffres fixes (les chiffres tirés de ROF Connect s'ajoutent)
   calendrier: Evenement[];
   palmares: Palmares[];
@@ -50,8 +51,15 @@ export const CONTENU: Record<Sport, Contenu> = {
     academique: [
       { t: "PSES", d: "Programme sport-études au primaire (5e et 6e année), pour les joueuses de Lanaudière." },
       { t: "Collège L'Assomption", d: "Concilier études secondaires et softball de haut niveau. Ouvert à toutes les joueuses, sans restriction de région." },
+      { t: "École en ligne", d: "12e année : école en ligne pour concilier études et softball de haut niveau." },
       { t: "Collège américain", d: "Accompagnement vers la NCAA, la NAIA et la NJCAA (parcours 12e année ou cégep)." },
     ],
+    aVenir: {
+      etiquette: "À VENIR",
+      titre: "Royal On Field Varsity/JV",
+      sous: "Automne 2027",
+      details: ["12 mois par année", "École en ligne", "18U · 16U"],
+    },
     stats: [
       ["9", "Titres canadiens"],
       ["8", "Séries mondiales LL"],
@@ -268,10 +276,6 @@ export function lienFieldLevel(v: string): string {
   const m = v.trim().match(/^https:\/\/www\.fieldlevel\.com\/app\/organization\/([a-z0-9]{6,12})\/(softball|baseball)\/overview/i);
   return m ? `https://www.fieldlevel.com/app/organization/${m[1]}/${m[2].toLowerCase()}/overview` : "";
 }
-
-
-/** Légende des étiquettes softball (affichée sous les cartes d'équipes). */
-export const LEGENDE_NIVEAUX: Record<Sport, string> = { softball: "National = Varsity · Régional = JV", baseball: "" };
 
 /** Partenaires par sport (le baseball n'affiche ni USA Softball ni Fastpitch Nation ; ajoute PBR Baseball, logo à fournir). */
 export const PARTENAIRES_PAR_SPORT: Record<Sport, { nom: string; src?: string }[]> = {

@@ -401,7 +401,6 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .team .big{right:10px;top:10px;font-size:64px;line-height:1;max-width:calc(100% - 20px);overflow:hidden}
 .v2 .team .team-nom{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-top:4px}
 .v2 .team .lvl{font-size:40px}
-.v2 .legende-niveaux{margin-top:12px;font-size:12px;letter-spacing:.06em;color:#5A6680}
 .v2 .acad{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .v2 .acad li{display:grid;grid-template-columns:48px 1fr;gap:12px;border:1px solid var(--line);border-top:4px solid var(--royal);border-radius:6px;padding:18px 20px;background:#fff}
 .v2 .acad .n{font-family:var(--display);font-size:40px;line-height:.9;color:var(--royal)}
@@ -409,3 +408,16 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .acad p{font-size:14px;line-height:1.5;color:#4A5570;margin-top:6px}
 .v2 .acad a{display:inline-flex;align-items:center;min-height:44px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--royal)}
 @media (max-width:1000px){.v2 .acad{grid-template-columns:1fr}}
+
+/* Carte « À venir » dans la rangée d'équipes */
+.v2 .team.team-avenir{border:2px dashed var(--accent);background:var(--navy);grid-column:auto}
+.v2 .team.team-avenir::before{background:linear-gradient(160deg,var(--royal-deep) 0%,var(--navy) 100%)}
+.v2 .team.team-avenir .lvl{font-size:26px;line-height:.95}
+.v2 .avenir-liste{list-style:none;display:grid;gap:3px;font-size:12px;color:#C9D4EE;line-height:1.35}
+.v2 .avenir-liste li::before{content:"· "}
+@media (min-width:1101px){.v2 .teams:has(.team-avenir){grid-auto-columns:minmax(0,1fr)}.v2 .team.team-avenir{min-width:0}}
+/* Carte « À venir » : plus large, texte sous l'étiquette */
+@media (min-width:1101px){.v2 .teams:has(.team-avenir){grid-auto-columns:minmax(0,1fr)}.v2 .team.team-avenir{grid-column:span 2;min-width:0;justify-content:flex-end;padding-top:44px}}
+.v2 .team.team-avenir .lvl{font-size:24px;line-height:1;margin-top:0}
+.v2 .team.team-avenir .team-tags{top:12px}
+@media (max-width:1100px){.v2 .team.team-avenir{min-width:220px}}
