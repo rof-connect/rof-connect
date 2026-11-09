@@ -92,6 +92,7 @@ export const dictionnaires = {
       scolaire: [
         { n: "PSES — 5e et 6e année", t: "Primaire", d: "Programme sport-études au primaire, offert pour la région de Lanaudière." },
         { n: "Collège L'Assomption", t: "Secondaire 1 à 5", d: "Sport-études Baseball et Softball, de la 1re à la 5e secondaire." },
+        { n: "Programme scolaire en ligne", t: "Grade 9 à 12", d: "Programme scolaire en ligne, de la 9e à la 12e année (Grade 9 à 12)." },
       ],
       baseballSoftball: "Baseball · Softball",
       recrutementKicker: "L'après-Royal",
@@ -418,6 +419,7 @@ export const dictionnaires = {
       scolaire: [
         { n: "PSES — Grades 5 & 6", t: "Elementary", d: "Elementary sport-study program, offered for the Lanaudière region." },
         { n: "Collège L'Assomption", t: "Grades 7 to 11", d: "Baseball and Softball sport-study, from grade 7 to grade 11." },
+        { n: "Online school program", t: "Grade 9 to 12", d: "Online school program, from grade 9 to grade 12." },
       ],
       baseballSoftball: "Baseball · Softball",
       recrutementKicker: "Life after Royal",

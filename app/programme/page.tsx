@@ -247,7 +247,7 @@ export default async function ProgrammePage() {
         <div className="mx-auto max-w-6xl px-5 py-16">
           <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{s.scolaireTitre}</h2>
           <p className="mt-4 max-w-3xl text-base text-rof-gris">{s.scolaireIntro}</p>
-          <ul className="mt-10 grid gap-5 md:grid-cols-2">
+          <ul className="mt-10 grid gap-5 md:grid-cols-3">
             {s.scolaire.map((e) => (
               <li key={e.n} className="rounded-3xl border border-rof-ligne bg-rof-blanc p-8">
                 <p className="font-condensed text-xs uppercase tracking-[0.25em] text-rof-poudre">{e.t}</p>
