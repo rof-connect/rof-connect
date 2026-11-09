@@ -192,7 +192,7 @@ export default async function ProgrammePage() {
           priority
           sizes="100vw"
           className="-z-20 object-cover"
-          style={{ objectPosition: "62% 50%" }}
+          style={{ objectPosition: "62% 8%" }}
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0B0B0D] via-[#0B0B0D]/85 via-45% to-[#0B0B0D]/10" />
         <div className="mx-auto w-full max-w-6xl px-4 pb-10 lg:pb-16">
