@@ -68,6 +68,7 @@ export async function modifierEquipe(formData: FormData) {
       .from("teams")
       .update({
         visible_public: formData.get("visible_public") === "on",
+        roster_public: formData.get("roster_public") === "on",
         ordre_affichage: ordre !== "" && Number.isInteger(Number(ordre)) ? Number(ordre) : null,
         nom_public: String(formData.get("nom_public") ?? "").trim().slice(0, 40) || null,
         description_publique: String(formData.get("description_publique") ?? "").trim().slice(0, 240) || null,

@@ -206,7 +206,7 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .roster-meta dd{font-family:var(--display);font-size:44px;line-height:1;color:var(--accent)}
 
 .v2 .roster{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
-.v2 .roster-row{display:grid;grid-template-columns:64px 1.6fr 1fr .6fr .6fr 1.3fr 1fr;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink);transition:background .15s}
+.v2 .roster-row{display:grid;grid-template-columns:52px 64px 1.6fr 1fr .6fr .6fr 1.3fr 1fr;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink);transition:background .15s}
 .v2 .roster-row:last-child{border-bottom:0}
 .v2 a.roster-row:hover{background:var(--mist)}
 .v2 .roster-th{background:var(--royal-deep);color:#fff;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding-top:14px;padding-bottom:14px}
@@ -231,3 +231,37 @@ html:has(.v2){scroll-behavior:smooth}
   .v2 .roster-row .c-lf:empty,.v2 .roster-row .c-taille:empty{display:none}
   .v2 .roster-hero{padding:40px 0 32px}
 }
+.v2 .team .lvl{font-size:44px;line-height:.9}
+
+/* Photos des joueuses : cadrage sur le visage */
+.v2 .roster-row .c-photo img{object-position:50% 14%}
+.v2 .profil-hero{display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:end}
+.v2 .profil-photo{width:220px;height:280px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.08);border:3px solid var(--accent);display:flex;align-items:center;justify-content:center}
+.v2 .profil-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 14%}
+.v2 .profil-photo .initiales{font-family:var(--display);font-size:96px;color:var(--accent)}
+.v2 .fiche-joueuse{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.v2 .fiche-joueuse>div{border:1px solid var(--line);border-top:4px solid var(--royal);border-radius:6px;padding:16px 18px;background:#fff}
+.v2 .fiche-joueuse dt{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#5A6680}
+.v2 .fiche-joueuse dd{font-family:var(--display);font-size:30px;line-height:1;color:var(--royal-deep);margin-top:6px}
+@media (max-width:800px){.v2 .profil-hero{grid-template-columns:1fr;gap:20px}.v2 .profil-photo{width:160px;height:200px}}
+
+.v2 .roster-row .c-no{font-family:var(--display);font-size:34px;line-height:1;color:var(--royal);text-align:center}
+.v2 .roster-th .c-no{font-family:var(--body);font-size:11px;color:#fff}
+.v2 .profil-no{color:var(--accent);margin-right:6px}
+@media (max-width:800px){
+  .v2 .roster-row{grid-template-columns:44px 56px 1fr}
+  .v2 .roster-row .c-no{grid-row:span 3;font-size:28px}
+  .v2 .roster-row .c-lf,.v2 .roster-row .c-taille,.v2 .roster-row .c-ecole,.v2 .roster-row .c-ville{grid-column:3}
+  .v2 .roster-row .c-nom,.v2 .roster-row .c-pos{grid-column:3}
+}
+
+/* Commitment au bas du profil */
+.v2 .engage-profil{display:grid;grid-template-columns:340px 1fr;gap:40px;align-items:center}
+.v2 .engage-photo{position:relative;aspect-ratio:4/5;border-radius:8px;overflow:hidden;background:var(--navy)}
+.v2 .engage-photo img{object-fit:cover}
+.v2 .sig-inline{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.2em;background:var(--accent);color:var(--navy);padding:6px 10px;border-radius:3px}
+.v2 .engage-ecole{font-family:var(--display);font-size:clamp(40px,5vw,64px);line-height:.9;margin-top:16px}
+.v2 .engage-meta{font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-top:12px}
+.v2 .engage-annee{font-family:var(--display);font-size:44px;color:rgba(255,255,255,.35);margin-top:8px}
+.v2 .badge-commit{display:inline-block;margin-left:10px;font-family:var(--body);font-style:normal;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:var(--accent);color:var(--navy);padding:3px 8px;border-radius:3px;vertical-align:middle}
+@media (max-width:800px){.v2 .engage-profil{grid-template-columns:1fr;gap:24px}.v2 .engage-photo{max-width:300px}}

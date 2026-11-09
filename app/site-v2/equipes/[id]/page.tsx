@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Cadre } from "@/components/site-v2/Cadre";
-import { CONTENU } from "@/lib/site-v2/donnees";
+import { CONTENU, engagementDe } from "@/lib/site-v2/donnees";
 import { chargerRoster } from "@/lib/site-v2/roster";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +21,6 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
   const c = CONTENU[r.sport];
   const f = r.sport === "softball";
   const mot = f ? "joueuse" : "joueur";
-  const autres = r.total - r.joueuses.length;
 
   return (
     <Cadre sport={r.sport} provisoire={r.provisoire}>
@@ -61,9 +60,15 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
             <Link className="more" href="/inscription">Joindre le programme →</Link>
           </div>
 
-          {r.joueuses.length > 0 ? (
+          {!r.afficher ? (
+            <div className="empty-clair">
+              <h3>Le roster n&apos;est pas publié.</h3>
+              <p>La liste des {mot}s de cette équipe n&apos;est pas affichée publiquement.</p>
+            </div>
+          ) : r.joueuses.length > 0 ? (
             <div className="roster" role="table" aria-label={`Roster ${r.nom}`}>
               <div className="roster-row roster-th" role="row">
+                <span role="columnheader" className="c-no">N°</span>
                 <span role="columnheader" className="c-photo">
                   <span className="sr">Photo</span>
                 </span>
@@ -74,45 +79,56 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
                 <span role="columnheader" className="c-ecole">École</span>
                 <span role="columnheader" className="c-ville">Ville</span>
               </div>
-              {r.joueuses.map((j) => (
-                <Link key={j.id} href={j.lien} className="roster-row" role="row">
-                  <span role="cell" className="c-photo">
-                    {j.photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={j.photo} alt={`Photo de ${j.nom}`} loading="lazy" />
-                    ) : (
-                      <span className="initiales" aria-hidden>
-                        {j.nom
-                          .split(/\s+/)
-                          .map((m) => m[0])
-                          .slice(0, 2)
-                          .join("")}
-                      </span>
-                    )}
-                  </span>
-                  <span role="cell" className="c-nom">{j.nom}</span>
-                  <span role="cell" className="c-pos">{j.positions.join(" · ") || "—"}</span>
-                  <span role="cell" className="c-lf">{[j.lance && j.lance.slice(0, 1).toUpperCase(), j.frappe && j.frappe.slice(0, 1).toUpperCase()].filter(Boolean).join(" / ") || "—"}</span>
-                  <span role="cell" className="c-taille">{j.taille || "—"}</span>
-                  <span role="cell" className="c-ecole">{j.ecole || "—"}</span>
-                  <span role="cell" className="c-ville">{j.ville || "—"}</span>
-                </Link>
-              ))}
+              {r.joueuses.map((j) => {
+                const contenu = (
+                  <>
+                    <span role="cell" className="c-no">{j.numero || "—"}</span>
+                    <span role="cell" className="c-photo">
+                      {j.photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={j.photo} alt={`Photo de ${j.nom}`} loading="lazy" />
+                      ) : (
+                        <span className="initiales" aria-hidden>
+                          {j.nom
+                            .split(/\s+/)
+                            .map((m) => m[0])
+                            .slice(0, 2)
+                            .join("")}
+                        </span>
+                      )}
+                    </span>
+                    <span role="cell" className="c-nom">{j.nom}{engagementDe(j.nom) && <em className="badge-commit">Committed {engagementDe(j.nom)?.c}</em>}</span>
+                    <span role="cell" className="c-pos">{j.positions.join(" · ") || "—"}</span>
+                    <span role="cell" className="c-lf">{[j.lance && j.lance.slice(0, 1).toUpperCase(), j.frappe && j.frappe.slice(0, 1).toUpperCase()].filter(Boolean).join(" / ") || "—"}</span>
+                    <span role="cell" className="c-taille">{j.taille || "—"}</span>
+                    <span role="cell" className="c-ecole">{j.ecole || "—"}</span>
+                    <span role="cell" className="c-ville">{j.ville || "—"}</span>
+                  </>
+                );
+                return j.lien ? (
+                  <Link key={j.id} href={j.lien} className="roster-row" role="row">
+                    {contenu}
+                  </Link>
+                ) : (
+                  <div key={j.id} className="roster-row" role="row">
+                    {contenu}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="empty-clair">
               <h3>Le roster sera publié bientôt.</h3>
-              <p>Les {mot}s apparaissent ici lorsqu&apos;elles (ou leurs parents) autorisent leur page publique dans ROF Connect.</p>
+              <p>Les {mot}s de l&apos;équipe apparaîtront ici dès qu&apos;elles auront été acceptées par la Direction.</p>
             </div>
           )}
 
-          {autres > 0 && r.joueuses.length > 0 && (
+          {r.afficher && r.joueuses.length > 0 && (
             <p className="roster-note">
-              {autres} autre{autres > 1 ? "s" : ""} {mot}
-              {autres > 1 ? "s" : ""} de l&apos;équipe {autres > 1 ? "n'ont" : "n'a"} pas (encore) activé {autres > 1 ? "leur page" : "sa page"} publique.
+              L / F : lance (Gauche / Droite) · frappe (Gauche / Droite / Ambidextre).
+              {r.joueuses.some((j) => j.lien) && ` Clique sur une ${mot} pour voir sa fiche de recrutement.`}
             </p>
           )}
-          {r.joueuses.length > 0 && <p className="roster-note">L / F : lance (Gauche / Droite) · frappe (Gauche / Droite / Ambidextre). Clique sur une {mot} pour voir sa fiche de recrutement.</p>}
         </div>
       </section>
     </Cadre>

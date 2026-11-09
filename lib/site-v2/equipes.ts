@@ -10,6 +10,7 @@ export type EquipePublique = {
   description: string;
   nb: number | null; // nombre de joueuses/joueurs, calculé depuis ROF Connect
   vedette: boolean;
+  roster: boolean; // la Direction autorise l'affichage du roster (par défaut : oui)
 };
 
 export type ResultatEquipes = {
@@ -21,22 +22,14 @@ export type ResultatEquipes = {
   source: "bd" | "provisoire";
 };
 
-/** « Softball 14U — Riley » → « 14U ». Utilisé seulement si la Direction n'a pas saisi de nom public. */
+/** « Softball 18U - Di Peco » → « 18U - Di Peco ». Utilisé seulement si la Direction n'a pas saisi de nom affiché. */
 export function nomPublicParDefaut(nom: string) {
-  return nom
-    .replace(/^(softball|baseball)\s+/i, "")
-    .split(/\s+[-—–]\s+/)[0]
-    .trim();
+  return nom.replace(/^(softball|baseball)\s+/i, "").trim();
 }
 
-/** Nom affiché d'une équipe : nom saisi par la Direction, sinon le niveau (+ entraîneur si deux équipes ont le même niveau). */
-export function nomAffiche(t: { name: string; nom_public?: string | null }, equipesDuSport: { name: string }[]) {
-  const saisi = (t.nom_public ?? "").trim();
-  if (saisi) return saisi;
-  const niveau = nomPublicParDefaut(t.name);
-  const memeNiveau = equipesDuSport.filter((e) => nomPublicParDefaut(e.name) === niveau).length;
-  const suffixe = t.name.split(/\s+[-—–]\s+/)[1]?.trim();
-  return memeNiveau > 1 && suffixe ? `${niveau} · ${suffixe}` : niveau;
+/** Nom affiché d'une équipe : nom saisi par la Direction, sinon le nom dans ROF Connect sans le sport (ex. « 18U - Di Peco »). */
+export function nomAffiche(t: { name: string; nom_public?: string | null }) {
+  return (t.nom_public ?? "").trim() || nomPublicParDefaut(t.name);
 }
 
 /** Équipes visibles sur le site public, décidées par la Direction dans ROF Connect. */
@@ -44,7 +37,7 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("teams")
-    .select("id, name, sport, nom_public, description_publique, ordre_affichage")
+    .select("id, name, sport, nom_public, description_publique, ordre_affichage, roster_public")
     .eq("sport", sport)
     .eq("visible_public", true)
     .eq("archived", false);
@@ -65,6 +58,7 @@ type LigneEquipe = {
   nom_public: string | null;
   description_publique: string | null;
   ordre_affichage: number | null;
+  roster_public?: boolean | null;
 };
 
 async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAdminClient>): Promise<EquipePublique[]> {
@@ -88,13 +82,14 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
   }
 
   return liste.map((t) => {
-    const nom = nomAffiche(t, liste);
+    const nom = nomAffiche(t);
     return {
       id: t.id,
       nom,
       description: (t.description_publique ?? "").trim(),
       nb: compte.get(t.id) ?? 0,
       vedette: /varsity/i.test(nom),
+      roster: t.roster_public !== false,
     };
   });
 }

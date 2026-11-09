@@ -9,7 +9,7 @@ export function sportDe(valeur: string | undefined): Sport {
 
 export type Evenement = { m: string; y: string; t: string; p: string; tag: string; hl?: boolean };
 export type Palmares = { y: string; l: string[] };
-export type Engagee = { who: string; s: string; m: string; c: string };
+export type Engagee = { who: string; s: string; m: string; c: string; photo?: string };
 
 type Contenu = {
   mot: string; // « Softball » / « Baseball »
@@ -63,9 +63,9 @@ export const CONTENU: Record<Sport, Contenu> = {
       { y: "2024", l: ["Champion canadien Softball — 12U, 14U", "World Series Softball — 12U, 14U"] },
     ],
     engagees: [
-      { who: "Maeva Gascon", s: "North Platte Community College", m: "NJCAA D1 · Nebraska", c: "2026" },
-      { who: "Julia Collard", s: "Dodge City Community College", m: "NJCAA D1 · Kansas", c: "2027" },
-      { who: "Béatrice Vézina", s: "Hill College", m: "NJCAA D1 · Texas", c: "2027" },
+      { who: "Maeva Gascon", s: "North Platte Community College", m: "NJCAA D1 · Nebraska", c: "2026", photo: "/photos/committed-maeva-gascon.jpg" },
+      { who: "Julia Collard", s: "Dodge City Community College", m: "NJCAA D1 · Kansas", c: "2027", photo: "/photos/committed-julia-collard.jpg" },
+      { who: "Béatrice Vézina", s: "Hill College", m: "NJCAA D1 · Texas", c: "2027", photo: "/photos/committed-hill-college.webp" },
     ],
     videCalendrier: "",
     videPalmares: "",
@@ -113,3 +113,14 @@ export const PARTENAIRES: { nom: string; src?: string }[] = [
   { nom: "Sébastien Gervais Photo", src: "/partenaires/sebastien-gervais-photo.jpg" },
   { nom: "Gym L'Armure" }, // logo à fournir
 ];
+
+const sansAccent = (n: string) => n.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+/**
+ * Engagement universitaire d'une joueuse (par son nom). Pour en ajouter un : ajouter une entrée dans CONTENU.softball.engagees
+ * (nom, école, division · État, année, photo) : il apparaît à la fois sur l'accueil et au bas de son profil.
+ */
+export function engagementDe(nom: string): Engagee | null {
+  const cle = sansAccent(nom);
+  return Object.values(CONTENU).flatMap((c) => c.engagees).find((e) => sansAccent(e.who) === cle) ?? null;
+}

@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse, changerStatutJoueuse } from "./actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
+import { changerNumeroJoueuse } from "@/app/membres/admin/joueurs/actions";
+import { chargerNumeros } from "@/lib/numeros-chandail";
+import { FormPhotoJoueuse } from "@/components/membres/FormPhotoJoueuse";
 import { chargerStatutsJoueuses, premierSeptembre, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
@@ -101,6 +104,7 @@ export default async function JoueursPage({
   const archivees = await chargerArchivees();
   const tousLiens = await chargerTousLiens();
   const statutsJoueuses = await chargerStatutsJoueuses();
+  const numeros = await chargerNumeros();
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
   const nbArchivees = tousLesJoueurs.filter(([pid]) => archivees.has(pid)).length;
 
@@ -317,6 +321,25 @@ export default async function JoueursPage({
                   );
                 })()}
               </details>
+
+              <FormPhotoJoueuse profileId={profileId} />
+              <form action={changerNumeroJoueuse} className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                <input type="hidden" name="profile_id" value={profileId} />
+                <label htmlFor={`numero-${profileId}`} className="text-rof-gris">
+                  N° de chandail
+                </label>
+                <input
+                  id={`numero-${profileId}`}
+                  name="numero"
+                  inputMode="numeric"
+                  maxLength={2}
+                  defaultValue={numeros[profileId] ?? ""}
+                  className="w-16 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
+                />
+                <button type="submit" className="text-rof-poudre underline">
+                  Enregistrer
+                </button>
+              </form>
 
               {/* 1) Statut : propre à la joueuse, indépendant de ses équipes */}
               <div className="mt-3 rounded-lg border border-rof-ligne p-3">

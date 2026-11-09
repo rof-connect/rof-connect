@@ -7,6 +7,8 @@ import { trouverOuCreerJoueuse } from "@/lib/joueuses";
 import { definirArchivee } from "@/lib/joueuses-archivees";
 import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
+import { cheminPhotoProfil } from "@/lib/photo-profil";
+import { definirNumeros } from "@/lib/numeros-chandail";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
   prospect: 1,
@@ -340,4 +342,25 @@ export async function accepterJoueuse(formData: FormData) {
   revalidatePath("/membres/admin/joueurs");
   revalidatePath("/membres/admin");
   revalidatePath("/membres");
+}
+
+/** La Direction ajoute ou remplace la photo de profil d'une joueuse (affichée dans le roster et son profil si l'autorisation photo est donnée). */
+export async function changerPhotoJoueuse(formData: FormData) {
+  if (!(await verifierAdmin())) return;
+  const profileId = String(formData.get("profile_id") ?? "");
+  const photo = formData.get("photo") as File | null;
+  if (!/^[0-9a-f-]{36}$/i.test(profileId) || !photo || photo.size === 0 || photo.size > 5 * 1024 * 1024 || !photo.type.startsWith("image/")) return;
+  await createAdminClient().storage.from("media").upload(cheminPhotoProfil(profileId), photo, { upsert: true, contentType: "image/jpeg" });
+  revalidatePath("/membres/admin/joueurs");
+  revalidatePath("/site-v2");
+}
+
+/** La Direction saisit le numéro de chandail d'une joueuse (affiché dans le roster du site public). */
+export async function changerNumeroJoueuse(formData: FormData) {
+  if (!(await verifierAdmin())) return;
+  const profileId = String(formData.get("profile_id") ?? "");
+  if (!/^[0-9a-f-]{36}$/i.test(profileId)) return;
+  await definirNumeros({ [profileId]: String(formData.get("numero") ?? "") });
+  revalidatePath("/membres/admin/joueurs");
+  revalidatePath("/site-v2");
 }

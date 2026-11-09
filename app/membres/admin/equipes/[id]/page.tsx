@@ -48,6 +48,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
     option: string | null;
     archived: boolean;
     visible_public?: boolean;
+    roster_public?: boolean | null;
     ordre_affichage?: number | null;
     nom_public?: string | null;
     description_publique?: string | null;
@@ -55,7 +56,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
   // Avec les champs du site public (migration 0009) ; sinon sans eux (la migration n'est pas encore appliquée).
   const complet = await supabase
     .from("teams")
-    .select("id, name, sport, season_year, option, archived, visible_public, ordre_affichage, nom_public, description_publique")
+    .select("id, name, sport, season_year, option, archived, visible_public, roster_public, ordre_affichage, nom_public, description_publique")
     .eq("id", id)
     .maybeSingle();
   const migre = !complet.error;
@@ -130,6 +131,10 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
             <label className="flex items-center gap-2 text-sm text-rof-texte">
               <input type="checkbox" name="visible_public" defaultChecked={equipe.visible_public ?? false} className="h-4 w-4" />
               Visible sur le site public
+            </label>
+            <label className="flex items-center gap-2 text-sm text-rof-texte">
+              <input type="checkbox" name="roster_public" defaultChecked={equipe.roster_public !== false} className="h-4 w-4" />
+              Afficher le roster (liste des joueuses) sur la page de l&apos;équipe
             </label>
             <div className="grid grid-cols-2 gap-3">
               <div>
