@@ -231,3 +231,10 @@ export const GALERIES: Record<Sport, { src: string; alt: string }[]> = {
  * appliquée ; ensuite, la case « Afficher le roster » de la gestion des équipes décide.
  */
 export const ROSTER_PROVISOIRE = ["18U - Di Peco"];
+
+/** Étiquettes de catégorie par équipe (ex. NATIONAL). Sert seulement tant que la migration 0009 n'est pas appliquée. */
+export const CATEGORIE_PROVISOIRE: Record<string, string> = {
+  "18U - Di Peco": "NATIONAL",
+  "16U - Bertrand": "RÉGIONAL",
+  "16U - Dostaler": "PROSPECT",
+};

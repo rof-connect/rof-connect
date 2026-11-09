@@ -7,7 +7,8 @@ alter table teams
   add column if not exists nom_public text,
   add column if not exists roster_public boolean not null default true,
   add column if not exists gamechanger_widget_id text,
-  add column if not exists gamechanger_url text;
+  add column if not exists gamechanger_url text,
+  add column if not exists categorie text;
 
 comment on column teams.visible_public is 'Affichée sur le site public (royalonfield.ca). Faux par défaut.';
 comment on column teams.ordre_affichage is 'Ordre sur le site public (petit = en premier). Vide = tri par défaut.';
@@ -31,3 +32,9 @@ where archived = false and name = 'Softball 16U - Dostaler';
 -- Roster affiché seulement pour 18U - Di Peco (softball) ; les autres équipes de softball : roster masqué.
 update teams set roster_public = false
 where sport = 'softball' and archived = false and name <> 'Softball 18U - Di Peco';
+
+comment on column teams.categorie is 'Étiquette de catégorie affichée sur le site public (ex. NATIONAL).';
+update teams set categorie = 'NATIONAL'
+where archived = false and name = 'Softball 18U - Di Peco';
+update teams set categorie = 'RÉGIONAL' where archived = false and name = 'Softball 16U - Bertrand';
+update teams set categorie = 'PROSPECT' where archived = false and name = 'Softball 16U - Dostaler';

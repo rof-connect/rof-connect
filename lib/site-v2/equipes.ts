@@ -2,7 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { comparerEquipes } from "@/lib/equipes";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
-import { GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
+import { CATEGORIE_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
 export type EquipePublique = {
   id: string;
@@ -10,6 +10,7 @@ export type EquipePublique = {
   description: string;
   nb: number | null; // nombre de joueuses/joueurs, calculé depuis ROF Connect
   vedette: boolean;
+  categorie: string; // étiquette (ex. NATIONAL), vide si aucune
   matchs: boolean; // calendrier GameChanger disponible (widget ou lien)
   roster: boolean; // la Direction autorise l'affichage du roster (par défaut : oui)
 };
@@ -38,7 +39,7 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("teams")
-    .select("id, name, sport, nom_public, description_publique, ordre_affichage, roster_public, gamechanger_widget_id, gamechanger_url")
+    .select("id, name, sport, nom_public, description_publique, ordre_affichage, roster_public, gamechanger_widget_id, gamechanger_url, categorie")
     .eq("sport", sport)
     .eq("visible_public", true)
     .eq("archived", false);
@@ -62,6 +63,7 @@ type LigneEquipe = {
   roster_public?: boolean | null;
   gamechanger_widget_id?: string | null;
   gamechanger_url?: string | null;
+  categorie?: string | null;
 };
 
 async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAdminClient>): Promise<EquipePublique[]> {
@@ -93,6 +95,7 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
       nb: compte.get(t.id) ?? 0,
       vedette: /varsity/i.test(nom),
       roster: t.roster_public !== false,
+      categorie: ((t.categorie ?? "").trim() || CATEGORIE_PROVISOIRE[nomPublicParDefaut(t.name)] || "").slice(0, 30),
       matchs: Boolean(
         idGameChanger(t.gamechanger_widget_id) ||
           lienGameChanger(t.gamechanger_url) ||

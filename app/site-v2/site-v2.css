@@ -326,3 +326,7 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .gallery.gallery-auto .g:nth-child(1){grid-column:span 2;grid-row:span 2}
 .v2 .gallery.gallery-auto .g img{object-position:50% 25%}
 @media (max-width:1000px){.v2 .gallery.gallery-auto{grid-auto-rows:220px}.v2 .gallery.gallery-auto .g:nth-child(1){grid-column:span 2;grid-row:span 1}}
+
+/* Étiquette de catégorie (ex. NATIONAL) */
+.v2 .team-tag{position:absolute;top:16px;left:18px;z-index:2;font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;background:var(--accent);color:var(--navy);padding:5px 10px;border-radius:3px}
+.v2 .team-tag-hero{position:static;display:inline-block;margin:6px 0 4px}
