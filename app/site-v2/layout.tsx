@@ -6,7 +6,7 @@ import "./site-v2.css";
 const bebas = Bebas_Neue({ variable: "--font-bebas", subsets: ["latin"], weight: "400", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Royal On Field — Athletics",
+  title: { absolute: "Royal On Field — Athletics" },
   description: "Programme élite de baseball et softball de Lanaudière. Équipes, calendrier, recrutement et engagements universitaires.",
   robots: { index: false, follow: false }, // aperçu : à retirer lors de la mise en ligne
 };

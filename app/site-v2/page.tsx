@@ -117,9 +117,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           <div className="wrap">
             <div className="head">
               <h2>
-                {c.mot}
-                <br />
-                <em>Équipes</em>
+                {c.mot} <em>Équipes</em>
               </h2>
               <Link className="more" href="/inscription">Joindre le programme →</Link>
             </div>
@@ -135,7 +133,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                       </span>
                     )}
                     <div className="lvl">{t.nom}</div>
-                    {t.roster && t.nb !== null && t.nb > 0 && (
+                    {t.nb !== null && t.nb > 0 && (
                       <div className="meta">
                         {t.nb} {sport === "softball" ? (t.nb > 1 ? "joueuses" : "joueuse") : t.nb > 1 ? "joueurs" : "joueur"}
                       </div>

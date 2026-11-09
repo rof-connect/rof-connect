@@ -2,6 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { comparerEquipes } from "@/lib/equipes";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
+import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { CATEGORIE_PROVISOIRE, NIVEAU_PROVISOIRE, ORDRE_PUBLIC, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
 export type EquipePublique = {
@@ -90,12 +91,14 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
   const compte = new Map<string, number>();
   const uniques = new Set<string>();
   if (ids.length) {
-    const [{ data: membres }, archivees] = await Promise.all([
-      admin.from("team_members").select("team_id, profile_id").eq("role_in_team", "athlete").in("team_id", ids),
+    const [{ data: membres }, archivees, statuts] = await Promise.all([
+      admin.from("team_members").select("team_id, profile_id, status_id").eq("role_in_team", "athlete").in("team_id", ids),
       chargerArchivees(),
+      chargerStatutsJoueuses(),
     ]);
     (membres ?? []).forEach((m) => {
-      if (archivees.has(m.profile_id)) return;
+      // Seules les joueuses acceptées par la Direction (statut autre que Prospect) sont comptées.
+      if (archivees.has(m.profile_id) || statutEffectif(m.profile_id, statuts, [m.status_id]) <= 1) return;
       compte.set(m.team_id, (compte.get(m.team_id) ?? 0) + 1);
       uniques.add(m.profile_id);
     });

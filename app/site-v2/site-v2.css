@@ -356,3 +356,19 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .team-tags .team-tag{position:static}
 .v2 .team-niveau{background:#fff;color:var(--royal-deep)}
 .v2 .team-tags-hero{position:static;display:flex;margin:6px 0 4px}
+
+/* Titre « Softball Équipes » sur une ligne, bloc plus compact */
+.v2 #equipes.block{padding:56px 0}
+.v2 #equipes .head{margin-bottom:24px}
+.v2 #equipes .head h2{font-size:clamp(44px,5.5vw,72px)}
+
+/* Cibles tactiles d'au moins 44 px */
+.v2 .util .wrap{height:44px}
+.v2 .sport-switch a{min-height:44px;padding:0 18px}
+.v2 .util .links a{display:inline-flex;align-items:center;min-height:44px}
+.v2 .burger{width:44px;height:44px;display:none;align-items:center;justify-content:center}
+@media (max-width:1000px){.v2 .burger{display:inline-flex}}
+.v2 .head .more{display:inline-flex;align-items:center;min-height:44px}
+.v2 footer a{display:flex;align-items:center;min-height:44px;padding:0}
+.v2 nav.primary a{min-height:44px;display:inline-flex;align-items:center}
+.v2 .quick a{min-height:44px}
