@@ -6,7 +6,7 @@ import { urlPhotoProfil } from "@/lib/photo-profil";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { nomAffiche, nomPublicParDefaut } from "./equipes";
-import { GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
+import { GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
 export type JoueuseRoster = {
   id: string;
@@ -77,7 +77,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
   }
   if (!equipe) return null;
 
-  const afficher = equipe.roster_public !== false; // par défaut : affiché
+  const afficher = provisoire ? ROSTER_PROVISOIRE.includes(nomPublicParDefaut(equipe.name)) : equipe.roster_public !== false; // par défaut : affiché
 
   const base = {
     id: equipe.id,

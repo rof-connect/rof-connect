@@ -266,15 +266,18 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .badge-commit{display:inline-block;margin-left:10px;font-family:var(--body);font-style:normal;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:var(--accent);color:var(--navy);padding:3px 8px;border-radius:3px;vertical-align:middle}
 @media (max-width:800px){.v2 .engage-profil{grid-template-columns:1fr;gap:24px}.v2 .engage-photo{max-width:300px}}
 
-/* Réseaux sociaux intégrés */
-.v2 .reseaux{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
-.v2 .reseau h3{font-family:var(--display);font-size:34px;line-height:1;margin-bottom:14px}
-.v2 .insta-embed,.v2 .tiktok-boite{background:#fff;border-radius:8px;overflow:hidden;min-height:200px}
-.v2 .insta-embed iframe{display:block;width:100%;height:640px;border:0}
-.v2 .tiktok-boite{padding:8px;color:var(--ink)}
-.v2 .tiktok-boite blockquote{margin:0 auto}
-.v2 .reseau-lien{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
-@media (max-width:1000px){.v2 .reseaux{grid-template-columns:1fr}.v2 .insta-embed iframe{height:560px}}
+/* Réseaux sociaux : logos et liens */
+.v2 .reseaux-section{padding:48px 0}
+.v2 .reseaux-section .head{margin-bottom:20px}
+.v2 .reseaux-section .head h2{font-size:clamp(40px,5vw,64px)}
+.v2 .reseaux-liens{list-style:none;display:flex;flex-wrap:wrap;gap:14px}
+.v2 .reseaux-liens a{display:flex;align-items:center;gap:14px;min-height:64px;padding:10px 22px 10px 12px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.06);transition:.15s}
+.v2 .reseaux-liens a:hover{background:rgba(255,255,255,.14);border-color:var(--accent)}
+.v2 .reseaux-liens .ico{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--navy)}
+.v2 .reseaux-liens .txt{display:flex;flex-direction:column;line-height:1.2}
+.v2 .reseaux-liens b{font-family:var(--display);font-size:26px;font-weight:400;letter-spacing:.03em}
+.v2 .reseaux-liens small{font-size:13px;color:#C9D4EE}
+@media (max-width:600px){.v2 .reseaux-liens a{width:100%}}
 
 /* Calendrier GameChanger */
 .v2 .gc-boite{background:#fff;border-radius:8px;padding:12px;min-height:160px;color:var(--ink)}

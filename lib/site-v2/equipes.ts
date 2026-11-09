@@ -2,7 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { comparerEquipes } from "@/lib/equipes";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
-import type { Sport } from "./donnees";
+import { GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
 export type EquipePublique = {
   id: string;
@@ -10,6 +10,7 @@ export type EquipePublique = {
   description: string;
   nb: number | null; // nombre de joueuses/joueurs, calculé depuis ROF Connect
   vedette: boolean;
+  matchs: boolean; // calendrier GameChanger disponible (widget ou lien)
   roster: boolean; // la Direction autorise l'affichage du roster (par défaut : oui)
 };
 
@@ -37,7 +38,7 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("teams")
-    .select("id, name, sport, nom_public, description_publique, ordre_affichage, roster_public")
+    .select("id, name, sport, nom_public, description_publique, ordre_affichage, roster_public, gamechanger_widget_id, gamechanger_url")
     .eq("sport", sport)
     .eq("visible_public", true)
     .eq("archived", false);
@@ -45,7 +46,7 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
   if (error) {
     // Migration 0009 pas encore appliquée : toutes les équipes actives de ROF Connect (provisoire).
     const { data: actives } = await admin.from("teams").select("id, name, sport").eq("sport", sport).eq("archived", false);
-    return { source: "provisoire", equipes: await enrichir((actives ?? []).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null })), admin) };
+    return { source: "provisoire", equipes: await enrichir((actives ?? []).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null, roster_public: ROSTER_PROVISOIRE.includes(nomPublicParDefaut(t.name)) })), admin) };
   }
 
   return { source: "bd", equipes: await enrichir(data ?? [], admin) };
@@ -59,6 +60,8 @@ type LigneEquipe = {
   description_publique: string | null;
   ordre_affichage: number | null;
   roster_public?: boolean | null;
+  gamechanger_widget_id?: string | null;
+  gamechanger_url?: string | null;
 };
 
 async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAdminClient>): Promise<EquipePublique[]> {
@@ -90,6 +93,12 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
       nb: compte.get(t.id) ?? 0,
       vedette: /varsity/i.test(nom),
       roster: t.roster_public !== false,
+      matchs: Boolean(
+        idGameChanger(t.gamechanger_widget_id) ||
+          lienGameChanger(t.gamechanger_url) ||
+          idGameChanger(GAMECHANGER_PROVISOIRE[nomPublicParDefaut(t.name)]) ||
+          lienGameChanger(GAMECHANGER_LIEN_PROVISOIRE[nomPublicParDefaut(t.name)]),
+      ),
     };
   });
 }

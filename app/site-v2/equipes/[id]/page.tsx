@@ -50,6 +50,7 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
         </div>
       </section>
 
+      {r.afficher && (
       <section className="block" style={{ paddingTop: 56 }}>
         <div className="wrap">
           <div className="head">
@@ -132,6 +133,8 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
           )}
         </div>
       </section>
+      )}
+
       {(r.gamechanger || r.gamechangerLien) && (
         <section className="block dark" id="matchs">
           <div className="wrap">

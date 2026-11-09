@@ -23,15 +23,10 @@ export function Organisation({ sport }: { sport: Sport }) {
         <div className="org">
           <div className="org-texte">
             <p className="org-lead">
-              Royal On Field est un organisme à but non lucratif de Repentigny, dans Lanaudière. Nous développons des athlètes de baseball et de
-              softball, de 10U jusqu&apos;à Varsity, et les accompagnons jusqu&apos;au collège américain.
+              Un programme de développement qui favorise la pratique du sport et les saines habitudes de vie, dans un environnement
+              professionnel : installations professionnelles, entraîneurs compétents et compétition.
             </p>
-            <p>{s.intro}</p>
             <ul className="org-faits">
-              <li>
-                <b>OBNL</b>
-                <span>Organisme à but non lucratif</span>
-              </li>
               <li>
                 <b>Repentigny</b>
                 <span>Lanaudière, Québec</span>

@@ -27,3 +27,7 @@ where archived = false and name = 'Softball 16U - Dostaler';
 -- Calendrier GameChanger de 16U - Dostaler.
 update teams set gamechanger_widget_id = '1f3faad8-a77c-44a3-986c-848b65a6ac07'
 where archived = false and name = 'Softball 16U - Dostaler';
+
+-- Roster affiché seulement pour 18U - Di Peco (softball) ; les autres équipes de softball : roster masqué.
+update teams set roster_public = false
+where sport = 'softball' and archived = false and name <> 'Softball 18U - Di Peco';

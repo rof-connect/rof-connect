@@ -128,10 +128,10 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             {equipes.length > 0 ? (
               <div className="teams">
                 {equipes.map((t) => (
-                  <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href={t.roster ? `/site-v2/equipes/${t.id}` : "/inscription"}>
+                  <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href={t.roster || t.matchs ? `/site-v2/equipes/${t.id}` : "/inscription"}>
                     <div className="big" aria-hidden>{t.nom.split(" ")[0].replace("Varsity", "V")}</div>
                     <div className="lvl">{t.nom}</div>
-                    {t.nb !== null && t.nb > 0 && (
+                    {t.roster && t.nb !== null && t.nb > 0 && (
                       <div className="meta">
                         {t.nb} {sport === "softball" ? (t.nb > 1 ? "joueuses" : "joueuse") : t.nb > 1 ? "joueurs" : "joueur"}
                       </div>

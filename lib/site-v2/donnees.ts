@@ -41,10 +41,10 @@ export const CONTENU: Record<Sport, Contenu> = {
     engagementsSous: "Elles ont signé.",
     lead: "De l'école primaire au collège américain : un chemin clair, un accompagnement personnalisé vers la NCAA, la NAIA et la NJCAA.",
     etapes: [
-      { n: "01", t: "10U à 11U", d: "Les fondations : technique, plaisir du jeu et habitudes d'athlète." },
-      { n: "02", t: "12U à 13U", d: "Compétition provinciale et canadienne, avec le rêve des World Series Softball." },
-      { n: "03", t: "14U à 15U", d: "Développement élite : un calibre de jeu et une préparation qui visent le niveau supérieur." },
-      { n: "04", t: "Collège 16U à 18U", d: "Le niveau vitrine : tournois aux États-Unis, exposition aux recruteurs et accompagnement vers la NCAA, la NAIA et la NJCAA." },
+      { n: "01", t: "Royal Junior", d: "10U à 11U — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
+      { n: "02", t: "Royal Relève", d: "12U à 13U — compétition provinciale et canadienne, avec le rêve des World Series Softball." },
+      { n: "03", t: "Royal Prospect", d: "14U à 15U — développement élite : un calibre de jeu et une préparation qui visent le niveau supérieur." },
+      { n: "04", t: "Royal Élite", d: "16U à 18U — le niveau vitrine : tournois aux États-Unis, exposition aux recruteurs et accompagnement vers la NCAA, la NAIA et la NJCAA." },
     ],
     stats: [
       ["9", "Titres canadiens"],
@@ -88,10 +88,10 @@ export const CONTENU: Record<Sport, Contenu> = {
     engagementsSous: "Les prochains noms.",
     lead: "Le même parcours Royal, adapté au baseball : développement, exposition et accompagnement vers les programmes collégiaux américains.",
     etapes: [
-      { n: "01", t: "Royal Junior", d: "10U à 11U" },
-      { n: "02", t: "Royal Relève", d: "12U à 13U" },
-      { n: "03", t: "Royal Prospect", d: "14U à 15U" },
-      { n: "04", t: "Royal Élite", d: "16U à 18U" },
+      { n: "01", t: "PSES", d: "5e et 6e année — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
+      { n: "02", t: "Collège L'Assomption", d: "Le secondaire : conciliation sport-études et développement structuré." },
+      { n: "03", t: "JV / Varsity", d: "Le niveau vitrine : tournois aux États-Unis, préparation physique et exposition aux recruteurs." },
+      { n: "04", t: "Collège américain", d: "La signature : parcours 12e année ou cégep, dossier, vidéos et contacts avec les entraîneurs." },
     ],
     stats: [["10U", "à Varsity"]],
     calendrier: [],
@@ -221,3 +221,9 @@ export const GALERIES: Record<Sport, { src: string; alt: string }[]> = {
     { src: bb(10), alt: "Un jeune joueur fait semblant de frapper son entraîneur avec un bâton orange" },
   ],
 };
+
+/**
+ * Équipes dont le roster (liste des joueuses) est affiché sur le site. Sert seulement tant que la migration 0009 n'est pas
+ * appliquée ; ensuite, la case « Afficher le roster » de la gestion des équipes décide.
+ */
+export const ROSTER_PROVISOIRE = ["18U - Di Peco"];

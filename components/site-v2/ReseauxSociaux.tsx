@@ -1,98 +1,48 @@
-import Script from "next/script";
+import { IcFacebook, IcInstagram } from "@/components/programme/Icones";
 import { FACEBOOK, INSTAGRAM, TIKTOK, compteInstagram, compteTiktok, pageFacebook } from "@/lib/site-v2/donnees";
 
-const enDev = process.env.NODE_ENV !== "production";
+const IcTiktok = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden focusable="false">
+    <path d="M14 3v11.2a3.7 3.7 0 1 1-3.7-3.7" />
+    <path d="M14 3c.4 2.5 2.1 4.2 4.7 4.4" />
+  </svg>
+);
 
-function Rappel({ reseau, variable }: { reseau: string; variable: string }) {
-  return (
-    <div className="empty">
-      <h3>{reseau}</h3>
-      <p>Aperçu : ajoute le compte pour afficher l&apos;intégration ici ({variable}).</p>
-    </div>
-  );
-}
-
-/** « Suis-nous » en bas du site : Instagram, Facebook et TikTok intégrés (comptes publics). */
+/** « Suis-nous » : logos des réseaux sociaux et liens (aucune intégration externe pour l'instant). */
 export function ReseauxSociaux() {
   const insta = compteInstagram(INSTAGRAM);
   const fb = pageFacebook(FACEBOOK);
   const tt = compteTiktok(TIKTOK);
-  if (!insta && !fb && !tt && !enDev) return null;
+
+  const liens = [
+    insta && { nom: "Instagram", url: `https://www.instagram.com/${insta}/`, compte: `@${insta}`, icone: <IcInstagram className="h-7 w-7" /> },
+    fb && { nom: "Facebook", url: fb, compte: fb.replace("https://www.facebook.com/", ""), icone: <IcFacebook className="h-7 w-7" /> },
+    tt && { nom: "TikTok", url: `https://www.tiktok.com/@${tt}`, compte: `@${tt}`, icone: <IcTiktok /> },
+  ].filter(Boolean) as { nom: string; url: string; compte: string; icone: React.ReactNode }[];
+  if (!liens.length) return null;
 
   return (
-    <section className="block dark" id="reseaux">
+    <section className="block dark reseaux-section" id="reseaux">
       <div className="wrap">
         <div className="head">
           <h2>
-            Suis-nous
-            <br />
-            <em>en ligne</em>
+            Suis-nous <em>en ligne</em>
           </h2>
           <span className="pill hl">#EarnTheCrown</span>
         </div>
-
-        <div className="reseaux">
-          <div className="reseau">
-            <h3>Instagram</h3>
-            {insta ? (
-              <>
-                <div className="insta-embed">
-                  <iframe src={`https://www.instagram.com/${insta}/embed`} title={`Publications Instagram de @${insta}`} loading="lazy" scrolling="no" referrerPolicy="strict-origin-when-cross-origin" />
-                </div>
-                <a className="reseau-lien" href={`https://www.instagram.com/${insta}/`} target="_blank" rel="noopener noreferrer">
-                  @{insta} sur Instagram →
-                </a>
-              </>
-            ) : (
-              enDev && <Rappel reseau="Instagram" variable="NEXT_PUBLIC_INSTAGRAM_URL" />
-            )}
-          </div>
-
-          <div className="reseau">
-            <h3>Facebook</h3>
-            {fb ? (
-              <>
-                <div className="insta-embed">
-                  <iframe
-                    src={`https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(fb)}&tabs=timeline&width=500&height=640&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false`}
-                    title="Publications Facebook de Royal On Field"
-                    loading="lazy"
-                    scrolling="no"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                  />
-                </div>
-                <a className="reseau-lien" href={fb} target="_blank" rel="noopener noreferrer">
-                  Notre page Facebook →
-                </a>
-              </>
-            ) : (
-              enDev && <Rappel reseau="Facebook" variable="NEXT_PUBLIC_FACEBOOK_URL" />
-            )}
-          </div>
-
-          <div className="reseau">
-            <h3>TikTok</h3>
-            {tt ? (
-              <>
-                <div className="tiktok-boite">
-                  <blockquote className="tiktok-embed" cite={`https://www.tiktok.com/@${tt}`} data-unique-id={tt} data-embed-type="creator" style={{ maxWidth: 780, minWidth: 288 }}>
-                    <section>
-                      <a target="_blank" rel="noopener noreferrer" href={`https://www.tiktok.com/@${tt}`}>
-                        @{tt}
-                      </a>
-                    </section>
-                  </blockquote>
-                </div>
-                <Script src="https://www.tiktok.com/embed.js" strategy="lazyOnload" />
-                <a className="reseau-lien" href={`https://www.tiktok.com/@${tt}`} target="_blank" rel="noopener noreferrer">
-                  @{tt} sur TikTok →
-                </a>
-              </>
-            ) : (
-              enDev && <Rappel reseau="TikTok" variable="NEXT_PUBLIC_TIKTOK_URL" />
-            )}
-          </div>
-        </div>
+        <ul className="reseaux-liens">
+          {liens.map((l) => (
+            <li key={l.nom}>
+              <a href={l.url} target="_blank" rel="noopener noreferrer" aria-label={`${l.nom} : ${l.compte} (nouvel onglet)`}>
+                <span className="ico">{l.icone}</span>
+                <span className="txt">
+                  <b>{l.nom}</b>
+                  <small>{l.compte}</small>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
