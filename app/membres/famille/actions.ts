@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { creerEnfant, famille, normaliserNom } from "@/lib/joueuses";
+import { envoyerADirection, echapper } from "@/lib/notifier-direction";
 
 export async function changerDeJoueuse(formData: FormData) {
   const cibleId = String(formData.get("profile_id") ?? "");
@@ -59,6 +60,12 @@ export async function ajouterJoueuse(_prev: { ok: boolean; erreur: string | null
 
   const naissance = String(formData.get("birth_date") ?? "").trim();
   if (naissance) await admin.from("athlete_details").upsert({ profile_id: res.profileId, birth_date: naissance }, { onConflict: "profile_id" });
+
+  await envoyerADirection(
+    `Nouvelle joueuse ajoutée : ${nom}`,
+    `<p style="font-family:Arial,sans-serif"><b>${echapper(nom)}</b> a été ajoutée par un parent (compte de ${echapper(racine.email ?? "—")}). ` +
+      `Statut : <b>Prospect</b>, à activer dans Direction (statut et équipe sont décidés par la Direction).</p>`,
+  );
 
   revalidatePath("/membres", "layout");
   return { ok: true, erreur: null };

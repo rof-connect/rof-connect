@@ -1,5 +1,5 @@
 // Ordre d'affichage des équipes : celui de la Direction, puis par âge décroissant pour les autres.
-const ORDRE = ["18U - Di Peco", "16U - Bertrand", "16U - Dostaler", "14U", "14U - Riley", "12U - Peley", "12U - Boisclair", "10U - Puga"];
+const ORDRE = ["18U - Di Peco", "16U - Bertrand", "16U - Dostaler", "14U - Riley", "14U", "12U - Peley", "12U - Boisclair", "10U - Puga"];
 
 const cle = (nom: string) => nom.replace(/^(softball|baseball)\s+/i, "").trim();
 const age = (nom: string) => Number(/(\d{1,2})\s*U/i.exec(nom)?.[1] ?? 0);
