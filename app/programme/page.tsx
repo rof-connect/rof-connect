@@ -61,6 +61,27 @@ export default async function ProgrammePage() {
     { src: "/photos/committed-julia-collard.jpg", nom: "Julia Collard", ecole: "Dodge City Community College · NJCAA Division 1", detail: "2027 - Kansas" },
     { src: "/photos/committed-hill-college.webp", nom: "Béatrice Vézina", ecole: "Hill College · NJCAA Division 1", detail: "2027 - Texas" },
   ];
+  const partenaires = [
+    { src: "/partenaires/little-league.jpg", nom: "Little League", zoom: 1.9 },
+    { src: "/partenaires/usa-softball.png", nom: "USA Softball", zoom: 1 },
+    { src: "/partenaires/fastpitch-nation.jpg", nom: "Fastpitch Nation", zoom: 1 },
+    { src: "/partenaires/entrepot-du-baseball.png", nom: "L'entrepôt du Baseball", zoom: 1 },
+    { src: "/partenaires/sebastien-gervais-photo.jpg", nom: "Sébastien Gervais Photo", zoom: 1 },
+  ];
+  const galerie = [
+    ["/photos/galerie-01.jpg", 1024, 1280],
+    ["/photos/galerie-02.jpg", 1024, 819],
+    ["/photos/galerie-03.jpg", 1024, 1280],
+    ["/photos/galerie-04.jpg", 1024, 1280],
+    ["/photos/galerie-05.jpg", 1024, 1280],
+    ["/photos/galerie-06.jpg", 1024, 1280],
+    ["/photos/galerie-07.jpg", 1024, 1280],
+    ["/photos/galerie-08.jpg", 1024, 1280],
+    ["/photos/galerie-09.jpg", 1024, 1280],
+    ["/photos/galerie-10.jpg", 1024, 819],
+    ["/photos/galerie-11.jpg", 1024, 819],
+    ["/photos/galerie-12.jpg", 740, 2000],
+  ] as [string, number, number][];
   const legendes = fr
     ? { unies: "Unies", fieres: "Fières", focus: "Focus", canada: "Équipe Canada", fun: "Le plaisir de jouer" }
     : { unies: "United", fieres: "Proud", focus: "Focus", canada: "Team Canada", fun: "The joy of playing" };
@@ -151,6 +172,22 @@ export default async function ProgrammePage() {
           <Photo src="/photos/canada.jpg" alt="" legende={legendes.canada} className="aspect-[3/4] lg:row-span-2 lg:aspect-auto" position="50% 30%" />
           <Photo src="/photos/celebration.jpg" alt="" legende={legendes.unies} className="col-span-2 aspect-[3/2] lg:aspect-auto" position="50% 45%" />
           <Photo src="/photos/trio-fun.jpg" alt="" legende={legendes.fun} className="col-span-2 aspect-[3/2] lg:aspect-auto" position="50% 35%" />
+        </div>
+      </section>
+
+      {/* ───────── EN IMAGES ───────── */}
+      <section className="mx-auto max-w-7xl px-5 pb-24">
+        <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{fr ? "En images" : "In pictures"}</h2>
+        <div className="mt-8 columns-2 gap-3 sm:gap-4 lg:columns-3">
+          {galerie.map(([src, w, h]) => (
+            <div
+              key={src}
+              className="relative mb-3 overflow-hidden rounded-2xl bg-rof-blanc sm:mb-4"
+              style={{ aspectRatio: String(Math.max(w / h, 0.75)) }}
+            >
+              <Image src={src} alt="" fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-cover transition duration-700 hover:scale-105" />
+            </div>
+          ))}
         </div>
       </section>
 
@@ -246,6 +283,22 @@ export default async function ProgrammePage() {
             ))}
           </ul>
           <p className="mt-8 font-condensed text-4xl font-bold uppercase text-rof-or">{s.builtRoyal}</p>
+        </div>
+      </section>
+
+      {/* ───────── NOS PARTENAIRES ───────── */}
+      <section className="border-t border-rof-ligne">
+        <div className="mx-auto max-w-7xl px-5 py-20">
+          <h2 className="text-center font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{fr ? "Nos partenaires" : "Our partners"}</h2>
+          <ul className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {partenaires.map((p) => (
+              <li key={p.nom} className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl bg-white p-6 transition hover:-translate-y-1">
+                <div className="relative h-full w-full" style={{ transform: `scale(${p.zoom})` }}>
+                  <Image src={p.src} alt={p.nom} fill sizes="(min-width: 1024px) 20vw, 50vw" className="object-contain" />
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
