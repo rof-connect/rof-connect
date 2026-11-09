@@ -236,5 +236,5 @@ export const ROSTER_PROVISOIRE = ["18U - Di Peco"];
 export const CATEGORIE_PROVISOIRE: Record<string, string> = {
   "18U - Di Peco": "NATIONAL",
   "16U - Bertrand": "RÉGIONAL",
-  "16U - Dostaler": "PROSPECT",
+  "16U - Dostaler": "ÉLITE",
 };
