@@ -335,3 +335,18 @@ html:has(.v2){scroll-behavior:smooth}
 
 .v2 .btn.ghost-clair{border:2px solid var(--royal);color:var(--royal)}
 .v2 .btn.ghost-clair:hover{background:var(--royal);color:#fff}
+
+/* Équipes sur une seule ligne (cartes plus compactes) */
+.v2 .teams{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px}
+.v2 .team{min-height:200px;padding:14px}
+.v2 .team.feat{grid-column:auto}
+.v2 .team .big{font-size:96px;right:-4px;top:-8px}
+.v2 .team .lvl{font-size:30px;line-height:.9;word-break:break-word}
+.v2 .team .meta{font-size:10px;letter-spacing:.1em}
+.v2 .team .bar{margin:10px 0 8px}
+.v2 .team .desc{font-size:12px}
+.v2 .team .team-tag{top:10px;left:12px;font-size:9px;padding:4px 7px;letter-spacing:.14em}
+@media (max-width:1100px){
+  .v2 .teams{grid-auto-columns:minmax(150px,1fr);overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity}
+  .v2 .team{scroll-snap-align:start}
+}

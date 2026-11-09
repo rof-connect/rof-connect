@@ -17,6 +17,8 @@ export type EquipePublique = {
 
 export type ResultatEquipes = {
   equipes: EquipePublique[];
+  /** Joueuses inscrites à l'application dans ces équipes, chacune comptée une seule fois. */
+  joueuses: number;
   /**
    * « bd » : équipes cochées « Visible sur le site » par la Direction.
    * « provisoire » : la migration 0009 n'est pas encore appliquée, on affiche toutes les équipes actives de ROF Connect.
@@ -47,10 +49,12 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
   if (error) {
     // Migration 0009 pas encore appliquée : toutes les équipes actives de ROF Connect (provisoire).
     const { data: actives } = await admin.from("teams").select("id, name, sport").eq("sport", sport).eq("archived", false);
-    return { source: "provisoire", equipes: await enrichir((actives ?? []).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null, roster_public: ROSTER_PROVISOIRE.includes(nomPublicParDefaut(t.name)) })), admin) };
+    const e = await enrichir((actives ?? []).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null, roster_public: ROSTER_PROVISOIRE.includes(nomPublicParDefaut(t.name)) })), admin);
+    return { source: "provisoire", equipes: e.equipes, joueuses: e.joueuses };
   }
 
-  return { source: "bd", equipes: await enrichir(data ?? [], admin) };
+  const e = await enrichir(data ?? [], admin);
+  return { source: "bd", equipes: e.equipes, joueuses: e.joueuses };
 }
 
 type LigneEquipe = {
@@ -66,7 +70,7 @@ type LigneEquipe = {
   categorie?: string | null;
 };
 
-async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAdminClient>): Promise<EquipePublique[]> {
+async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAdminClient>): Promise<{ equipes: EquipePublique[]; joueuses: number }> {
   const liste = [...lignes].sort((a, b) => {
     const oa = a.ordre_affichage ?? Number.MAX_SAFE_INTEGER;
     const ob = b.ordre_affichage ?? Number.MAX_SAFE_INTEGER;
@@ -82,17 +86,20 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
   // Nombre d'athlètes par équipe (sans les joueuses archivées). Aucun nom ni donnée personnelle n'est lu.
   const ids = liste.map((t) => t.id);
   const compte = new Map<string, number>();
+  const uniques = new Set<string>();
   if (ids.length) {
     const [{ data: membres }, archivees] = await Promise.all([
       admin.from("team_members").select("team_id, profile_id").eq("role_in_team", "athlete").in("team_id", ids),
       chargerArchivees(),
     ]);
     (membres ?? []).forEach((m) => {
-      if (!archivees.has(m.profile_id)) compte.set(m.team_id, (compte.get(m.team_id) ?? 0) + 1);
+      if (archivees.has(m.profile_id)) return;
+      compte.set(m.team_id, (compte.get(m.team_id) ?? 0) + 1);
+      uniques.add(m.profile_id);
     });
   }
 
-  return liste.map((t) => {
+  const equipes = liste.map((t) => {
     const nom = nomAffiche(t);
     return {
       id: t.id,
@@ -110,4 +117,5 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
       ),
     };
   });
+  return { equipes, joueuses: uniques.size };
 }

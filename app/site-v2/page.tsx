@@ -17,9 +17,8 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
   const { sport: param } = await searchParams;
   const sport = sportDe(param);
   const c = CONTENU[sport];
-  const { equipes, source } = await chargerEquipesPubliques(sport);
+  const { equipes, source, joueuses: nbJoueurs } = await chargerEquipesPubliques(sport);
 
-  const nbJoueurs = equipes.reduce((s, e) => s + (e.nb ?? 0), 0);
   const stats: [string, string][] = [...c.stats];
   if (equipes.length > 0) {
     const mot = sport === "softball" ? "Joueuses" : "Joueurs";

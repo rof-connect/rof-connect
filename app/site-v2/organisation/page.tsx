@@ -9,7 +9,7 @@ export const metadata = { title: "Organisation — Royal On Field" };
 
 export default async function OrganisationPage({ searchParams }: { searchParams: Promise<{ sport?: string }> }) {
   const sport = sportDe((await searchParams).sport);
-  const entraineurs = await chargerEntraineurs();
+  const entraineurs = await chargerEntraineurs(sport);
   const c = CONTENU[sport];
 
   return (
