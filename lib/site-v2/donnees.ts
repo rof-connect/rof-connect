@@ -93,7 +93,11 @@ export const CONTENU: Record<Sport, Contenu> = {
       { n: "03", t: "JV / Varsity", d: "Le niveau vitrine : tournois aux États-Unis, préparation physique et exposition aux recruteurs." },
       { n: "04", t: "Collège américain", d: "La signature : parcours 12e année ou cégep, dossier, vidéos et contacts avec les entraîneurs." },
     ],
-    stats: [["10U", "à Varsity"]],
+    stats: [
+      ["4", "Titres provinciaux"],
+      ["2", "Titres Can-Am United"],
+      ["1", "Titre ECTBL"],
+    ],
     calendrier: [],
     palmares: [],
     engagees: [],
