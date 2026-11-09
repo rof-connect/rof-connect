@@ -147,7 +147,11 @@ export const CONTENU: Record<Sport, Contenu> = {
       ["1", "Titre ECTBL"],
     ],
     calendrier: [],
-    palmares: [],
+    palmares: [
+      { y: "2025", l: ["Champion 2025 Can-Am United League 12U"] },
+      { y: "2024", l: ["Champion 2024 Can-Am United League 12U"] },
+      { y: "2023", l: ["Champion 2023 Can-Am United League 12U"] },
+    ],
     engagees: [],
     videCalendrier: "Les tournois et showcases du programme baseball seront publiés ici dès qu'ils seront confirmés.",
     videPalmares: "Le palmarès du programme baseball sera ajouté ici.",
