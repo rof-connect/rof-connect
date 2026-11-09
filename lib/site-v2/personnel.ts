@@ -12,7 +12,7 @@ export const DIRECTION_SITE: { nom: string; role: string }[] = [
 ];
 
 /** Membres de la direction qui sont aussi entraîneurs (leur compte ROF Connect est « Direction », pas « entraîneur »). */
-const ENTRAINEURS_DIRECTION: { nom: string; sport: Sport; equipes: string[] }[] = [{ nom: "Eric Dostaler", sport: "softball", equipes: ["16U - Dostaler"] }];
+const ENTRAINEURS_DIRECTION: { nom: string; sport: Sport; equipes: string[] }[] = [{ nom: "Eric Dostaler", sport: "softball", equipes: ["16U Dostaler"] }];
 
 /** Sport d'un entraîneur qui n'a pas encore d'équipe (équipe à venir). */
 const SPORT_SANS_EQUIPE: Record<string, Sport> = {
@@ -20,7 +20,7 @@ const SPORT_SANS_EQUIPE: Record<string, Sport> = {
   "Jonathan Dionne": "softball",
 };
 
-const sansSport = (nom: string) => nom.replace(/^(softball|baseball)\s+/i, "").trim();
+const sansSport = (nom: string) => nom.replace(/^(softball|baseball)\s+/i, "").replace(/\s+[-—–]\s+/g, " ").trim();
 
 /**
  * Entraîneurs d'un sport : les comptes « entraîneur » de ROF Connect avec leurs équipes actives de ce sport.

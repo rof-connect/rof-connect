@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, FIELDLEVEL, GALERIES, HERO, NB_JOUEUSES_AFFICHE, NIVEAUX, PARTENAIRES, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, FIELDLEVEL, GALERIES, HERO, LEGENDE_NIVEAUX, NIVEAUX, PARTENAIRES_PAR_SPORT, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -13,18 +13,21 @@ const Icone = ({ children }: { children: React.ReactNode }) => (
   </svg>
 );
 
+/** « 16U Dostaler » : niveau « 16U » en grand, nom « Dostaler » dessous (le nom complet reste « 16U Dostaler »). */
+function niveauNom(nom: string) {
+  const m = nom.match(/^(\d{1,2}(?:\/\d{1,2})?U)\s+(.+)$/i);
+  return m ? { niveau: m[1], reste: m[2] } : { niveau: nom, reste: "" };
+}
+
 export default async function SiteV2({ searchParams }: { searchParams: Promise<{ sport?: string }> }) {
   const { sport: param } = await searchParams;
   const sport = sportDe(param);
   const c = CONTENU[sport];
-  const { equipes, source, joueuses: nbJoueurs } = await chargerEquipesPubliques(sport);
+  const { equipes, source } = await chargerEquipesPubliques(sport);
 
   const stats: [string, string][] = [...c.stats];
-  if (equipes.length > 0) {
-    const mot = sport === "softball" ? "Joueuses" : "Joueurs";
-    if (sport === "softball") stats.push([String(NB_JOUEUSES_AFFICHE.softball ?? nbJoueurs), `${mot} · ${equipes.length} équipe${equipes.length > 1 ? "s" : ""}`]);
-    else stats.unshift([String(equipes.length), "Équipes"]);
-  }
+  // Pas de nombre de joueuses dans la bande ; le baseball ajoute seulement le nombre d'équipes.
+  if (sport === "baseball" && equipes.length > 0) stats.unshift([String(equipes.length), "Équipes"]);
   const qEquipes = equipes.length ? `${equipes.length} équipe${equipes.length > 1 ? "s" : ""} · ${NIVEAUX[sport]}` : NIVEAUX[sport];
   const qEngagees = c.engagees.length ? `${c.engagees.length} athlètes signées` : "Les premiers à venir";
 
@@ -122,22 +125,18 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
               <Link className="more" href="/inscription">Joindre le programme →</Link>
             </div>
             {equipes.length > 0 ? (
+              <>
               <div className="teams">
                 {equipes.map((t) => (
                   <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href={t.roster || t.matchs ? `/site-v2/equipes/${t.id}` : "/inscription"}>
-                    <div className="big" aria-hidden>{t.nom.split(" ")[0].replace("Varsity", "V")}</div>
-                    {(t.categorie || t.niveau) && (
+                    <div className="big" aria-hidden>{niveauNom(t.nom).niveau.replace("Varsity", "V")}</div>
+                    {t.categorie && (
                       <span className="team-tags">
-                        {t.categorie && <span className="team-tag">{t.categorie}</span>}
-                        {t.niveau && <span className="team-tag team-niveau">{t.niveau}</span>}
+                        <span className="team-tag">{t.categorie}</span>
                       </span>
                     )}
-                    <div className="lvl">{t.nom}</div>
-                    {t.nb !== null && t.nb > 0 && (
-                      <div className="meta">
-                        {t.nb} {sport === "softball" ? (t.nb > 1 ? "joueuses" : "joueuse") : t.nb > 1 ? "joueurs" : "joueur"}
-                      </div>
-                    )}
+                    <div className="lvl">{niveauNom(t.nom).niveau}</div>
+                    {niveauNom(t.nom).reste && <div className="team-nom">{niveauNom(t.nom).reste}</div>}
                     {t.description && (
                       <>
                         <div className="bar" />
@@ -147,6 +146,8 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                   </Link>
                 ))}
               </div>
+              {LEGENDE_NIVEAUX[sport] && equipes.some((t) => t.categorie) && <p className="legende-niveaux">{LEGENDE_NIVEAUX[sport]}</p>}
+              </>
             ) : (
               <p style={{ color: "#4A5570" }}>Les équipes {c.mot.toLowerCase()} de la saison seront publiées ici bientôt.</p>
             )}
@@ -246,7 +247,6 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                     <div>
                       <h4>{e.t}</h4>
                       <p>{e.d}</p>
-                      {e.nb && <span className="step-nb">{e.nb} athlètes</span>}
                     </div>
                   </div>
                 ))}
@@ -263,6 +263,35 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             </div>
           </div>
         </section>
+
+        {/* PARCOURS ACADÉMIQUE (softball) */}
+        {c.academique.length > 0 && (
+          <section className="block" id="academique" style={{ paddingTop: 0 }}>
+            <div className="wrap">
+              <div className="head">
+                <h2>
+                  Le parcours <em>académique</em>
+                </h2>
+              </div>
+              <ol className="acad">
+                {c.academique.map((a, i) => (
+                  <li key={a.t}>
+                    <span className="n">{String(i + 1).padStart(2, "0")}</span>
+                    <div>
+                      <h3>{a.t}</h3>
+                      <p>{a.d}</p>
+                      {a.lien && (
+                        <a href={a.lien} target="_blank" rel="noopener noreferrer">
+                          En savoir plus →
+                        </a>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+        )}
 
         {/* ENGAGEMENTS */}
         <section className="block dark" id="engagements">
@@ -365,7 +394,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
               </h2>
             </div>
             <div className="partners">
-              {PARTENAIRES.map((p) =>
+              {PARTENAIRES_PAR_SPORT[sport].map((p) =>
                 p.src ? (
                   <div className="logo" key={p.nom}>
                     <Image src={p.src} alt={p.nom} fill loading="lazy" sizes="150px" />

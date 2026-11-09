@@ -8,8 +8,7 @@ alter table teams
   add column if not exists roster_public boolean not null default true,
   add column if not exists gamechanger_widget_id text,
   add column if not exists gamechanger_url text,
-  add column if not exists categorie text,
-  add column if not exists niveau_public text;
+  add column if not exists niveau_competition text;
 
 comment on column teams.visible_public is 'Affichée sur le site public (royalonfield.ca). Faux par défaut.';
 comment on column teams.ordre_affichage is 'Ordre sur le site public (petit = en premier). Vide = tri par défaut.';
@@ -34,15 +33,12 @@ where archived = false and name = 'Softball 16U - Dostaler';
 update teams set roster_public = false
 where sport = 'softball' and archived = false and name <> 'Softball 18U - Di Peco';
 
-comment on column teams.categorie is 'Étiquette de catégorie affichée sur le site public (ex. NATIONAL).';
-update teams set categorie = 'NATIONAL'
+comment on column teams.niveau_competition is 'Niveau de compétition affiché sur le site public (softball : NATIONAL = Varsity, RÉGIONAL = JV, ÉLITE). Baseball : vide pour l''instant.';
+update teams set niveau_competition = 'NATIONAL'
 where archived = false and name = 'Softball 18U - Di Peco';
-update teams set categorie = 'RÉGIONAL' where archived = false and name = 'Softball 16U - Bertrand';
-update teams set categorie = 'ÉLITE' where archived = false and name = 'Softball 16U - Dostaler';
+update teams set niveau_competition = 'RÉGIONAL' where archived = false and name = 'Softball 16U - Bertrand';
+update teams set niveau_competition = 'ÉLITE' where archived = false and name = 'Softball 16U - Dostaler';
 
 -- Au départ, toutes les équipes actives sont visibles sur le site (la Direction décoche celles à masquer).
 update teams set visible_public = true where archived = false and sport in ('softball', 'baseball');
 
-comment on column teams.niveau_public is 'Niveau affiché à côté de la catégorie sur le site public (ex. VARSITY, JV).';
-update teams set niveau_public = 'VARSITY' where archived = false and name = 'Softball 18U - Di Peco';
-update teams set niveau_public = 'JV' where archived = false and name = 'Softball 16U - Bertrand';

@@ -19,7 +19,8 @@ type Contenu = {
   noteCalendrier: string;
   engagementsSous: string;
   lead: string;
-  etapes: { n: string; t: string; d: string; nb?: number }[]; // parcours Royal
+  etapes: { n: string; t: string; d: string }[];
+  academique: { t: string; d: string; lien?: string }[]; // parcours académique (propre au sport) // parcours Royal
   stats: [string, string][]; // chiffres fixes (les chiffres tirés de ROF Connect s'ajoutent)
   calendrier: Evenement[];
   palmares: Palmares[];
@@ -41,10 +42,15 @@ export const CONTENU: Record<Sport, Contenu> = {
     engagementsSous: "Elles ont signé.",
     lead: "De l'école primaire au collège américain : un chemin clair, un accompagnement personnalisé vers la NCAA, la NAIA et la NJCAA.",
     etapes: [
-      { n: "01", t: "Royal Junior", d: "10U à 11U — les fondations : technique, plaisir du jeu et habitudes d'athlète.", nb: 24 },
-      { n: "02", t: "Royal Relève", d: "12U à 13U — compétition provinciale et canadienne, avec le rêve des World Series Softball.", nb: 24 },
-      { n: "03", t: "Royal Prospect", d: "14U à 15U — développement élite : un calibre de jeu et une préparation qui visent le niveau supérieur.", nb: 24 },
-      { n: "04", t: "Royal Élite", d: "16U à 18U — le niveau vitrine : tournois aux États-Unis, exposition aux recruteurs et accompagnement vers la NCAA, la NAIA et la NJCAA.", nb: 36 },
+      { n: "01", t: "Royal Junior", d: "10U à 11U — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
+      { n: "02", t: "Royal Relève", d: "12U à 13U — compétition provinciale et canadienne, avec le rêve des World Series Softball." },
+      { n: "03", t: "Royal Prospect", d: "14U à 15U — développement élite : un calibre de jeu et une préparation qui visent le niveau supérieur." },
+      { n: "04", t: "Royal Élite", d: "16U à 18U — le niveau vitrine : tournois aux États-Unis, exposition aux recruteurs et accompagnement vers la NCAA, la NAIA et la NJCAA." },
+    ],
+    academique: [
+      { t: "PSES", d: "Programme sport-études au primaire (5e et 6e année), pour les joueuses de Lanaudière." },
+      { t: "Collège L'Assomption", d: "Concilier études secondaires et softball de haut niveau. Ouvert à toutes les joueuses, sans restriction de région." },
+      { t: "Collège américain", d: "Accompagnement vers la NCAA, la NAIA et la NJCAA (parcours 12e année ou cégep)." },
     ],
     stats: [
       ["9", "Titres canadiens"],
@@ -93,6 +99,7 @@ export const CONTENU: Record<Sport, Contenu> = {
       { n: "03", t: "JV / Varsity", d: "Le niveau vitrine : tournois aux États-Unis, préparation physique et exposition aux recruteurs." },
       { n: "04", t: "Collège américain", d: "La signature : parcours 12e année ou cégep, dossier, vidéos et contacts avec les entraîneurs." },
     ],
+    academique: [],
     stats: [
       ["4", "Titres provinciaux"],
       ["2", "Titres Can-Am United"],
@@ -165,14 +172,14 @@ export function compteTiktok(brut: string): string {
  * ensuite, la Direction le saisit dans la gestion des équipes.
  */
 export const GAMECHANGER_PROVISOIRE: Record<string, string> = {
-  "18U - Di Peco": "7995b8d4-b175-40db-9190-7719a306837c",
-  "16U - Dostaler": "1f3faad8-a77c-44a3-986c-848b65a6ac07",
+  "18U Di Peco": "7995b8d4-b175-40db-9190-7719a306837c",
+  "16U Dostaler": "1f3faad8-a77c-44a3-986c-848b65a6ac07",
 };
 
 export const idGameChanger = (v: unknown) => (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v ?? "").trim()) ? String(v).trim() : "");
 
 export const GAMECHANGER_LIEN_PROVISOIRE: Record<string, string> = {
-  "16U - Dostaler": "https://web.gc.com/teams/8MQao52hpmge",
+  "16U Dostaler": "https://web.gc.com/teams/8MQao52hpmge",
 };
 
 /** Lien de page d'équipe GameChanger (web.gc.com/teams/…), sans les paramètres de suivi. */
@@ -223,13 +230,13 @@ export const GALERIES: Record<Sport, { src: string; alt: string }[]> = {
  * Équipes dont le roster (liste des joueuses) est affiché sur le site. Sert seulement tant que la migration 0009 n'est pas
  * appliquée ; ensuite, la case « Afficher le roster » de la gestion des équipes décide.
  */
-export const ROSTER_PROVISOIRE = ["18U - Di Peco"];
+export const ROSTER_PROVISOIRE = ["18U Di Peco"];
 
-/** Étiquettes de catégorie par équipe (ex. NATIONAL). Sert seulement tant que la migration 0009 n'est pas appliquée. */
-export const CATEGORIE_PROVISOIRE: Record<string, string> = {
-  "18U - Di Peco": "NATIONAL",
-  "16U - Bertrand": "RÉGIONAL",
-  "16U - Dostaler": "ÉLITE",
+/** Étiquettes de niveau de compétition par équipe (softball : NATIONAL = Varsity, RÉGIONAL = JV, ÉLITE). Sert seulement tant que la migration 0009 n'est pas appliquée. */
+export const NIVEAU_COMPETITION_PROVISOIRE: Record<string, string> = {
+  "18U Di Peco": "NATIONAL",
+  "16U Bertrand": "RÉGIONAL",
+  "16U Dostaler": "ÉLITE",
 };
 
 /** Ordre d'affichage par défaut des équipes (quand la Direction n'a pas saisi d'ordre). */
@@ -262,14 +269,15 @@ export function lienFieldLevel(v: string): string {
   return m ? `https://www.fieldlevel.com/app/organization/${m[1]}/${m[2].toLowerCase()}/overview` : "";
 }
 
-/** Niveau affiché avec la catégorie (ex. NATIONAL · VARSITY). Sert seulement tant que la migration 0009 n'est pas appliquée. */
-export const NIVEAU_PROVISOIRE: Record<string, string> = {
-  "18U - Di Peco": "VARSITY",
-  "16U - Bertrand": "JV",
-};
 
-/**
- * Nombre de joueuses affiché dans le bandeau de chiffres, fixé par la Direction. null = nombre calculé depuis ROF Connect
- * (joueuses acceptées, statut autre que Prospect).
- */
-export const NB_JOUEUSES_AFFICHE: Record<Sport, number | null> = { softball: 108, baseball: null };
+/** Légende des étiquettes softball (affichée sous les cartes d'équipes). */
+export const LEGENDE_NIVEAUX: Record<Sport, string> = { softball: "National = Varsity · Régional = JV", baseball: "" };
+
+/** Partenaires par sport (le baseball n'affiche ni USA Softball ni Fastpitch Nation ; ajoute PBR Baseball, logo à fournir). */
+export const PARTENAIRES_PAR_SPORT: Record<Sport, { nom: string; src?: string }[]> = {
+  softball: PARTENAIRES,
+  baseball: [
+    ...PARTENAIRES.filter((p) => !["USA Softball", "Fastpitch Nation"].includes(p.nom)),
+    { nom: "PBR Baseball" }, // logo à fournir
+  ],
+};
