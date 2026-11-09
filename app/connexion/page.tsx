@@ -61,6 +61,12 @@ export default async function ConnexionPage({
       <p className="mt-6 text-center text-sm text-rof-gris">
         {c.pasDeCompte} <Link href="/inscription" className="text-rof-poudre">{c.sinscrire}</Link>
       </p>
+
+      <p className="mt-6 text-center">
+        <Link href="/programme" className="font-condensed text-base uppercase tracking-[0.2em] text-rof-or underline">
+          {c.programme} →
+        </Link>
+      </p>
     </main>
   );
 }

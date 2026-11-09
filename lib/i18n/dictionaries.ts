@@ -43,8 +43,8 @@ export const dictionnaires = {
       decouvrir: "Découvrir l'académie",
       baseballQuebec: "ECTBL · Fastpitch Nation · Triple Crown · NSA Softball · Perfect Game · Prep Baseball · Can-Am United League",
       statsHero: [
-        ["8", "Titres canadiens Softball"],
-        ["8", "Équipes à la Little League World Series"],
+        ["8", "Little League World Series"],
+        ["9", "Titres canadiens"],
         ["8", "Équipes"],
       ] as [string, string][],
       approcheKicker: "Notre approche",
@@ -112,8 +112,8 @@ export const dictionnaires = {
         {
           annee: "2026",
           faits: [
-            { texte: "Champion canadien Softball — 12U · 14U · 16U", titre: true },
-            { texte: "Participation à la World Series Softball — 12U · 14U · 16U", titre: false },
+            { texte: "Champion de l'Est du Canada — Softball Canada", titre: true },
+            { texte: "Champion Fastpitch Nation « Firecrackers » — 16U", titre: true },
           ],
         },
         {
@@ -151,6 +151,7 @@ export const dictionnaires = {
       motDePasseOublie: "Mot de passe oublié ?",
       aVenir: "À venir",
       parcours: "Questionnaire de parcours NCAA",
+      programme: "Découvrir le programme",
     },
     motDePasseOublie: {
       titre: "Mot de passe oublié",
@@ -366,8 +367,8 @@ export const dictionnaires = {
       decouvrir: "Discover the academy",
       baseballQuebec: "ECTBL · Fastpitch Nation · Triple Crown · NSA Softball · Perfect Game · Prep Baseball · Can-Am United League",
       statsHero: [
-        ["8", "Canadian Softball titles"],
-        ["8", "Teams at the Little League World Series"],
+        ["8", "Little League World Series"],
+        ["9", "Canadian titles"],
         ["8", "Teams"],
       ] as [string, string][],
       approcheKicker: "Our approach",
@@ -435,8 +436,8 @@ export const dictionnaires = {
         {
           annee: "2026",
           faits: [
-            { texte: "Canadian Softball Champions — 12U · 14U · 16U", titre: true },
-            { texte: "Softball World Series appearance — 12U · 14U · 16U", titre: false },
+            { texte: "Eastern Canada Champions — Softball Canada", titre: true },
+            { texte: "Fastpitch Nation \"Firecrackers\" Champions — 16U", titre: true },
           ],
         },
         {
@@ -474,6 +475,7 @@ export const dictionnaires = {
       motDePasseOublie: "Forgot your password?",
       aVenir: "Coming soon",
       parcours: "NCAA pathway questionnaire (French)",
+      programme: "Discover the program",
     },
     motDePasseOublie: {
       titre: "Forgot password",

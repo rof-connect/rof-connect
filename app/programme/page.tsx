@@ -220,6 +220,64 @@ export default async function ProgrammePage() {
         </div>
       </section>
 
+      {/* ───────── PALMARÈS ───────── */}
+      <section className="border-y border-rof-ligne bg-gradient-to-b from-rof-royal-sombre/40 to-rof-noir">
+        <div className="mx-auto max-w-7xl px-5 py-24">
+          <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">{s.resultatsTitre}</h2>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {s.palmares.map((a) => (
+              <article key={a.annee} className="rounded-3xl border border-rof-ligne bg-rof-noir/80 p-8">
+                <p className="font-condensed text-7xl font-bold leading-none text-rof-or">{a.annee}</p>
+                <ul className="mt-5 flex flex-col gap-3">
+                  {a.faits.map((f) => (
+                    <li key={f.texte} className={`flex gap-3 ${f.titre ? "font-semibold text-white" : "text-rof-texte/90"}`}>
+                      <span aria-hidden>{f.titre ? "🏆" : "🥎"}</span>
+                      <span>{f.texte}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── PROGRAMME SCOLAIRE (pleine largeur) ───────── */}
+      <section className="border-t border-rof-ligne">
+        <div className="mx-auto max-w-7xl px-5 py-24">
+          <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">{s.scolaireTitre}</h2>
+          <p className="mt-4 max-w-3xl text-lg text-rof-gris">{s.scolaireIntro}</p>
+          <ul className="mt-10 grid gap-5 md:grid-cols-2">
+            {s.scolaire.map((e) => (
+              <li key={e.n} className="rounded-3xl border border-rof-ligne bg-rof-blanc p-8">
+                <p className="font-condensed text-xs uppercase tracking-[0.25em] text-rof-poudre">{e.t}</p>
+                <p className="mt-2 font-condensed text-3xl font-bold uppercase text-rof-or">{e.n}</p>
+                <p className="mt-2 text-rof-texte/90">{e.d}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ───────── PLACEMENT & RECRUTEMENT (pleine largeur) ───────── */}
+      <section className="border-t border-rof-ligne bg-gradient-to-b from-rof-royal-sombre/30 to-transparent">
+        <div className="mx-auto max-w-7xl px-5 py-24">
+          <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">{s.recrutementTitre}</h2>
+          <p className="mt-4 max-w-3xl text-lg text-rof-gris">{s.recrutementIntro}</p>
+          <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {s.placement.map((p) => (
+              <li key={p} className="flex gap-3 rounded-2xl border border-rof-ligne bg-rof-noir/70 p-5 text-rof-texte">
+                <span className="text-rof-or" aria-hidden>
+                  ★
+                </span>
+                {p}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-10 font-condensed text-5xl font-bold uppercase text-rof-or">{s.builtRoyal}</p>
+        </div>
+      </section>
+
       {/* ───────── COMMITTED ───────── */}
       <section className="mx-auto max-w-7xl px-5 py-24">
         <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">
@@ -245,60 +303,6 @@ export default async function ProgrammePage() {
               </figcaption>
             </figure>
           ))}
-        </div>
-      </section>
-
-      {/* ───────── PALMARÈS ───────── */}
-      <section className="border-y border-rof-ligne bg-gradient-to-b from-rof-royal-sombre/40 to-rof-noir">
-        <div className="mx-auto max-w-7xl px-5 py-24">
-          <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">{s.resultatsTitre}</h2>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {s.palmares.map((a) => (
-              <article key={a.annee} className="rounded-3xl border border-rof-ligne bg-rof-noir/80 p-8">
-                <p className="font-condensed text-7xl font-bold leading-none text-rof-or">{a.annee}</p>
-                <ul className="mt-5 flex flex-col gap-3">
-                  {a.faits.map((f) => (
-                    <li key={f.texte} className={`flex gap-3 ${f.titre ? "font-semibold text-white" : "text-rof-texte/90"}`}>
-                      <span aria-hidden>{f.titre ? "🏆" : "🥎"}</span>
-                      <span>{f.texte}</span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ───────── ÉCOLE + RECRUTEMENT ───────── */}
-      <section className="mx-auto grid max-w-7xl gap-12 px-5 py-24 lg:grid-cols-2">
-        <div>
-          <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{s.scolaireTitre}</h2>
-          <p className="mt-4 text-rof-gris">{s.scolaireIntro}</p>
-          <ul className="mt-8 flex flex-col gap-4">
-            {s.scolaire.map((e) => (
-              <li key={e.n} className="rounded-2xl border border-rof-ligne bg-rof-blanc p-5">
-                <p className="font-condensed text-xs uppercase tracking-[0.25em] text-rof-poudre">{e.t}</p>
-                <p className="mt-1 font-condensed text-2xl font-bold uppercase text-rof-or">{e.n}</p>
-                <p className="mt-1 text-sm text-rof-texte/90">{e.d}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{s.recrutementTitre}</h2>
-          <p className="mt-4 text-rof-gris">{s.recrutementIntro}</p>
-          <ul className="mt-8 flex flex-col gap-3">
-            {s.placement.map((p) => (
-              <li key={p} className="flex gap-3 text-rof-texte">
-                <span className="text-rof-or" aria-hidden>
-                  ★
-                </span>
-                {p}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-8 font-condensed text-4xl font-bold uppercase text-rof-or">{s.builtRoyal}</p>
         </div>
       </section>
 
