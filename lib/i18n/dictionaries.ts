@@ -111,27 +111,17 @@ export const dictionnaires = {
       resultatsTitre: "Le palmarès parle",
       palmares: [
         {
-          annee: "2026",
-          faits: [
-            { texte: "Champion Fastpitch Nation « The Thin Blue Line » — 14U", titre: true },
-            { texte: "Saison en cours — à suivre 👑", titre: false },
-          ],
-        },
-        {
           annee: "2025",
           faits: [
             { texte: "Champion canadien Softball — 12U · 14U · 16U", titre: true },
             { texte: "Participation à la World Series Softball — 12U · 14U · 16U", titre: false },
-            { texte: "Champion Triple Crown Binghamton — 14U", titre: true },
-            { texte: "Champion Fastpitch Nation « Firecracker 4th of July » — 16U", titre: true },
-            { texte: "Champion Petite Ligue Québec Baseball — 12U", titre: true },
           ],
         },
         {
           annee: "2024",
           faits: [
             { texte: "Champion canadien Softball — 12U · 14U", titre: true },
-            { texte: "Participation à la World Series Softball", titre: false },
+            { texte: "Participation à la World Series Softball — 12U · 14U", titre: false },
           ],
         },
       ],
@@ -438,27 +428,17 @@ export const dictionnaires = {
       resultatsTitre: "The record speaks",
       palmares: [
         {
-          annee: "2026",
-          faits: [
-            { texte: "Fastpitch Nation \"The Thin Blue Line\" Champions — 14U", titre: true },
-            { texte: "Season in progress — stay tuned 👑", titre: false },
-          ],
-        },
-        {
           annee: "2025",
           faits: [
             { texte: "Canadian Softball Champions — 12U · 14U · 16U", titre: true },
             { texte: "Softball World Series appearance — 12U · 14U · 16U", titre: false },
-            { texte: "Binghamton Triple Crown Champions — 14U", titre: true },
-            { texte: "Fastpitch Nation \"Firecracker 4th of July\" Champions — 16U", titre: true },
-            { texte: "Québec Little League Baseball Champions — 12U", titre: true },
           ],
         },
         {
           annee: "2024",
           faits: [
             { texte: "Canadian Softball Champions — 12U · 14U", titre: true },
-            { texte: "Softball World Series appearance", titre: false },
+            { texte: "Softball World Series appearance — 12U · 14U", titre: false },
           ],
         },
       ],
