@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { definirSportSondage } from "@/lib/sondages";
 
 const TAILLE_MAX_IMAGE = 5 * 1024 * 1024;
 
@@ -44,7 +45,13 @@ export async function creerSondage(formData: FormData) {
   if (!poll) return;
   if (kind === "choix") {
     await admin.from("poll_options").insert(options.map((label, i) => ({ poll_id: poll.id, label, position: i })));
+  } else {
+    // Réponse « pas de date » (ex. : Pas de bal, Pas d'examen).
+    const aucune = String(formData.get("label_aucune") ?? "").trim().slice(0, 60) || "Pas de date";
+    await admin.from("poll_options").insert({ poll_id: poll.id, label: aucune, position: 0 });
   }
+  const sport = String(formData.get("sport") ?? "");
+  if (sport === "softball" || sport === "baseball") await definirSportSondage(poll.id, sport);
   rafraichir();
 }
 
@@ -132,5 +139,14 @@ export async function majImageSondage(formData: FormData) {
   if (error) return;
   if (poll.image_path) await admin.storage.from("media").remove([poll.image_path]);
   await admin.from("polls").update({ image_path: chemin }).eq("id", pollId);
+  rafraichir();
+}
+
+export async function majSportSondage(formData: FormData) {
+  if (!(await verifierAdmin())) return;
+  const pollId = String(formData.get("poll_id") ?? "");
+  const sport = String(formData.get("sport") ?? "");
+  if (!pollId) return;
+  await definirSportSondage(pollId, sport === "softball" || sport === "baseball" ? sport : null);
   rafraichir();
 }

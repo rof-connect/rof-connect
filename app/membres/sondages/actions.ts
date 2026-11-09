@@ -29,13 +29,23 @@ export async function voter(formData: FormData) {
       .sort()
       .slice(0, sondage.maxDates);
     const admin = createAdminClient();
-    const inchangee = valides.join(",") === sondage.maDates.join(",");
-    if (inchangee) {
-      // rien à faire
+    const aucune = formData.get("aucune") === "1";
+    const optAucune = sondage.options[0]; // réponse « pas de date » (ex. : Pas de bal)
+    if (aucune && optAucune) {
+      if (sondage.monVote !== optAucune.id) {
+        await admin
+          .from("poll_votes")
+          .upsert(
+            { poll_id: pollId, option_id: optAucune.id, reponse_date: null, reponse_dates: [], profile_id: user.id },
+            { onConflict: "poll_id,profile_id" },
+          );
+      }
     } else if (valides.length === 0) {
       // Réponse facultative : aucune date = on retire la réponse.
-      await admin.from("poll_votes").delete().eq("poll_id", pollId).eq("profile_id", user.id);
-    } else {
+      if (sondage.monVote !== null || sondage.maDates.length > 0) {
+        await admin.from("poll_votes").delete().eq("poll_id", pollId).eq("profile_id", user.id);
+      }
+    } else if (valides.join(",") !== sondage.maDates.join(",") || sondage.monVote !== null) {
       await admin
         .from("poll_votes")
         .upsert(

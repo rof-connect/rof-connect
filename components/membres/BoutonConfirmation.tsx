@@ -15,6 +15,11 @@ export function BoutonConfirmation({ libelle }: { libelle: string }) {
     if (!form) return;
     if (!form.reportValidity()) return;
 
+    const aucune = form.querySelector<HTMLInputElement>('input[name="aucune"]:checked');
+    if (aucune) {
+      setResume(aucune.dataset.label ?? "Aucune date");
+      return;
+    }
     const choisi = form.querySelector<HTMLInputElement>('input[type="radio"]:checked');
     if (choisi) {
       setResume(choisi.dataset.label ?? choisi.value);

@@ -12,6 +12,8 @@ export type Sondage = {
   closed: boolean;
   teamId: string | null;
   teamName: string | null;
+  /** Sondage réservé à un sport (null = tous les sports). */
+  sport: "softball" | "baseball" | null;
   options: OptionSondage[];
   total: number;
   monVote: string | null;
@@ -19,6 +21,28 @@ export type Sondage = {
   votants: { optionId: string; nom: string }[];
   dates: { nom: string; date: string }[];
 };
+
+const FICHIER_SPORTS = "sondages-sports.json"; // bucket privé : { idSondage: "softball" | "baseball" }
+
+export async function chargerSportsSondages(): Promise<Record<string, "softball" | "baseball">> {
+  const { data } = await createAdminClient().storage.from("media").download(FICHIER_SPORTS);
+  if (!data) return {};
+  try {
+    const obj = JSON.parse(await data.text());
+    return obj && typeof obj === "object" ? obj : {};
+  } catch {
+    return {};
+  }
+}
+
+export async function definirSportSondage(pollId: string, sport: "softball" | "baseball" | null) {
+  const tous = await chargerSportsSondages();
+  if (sport) tous[pollId] = sport;
+  else delete tous[pollId];
+  await createAdminClient()
+    .storage.from("media")
+    .upload(FICHIER_SPORTS, new Blob([JSON.stringify(tous)], { type: "application/json" }), { upsert: true, contentType: "application/json" });
+}
 
 type Vote = { reponse_date: string | null; reponse_dates: string[] | null };
 function datesDe(v?: Vote): string[] {
@@ -35,12 +59,20 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
     .select("id, title, description, image_path, kind, max_dates, closed, team_id, teams (name)")
     .order("created_at", { ascending: false });
 
+  const sports = await chargerSportsSondages();
   let mesEquipes = new Set<string>();
+  const mesSports = new Set<string>();
   if (!estAdmin) {
-    const { data: m } = await admin.from("team_members").select("team_id").eq("profile_id", userId);
+    const { data: m } = await admin.from("team_members").select("team_id, teams (sport)").eq("profile_id", userId);
     mesEquipes = new Set((m ?? []).map((x) => x.team_id));
+    (m ?? []).forEach((x) => {
+      const t = Array.isArray(x.teams) ? x.teams[0] : x.teams;
+      if (t?.sport) mesSports.add(t.sport);
+    });
   }
-  const visibles = (polls ?? []).filter((p) => estAdmin || !p.team_id || mesEquipes.has(p.team_id));
+  const visibles = (polls ?? []).filter(
+    (p) => estAdmin || ((!p.team_id || mesEquipes.has(p.team_id)) && (!sports[p.id] || mesSports.has(sports[p.id]))),
+  );
   if (visibles.length === 0) return [];
   const ids = visibles.map((p) => p.id);
 
@@ -86,6 +118,7 @@ export async function chargerSondages(userId: string, estAdmin: boolean): Promis
       closed: p.closed,
       teamId: p.team_id,
       teamName: team?.name ?? null,
+      sport: sports[p.id] ?? null,
       options: (options ?? [])
         .filter((o) => o.poll_id === p.id)
         .map((o) => ({

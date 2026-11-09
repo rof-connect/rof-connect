@@ -9,9 +9,19 @@ function lignesDe(s: Sondage): Ligne[] {
   if (s.kind === "date") {
     const parDate = new Map<string, string[]>();
     s.dates.forEach((d) => parDate.set(d.date, [...(parDate.get(d.date) ?? []), d.nom]));
-    return [...parDate.entries()]
+    const lignesDates = [...parDate.entries()]
       .sort((a, b) => a[0].localeCompare(b[0]))
-      .map(([date, noms]) => ({ sondage: s.title, reponse: dateFr(date), nb: noms.length, pct: null, noms: noms.join(", ") }));
+      .map(([date, noms]) => ({ sondage: s.title, reponse: dateFr(date), nb: noms.length, pct: null as number | null, noms: noms.join(", ") }));
+    const lignesAucune = s.options
+      .filter((o) => o.votes > 0)
+      .map((o) => ({
+        sondage: s.title,
+        reponse: o.label,
+        nb: o.votes,
+        pct: null as number | null,
+        noms: s.votants.filter((v) => v.optionId === o.id).map((v) => v.nom).join(", "),
+      }));
+    return [...lignesDates, ...lignesAucune];
   }
   return s.options.map((o) => ({
     sondage: s.title,
@@ -46,7 +56,7 @@ export function TableauSondages({ sondages }: { sondages: Sondage[] }) {
           <tbody>
             {sondages.map((s) => {
               const lignes = lignesDe(s);
-              const total = s.kind === "date" ? new Set(s.dates.map((d) => d.nom)).size : s.total;
+              const total = s.total;
               return (
                 <Fragment key={s.id}>
                   {lignes.length === 0 && (

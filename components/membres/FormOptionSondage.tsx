@@ -8,12 +8,10 @@ export function FormOptionSondage({
   optionId,
   label,
   imageUrl,
-  votes,
 }: {
   optionId: string;
   label: string;
   imageUrl: string | null;
-  votes: number;
 }) {
   const [enCours, startTransition] = useTransition();
   const [message, setMessage] = useState("");
@@ -67,9 +65,6 @@ export function FormOptionSondage({
             {enCours ? "Envoi…" : "Enregistrer"}
           </button>
           {message && <span className="text-xs text-rof-gazon">{message}</span>}
-          <span className="ml-auto text-xs text-rof-gris">
-            {votes} vote{votes > 1 ? "s" : ""}
-          </span>
         </div>
       </form>
       <form action={supprimerOptionSondage}>

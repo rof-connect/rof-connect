@@ -6,7 +6,7 @@ import { chargerSondages } from "@/lib/sondages";
 import { TableauSondages } from "@/components/membres/TableauSondages";
 import { FormImageSondage } from "@/components/membres/FormImageSondage";
 import { FormOptionSondage } from "@/components/membres/FormOptionSondage";
-import { creerSondage, ajouterOptionSondage, basculerSondage, supprimerSondage } from "./actions";
+import { creerSondage, ajouterOptionSondage, basculerSondage, supprimerSondage, majSportSondage } from "./actions";
 
 const champ = "w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-sm text-rof-texte placeholder:text-rof-gris/60";
 const etiquette = "mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris";
@@ -67,6 +67,18 @@ export default async function SondagesAdminPage() {
             <textarea name="options" rows={4} className={champ} placeholder={"Floride\nTexas"} />
           </div>
           <div>
+            <p className={etiquette}>Type « Une date » : texte de la réponse « pas de date »</p>
+            <input name="label_aucune" className={champ} placeholder="Ex. : Pas de bal" />
+          </div>
+          <div>
+            <p className={etiquette}>Réservé à un sport</p>
+            <select name="sport" className={champ} defaultValue="softball">
+              <option value="">Tous les sports</option>
+              <option value="softball">Softball seulement</option>
+              <option value="baseball">Baseball seulement</option>
+            </select>
+          </div>
+          <div>
             <p className={etiquette}>Pour qui</p>
             <select name="team_id" className={champ}>
               <option value="">Tout le monde</option>
@@ -92,31 +104,18 @@ export default async function SondagesAdminPage() {
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-texte">{s.title}</h2>
               <p className="text-xs text-rof-gris">
-                {s.teamName ?? "Tout le monde"} · {s.closed ? "Fermé" : "Ouvert"} · {s.total} vote{s.total > 1 ? "s" : ""}
+                {s.teamName ?? "Tout le monde"} · {s.closed ? "Fermé" : "Ouvert"}
               </p>
             </div>
             {s.description && <p className="text-sm text-rof-gris">{s.description}</p>}
 
-            {s.kind === "date" ? (
-              <div className="rounded-lg border border-rof-ligne bg-rof-craie p-3 text-sm">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rof-gris">
-                  Dates reçues ({s.dates.length})
-                </p>
-                {s.dates.length === 0 && <p className="text-rof-gris">Aucune réponse pour le moment.</p>}
-                {s.dates.map((d, n) => (
-                  <p key={n} className="text-rof-texte">
-                    {new Date(d.date + "T12:00:00").toLocaleDateString("fr-CA", { dateStyle: "long" })}{" "}
-                    <span className="text-rof-gris">· {d.nom}</span>
-                  </p>
-                ))}
-              </div>
-            ) : (
+            {s.kind !== "date" && (
               <>
                 <FormImageSondage pollId={s.id} imageUrl={s.imageUrl} />
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   {s.options.map((o) => (
-                    <FormOptionSondage key={o.id} optionId={o.id} label={o.label} imageUrl={o.imageUrl} votes={o.votes} />
+                    <FormOptionSondage key={o.id} optionId={o.id} label={o.label} imageUrl={o.imageUrl} />
                   ))}
                 </div>
 
@@ -130,22 +129,17 @@ export default async function SondagesAdminPage() {
               </>
             )}
 
-            {s.total > 0 && s.kind !== "date" && (
-              <details>
-                <summary className="cursor-pointer text-sm font-semibold text-rof-poudre">Qui a voté quoi</summary>
-                <div className="mt-2 flex flex-col gap-2 text-sm">
-                  {s.options.map((o) => (
-                    <p key={o.id} className="text-rof-gris">
-                      <span className="font-semibold text-rof-texte">{o.label}</span> :{" "}
-                      {s.votants
-                        .filter((v) => v.optionId === o.id)
-                        .map((v) => v.nom)
-                        .join(", ") || "—"}
-                    </p>
-                  ))}
-                </div>
-              </details>
-            )}
+            <form action={majSportSondage} className="flex flex-wrap items-center gap-2">
+              <input type="hidden" name="poll_id" value={s.id} />
+              <select name="sport" defaultValue={s.sport ?? ""} className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-xs text-rof-texte">
+                <option value="">Tous les sports</option>
+                <option value="softball">Softball seulement</option>
+                <option value="baseball">Baseball seulement</option>
+              </select>
+              <button type="submit" className="text-xs text-rof-poudre underline">
+                Réserver à ce sport
+              </button>
+            </form>
 
             <div className="flex gap-4">
               <form action={basculerSondage}>

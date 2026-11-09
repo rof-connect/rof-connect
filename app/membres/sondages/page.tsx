@@ -29,10 +29,16 @@ export default async function SondagesPage() {
                 <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-texte">{s.title}</h2>
                 {s.description && <p className="mt-1 text-sm text-rof-gris">{s.description}</p>}
                 <p className="mt-1 text-xs text-rof-gris">
-                  {s.teamName ? s.teamName : "Tout le monde"} · {s.closed ? "Fermé" : "Ouvert"}
+                  {s.sport === "softball" ? "Softball" : s.sport === "baseball" ? "Baseball" : s.teamName ? s.teamName : "Tout le monde"} · {s.closed ? "Fermé" : "Ouvert"}
                 </p>
               </div>
               <div className="flex flex-col gap-3">
+                {s.options[0] && (
+                  <label className={`flex items-center gap-2 rounded-lg border p-3 text-rof-texte ${s.monVote === s.options[0].id ? "border-rof-or bg-rof-carte-haut" : "border-rof-ligne bg-rof-craie"}`}>
+                    <input type="checkbox" name="aucune" value="1" data-label={s.options[0].label} defaultChecked={s.monVote === s.options[0].id} disabled={s.closed} />
+                    <span className="font-semibold">{s.options[0].label}</span>
+                  </label>
+                )}
                 {Array.from({ length: s.maxDates }, (_, n) => (
                   <label key={n} className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">
                     {s.maxDates > 1 ? `Date ${n + 1} (facultatif)` : "Ta date (facultatif)"}
@@ -46,7 +52,8 @@ export default async function SondagesPage() {
                   </label>
                 ))}
               </div>
-              {!s.closed && <BoutonConfirmation libelle={s.maDates.length ? "Modifier" : "Enregistrer"} />}
+              {!s.closed && <BoutonConfirmation libelle={s.maDates.length || s.monVote ? "Modifier" : "Enregistrer"} />}
+              {s.monVote !== null && s.options[0]?.id === s.monVote && <p className="text-xs text-rof-gazon">Enregistré : {s.options[0].label}</p>}
               {s.maDates.length > 0 && (
                 <p className="text-xs text-rof-gazon">
                   Enregistré :{" "}
@@ -67,7 +74,7 @@ export default async function SondagesPage() {
               <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-texte">{s.title}</h2>
               {s.description && <p className="mt-1 text-sm text-rof-gris">{s.description}</p>}
               <p className="mt-1 text-xs text-rof-gris">
-                {s.teamName ? s.teamName : "Tout le monde"} · {s.closed ? "Fermé" : "Ouvert"}
+                {s.sport === "softball" ? "Softball" : s.sport === "baseball" ? "Baseball" : s.teamName ? s.teamName : "Tout le monde"} · {s.closed ? "Fermé" : "Ouvert"}
               </p>
             </div>
 
