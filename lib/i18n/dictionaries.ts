@@ -46,7 +46,6 @@ export const dictionnaires = {
         ["8", "Titres canadiens Softball"],
         ["8", "Équipes à la Little League World Series"],
         ["13", "Équipes"],
-        ["2", "Sports — Baseball & Softball"],
       ] as [string, string][],
       approcheKicker: "Notre approche",
       approcheTitre: "L'expérience Royal",
@@ -110,6 +109,13 @@ export const dictionnaires = {
       resultatsKicker: "Résultats",
       resultatsTitre: "Le palmarès parle",
       palmares: [
+        {
+          annee: "2026",
+          faits: [
+            { texte: "Champion canadien Softball — 12U · 14U · 16U", titre: true },
+            { texte: "Participation à la World Series Softball — 12U · 14U · 16U", titre: false },
+          ],
+        },
         {
           annee: "2025",
           faits: [
@@ -363,7 +369,6 @@ export const dictionnaires = {
         ["8", "Canadian Softball titles"],
         ["8", "Teams at the Little League World Series"],
         ["13", "Teams"],
-        ["2", "Sports — Baseball & Softball"],
       ] as [string, string][],
       approcheKicker: "Our approach",
       approcheTitre: "The Royal Experience",
@@ -427,6 +432,13 @@ export const dictionnaires = {
       resultatsKicker: "Results",
       resultatsTitre: "The record speaks",
       palmares: [
+        {
+          annee: "2026",
+          faits: [
+            { texte: "Canadian Softball Champions — 12U · 14U · 16U", titre: true },
+            { texte: "Softball World Series appearance — 12U · 14U · 16U", titre: false },
+          ],
+        },
         {
           annee: "2025",
           faits: [

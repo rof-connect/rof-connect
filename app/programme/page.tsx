@@ -42,6 +42,25 @@ export default async function ProgrammePage() {
   const { t, locale } = await getDictionnaire();
   const s = t.site;
   const fr = locale !== "en";
+  const centre = fr
+    ? {
+        titre: "Centre d'entraînement privé",
+        texte:
+          "Des cages de frappe avec lanceurs automatiques et une surface dédiée à l'entraînement : un centre privé pour travailler la technique, la répétition et la confiance, au rythme de chaque athlète.",
+      }
+    : {
+        titre: "Private training center",
+        texte:
+          "Batting cages with automatic pitching machines and a dedicated training surface: a private center to work on technique, repetition and confidence, at each athlete's pace.",
+      };
+  const committed = fr
+    ? { titre: "Elles ont signé", sous: "Nos athlètes engagées au niveau collégial américain." }
+    : { titre: "They committed", sous: "Our athletes committed to the American college level." };
+  const engagees = [
+    { src: "/photos/committed-maeva-gascon.jpg", nom: "Maeva Gascon", ecole: "North Platte Community College", detail: "2026" },
+    { src: "/photos/committed-julia-collard.jpg", nom: "Julia Collard", ecole: "Dodge City Community College", detail: "Kansas" },
+    { src: "/photos/committed-hill-college.webp", nom: "", ecole: "Hill College", detail: "NJCAA Division 1" },
+  ];
   const legendes = fr
     ? { unies: "Unies", fieres: "Fières", focus: "Focus", canada: "Équipe Canada", fun: "Le plaisir de jouer" }
     : { unies: "United", fieres: "Proud", focus: "Focus", canada: "Team Canada", fun: "The joy of playing" };
@@ -92,7 +111,7 @@ export default async function ProgrammePage() {
 
       {/* ───────── CHIFFRES ───────── */}
       <section id="chiffres" className="border-y border-rof-ligne bg-rof-blanc">
-        <dl className="mx-auto grid max-w-7xl grid-cols-2 gap-y-8 px-5 py-12 text-center sm:grid-cols-4">
+        <dl className="mx-auto grid max-w-7xl grid-cols-2 gap-y-8 px-5 py-12 text-center sm:grid-cols-3">
           {s.statsHero.map(([n, l]) => (
             <div key={l}>
               <dt className="font-condensed text-6xl font-bold leading-none text-rof-or sm:text-7xl">{n}</dt>
@@ -135,11 +154,52 @@ export default async function ProgrammePage() {
         </div>
       </section>
 
+      {/* ───────── CENTRE D'ENTRAÎNEMENT PRIVÉ ───────── */}
+      <section className="relative isolate overflow-hidden">
+        <Image src="/photos/centre-entrainement.webp" alt="" fill sizes="100vw" className="-z-20 object-cover" style={{ objectPosition: "50% 60%" }} />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/90 via-black/65 to-black/10" />
+        <div className="mx-auto flex min-h-[28rem] max-w-7xl items-center px-5 py-20">
+          <div className="max-w-xl">
+            <p className="font-condensed text-sm font-bold uppercase tracking-[0.35em] text-rof-or">Royal On Field</p>
+            <h2 className="mt-3 font-condensed text-5xl font-bold uppercase leading-none text-white sm:text-7xl">{centre.titre}</h2>
+            <p className="mt-5 text-lg text-white/85">{centre.texte}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── COMMITTED ───────── */}
+      <section className="mx-auto max-w-7xl px-5 py-24">
+        <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">
+          <span className="text-rof-or">Committed.</span> {committed.titre}
+        </h2>
+        <p className="mt-4 max-w-2xl text-lg text-rof-gris">{committed.sous}</p>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {engagees.map((e) => (
+            <figure key={e.src} className="group overflow-hidden rounded-3xl border border-rof-ligne bg-rof-blanc">
+              <div className="relative aspect-[4/5]">
+                <Image
+                  src={e.src}
+                  alt={[e.nom, e.ecole].filter(Boolean).join(" · ")}
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover transition duration-700 group-hover:scale-105"
+                />
+              </div>
+              <figcaption className="px-5 py-4">
+                {e.nom && <p className="font-condensed text-2xl font-bold uppercase text-white">{e.nom}</p>}
+                <p className={e.nom ? "text-sm text-rof-gris" : "font-condensed text-2xl font-bold uppercase text-white"}>{e.ecole}</p>
+                <p className="text-xs uppercase tracking-widest text-rof-or">{e.detail}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
       {/* ───────── PALMARÈS ───────── */}
       <section className="border-y border-rof-ligne bg-gradient-to-b from-rof-royal-sombre/40 to-rof-noir">
         <div className="mx-auto max-w-7xl px-5 py-24">
           <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">{s.resultatsTitre}</h2>
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
             {s.palmares.map((a) => (
               <article key={a.annee} className="rounded-3xl border border-rof-ligne bg-rof-noir/80 p-8">
                 <p className="font-condensed text-7xl font-bold leading-none text-rof-or">{a.annee}</p>
