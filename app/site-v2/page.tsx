@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
+import { Organisation } from "@/components/site-v2/Organisation";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, ETAPES, GALERIE, PARTENAIRES, SPORTS, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, GALERIE, PARTENAIRES, SPORTS, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -239,7 +240,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                 <p>{c.lead}</p>
               </div>
               <div className="steps">
-                {ETAPES.map((e) => (
+                {c.etapes.map((e) => (
                   <div className="step" key={e.n}>
                     <div className="n">{e.n}</div>
                     <div>
@@ -271,27 +272,24 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             {c.engagees.length > 0 ? (
               <div className="commits">
                 {c.engagees.map((e) => (
-                  <div className="commit" key={e.who}>
-                    <div className="img">
-                      <svg aria-hidden>
-                        <use href="#diamondArt" />
-                      </svg>
+                  <figure className="commit-photo" key={e.who}>
+                    <div className="commit-visuel">
+                      {e.photo ? (
+                        <Image src={e.photo} alt={`${e.who}, engagée avec ${e.s}`} fill loading="lazy" sizes="(min-width: 1000px) 400px, 90vw" />
+                      ) : (
+                        <svg aria-hidden>
+                          <use href="#diamondArt" />
+                        </svg>
+                      )}
                     </div>
-                    <div className="sig">SIGNÉE</div>
-                    <div className="body">
-                      <div className="who">
-                        {e.who.split(" ").map((m, i) => (
-                          <span key={i}>
-                            {i > 0 && <br />}
-                            {m}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="school">{e.s}</div>
-                      <div className="meta">{e.m}</div>
-                    </div>
-                    <div className="cls">{e.c}</div>
-                  </div>
+                    <figcaption>
+                      <b>{e.who}</b>
+                      <span>{e.s}</span>
+                      <em>
+                        {e.m} · {e.c}
+                      </em>
+                    </figcaption>
+                  </figure>
                 ))}
               </div>
             ) : (
@@ -355,6 +353,8 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             </div>
           </div>
         </section>
+
+        <Organisation />
 
         {/* PARTENAIRES */}
         <section className="block" id="partenaires" style={{ paddingTop: 0 }}>

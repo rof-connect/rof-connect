@@ -284,3 +284,35 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .gc-lien strong{display:block;font-family:var(--display);font-size:30px;letter-spacing:.02em;font-weight:400}
 .v2 .gc-lien small{color:#AFC0E2;font-size:14px}
 .v2 .gc-lien>span:last-child{font-size:28px;color:var(--accent)}
+
+/* Organisation */
+.v2 .org{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:start}
+.v2 .org-lead{font-family:var(--display);font-size:clamp(30px,3.4vw,44px);line-height:1;color:var(--royal-deep);margin-bottom:18px}
+.v2 .org-texte>p:not(.org-lead){color:#4A5570;line-height:1.65;font-size:16px}
+.v2 .org-faits{list-style:none;display:grid;gap:10px;margin-top:26px}
+.v2 .org-faits li{display:flex;flex-direction:column;gap:2px;border-left:4px solid var(--mark);background:var(--mist);padding:14px 18px;border-radius:0 6px 6px 0}
+.v2 .org-faits b{font-family:var(--display);font-size:28px;font-weight:400;color:var(--royal-deep);line-height:1}
+.v2 .org-faits span{font-size:14px;color:#4A5570}
+.v2 .org-valeurs h3,.v2 .org-equipe h3,.v2 .org-contact h3{font-family:var(--display);font-size:34px;font-weight:400;color:var(--royal-deep);margin-bottom:14px}
+.v2 .org-valeur{border:1px solid var(--line);border-top:4px solid var(--royal);border-radius:6px;padding:20px 22px;background:#fff;margin-bottom:12px}
+.v2 .org-valeur h4{font-family:var(--display);font-size:26px;font-weight:400;color:var(--royal-deep)}
+.v2 .org-valeur p{font-size:14px;line-height:1.55;color:#4A5570;margin-top:6px}
+.v2 .org-equipe{margin-top:48px}
+.v2 .org-equipe ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.v2 .org-equipe li{border:1px solid var(--line);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:2px}
+.v2 .org-equipe b{font-family:var(--display);font-size:26px;font-weight:400;color:var(--royal-deep)}
+.v2 .org-equipe span{font-size:13px;color:#4A5570}
+.v2 .org-contact{margin-top:48px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;background:linear-gradient(110deg,var(--royal) 0%,var(--royal-deep) 100%);color:#fff;border-radius:8px;padding:32px 36px}
+.v2 .org-contact h3{color:#fff;margin-bottom:6px}
+.v2 .org-contact p{color:#C9D4EE}
+@media (max-width:1000px){.v2 .org{grid-template-columns:1fr;gap:32px}.v2 .org-contact{padding:26px 22px}}
+
+/* Committed : photo de l'engagement + légende */
+.v2 .commit-photo{margin:0}
+.v2 .commit-visuel{position:relative;aspect-ratio:4/5;border-radius:6px;overflow:hidden;background:var(--navy)}
+.v2 .commit-visuel img{object-fit:cover}
+.v2 .commit-visuel .sig{position:absolute;top:14px;left:14px;font-size:11px;font-weight:800;letter-spacing:.2em;background:var(--accent);color:var(--navy);padding:6px 10px;border-radius:3px;z-index:2}
+.v2 .commit-photo figcaption{display:flex;flex-direction:column;gap:2px;padding:14px 2px 0}
+.v2 .commit-photo figcaption b{font-family:var(--display);font-size:34px;font-weight:400;line-height:1}
+.v2 .commit-photo figcaption span{font-weight:700}
+.v2 .commit-photo figcaption em{font-style:normal;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}

@@ -23,3 +23,7 @@ where archived = false and name = 'Softball 18U - Di Peco';
 comment on column teams.gamechanger_url is 'Lien de la page de l''équipe sur GameChanger (bouton sur la page de l''équipe).';
 update teams set gamechanger_url = 'https://web.gc.com/teams/8MQao52hpmge'
 where archived = false and name = 'Softball 16U - Dostaler';
+
+-- Calendrier GameChanger de 16U - Dostaler.
+update teams set gamechanger_widget_id = '1f3faad8-a77c-44a3-986c-848b65a6ac07'
+where archived = false and name = 'Softball 16U - Dostaler';

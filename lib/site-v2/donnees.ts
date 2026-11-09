@@ -19,6 +19,7 @@ type Contenu = {
   noteCalendrier: string;
   engagementsSous: string;
   lead: string;
+  etapes: { n: string; t: string; d: string }[]; // parcours Royal
   stats: [string, string][]; // chiffres fixes (les chiffres tirés de ROF Connect s'ajoutent)
   calendrier: Evenement[];
   palmares: Palmares[];
@@ -39,6 +40,12 @@ export const CONTENU: Record<Sport, Contenu> = {
     noteCalendrier: "Volet JV / Varsity",
     engagementsSous: "Elles ont signé.",
     lead: "De l'école primaire au collège américain : un chemin clair, un accompagnement personnalisé vers la NCAA, la NAIA et la NJCAA.",
+    etapes: [
+      { n: "01", t: "10U à 11U", d: "Les fondations : technique, plaisir du jeu et habitudes d'athlète." },
+      { n: "02", t: "12U à 13U", d: "Compétition provinciale et canadienne, avec le rêve des World Series Softball." },
+      { n: "03", t: "14U à 15U", d: "Développement élite : un calibre de jeu et une préparation qui visent le niveau supérieur." },
+      { n: "04", t: "Collège 16U à 18U", d: "Le niveau vitrine : tournois aux États-Unis, exposition aux recruteurs et accompagnement vers la NCAA, la NAIA et la NJCAA." },
+    ],
     stats: [
       ["9", "Titres canadiens"],
       ["8", "Séries mondiales LL"],
@@ -80,6 +87,12 @@ export const CONTENU: Record<Sport, Contenu> = {
     noteCalendrier: "Calendrier en préparation",
     engagementsSous: "Les prochains noms.",
     lead: "Le même parcours Royal, adapté au baseball : développement, exposition et accompagnement vers les programmes collégiaux américains.",
+    etapes: [
+      { n: "01", t: "PSES", d: "5e et 6e année — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
+      { n: "02", t: "Collège L'Assomption", d: "Le secondaire : conciliation sport-études et développement structuré." },
+      { n: "03", t: "JV / Varsity", d: "Le niveau vitrine : tournois aux États-Unis, préparation physique et exposition aux recruteurs." },
+      { n: "04", t: "Collège américain", d: "La signature : parcours 12e année ou cégep, dossier, vidéos et contacts avec les entraîneurs." },
+    ],
     stats: [["10U", "à Varsity"]],
     calendrier: [],
     palmares: [],
@@ -89,13 +102,6 @@ export const CONTENU: Record<Sport, Contenu> = {
     videEngagements: "Les premiers engagements universitaires du programme baseball seront célébrés ici.",
   },
 };
-
-export const ETAPES = [
-  { n: "01", t: "PSES", d: "5e et 6e année — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
-  { n: "02", t: "Collège L'Assomption", d: "Le secondaire : conciliation sport-études et développement structuré." },
-  { n: "03", t: "JV / Varsity", d: "Le niveau vitrine : tournois aux États-Unis, préparation physique et exposition aux recruteurs." },
-  { n: "04", t: "Collège américain", d: "La signature : parcours 12e année ou cégep, dossier, vidéos et contacts avec les entraîneurs." },
-];
 
 export const GALERIE: { src: string; alt: string }[] = [
   { src: "/photos/trio-sourire.jpg", alt: "Trois joueuses de Royal On Field posent ensemble devant le décor « Earn the Crown »" },
@@ -156,6 +162,7 @@ export function compteTiktok(brut: string): string {
  */
 export const GAMECHANGER_PROVISOIRE: Record<string, string> = {
   "18U - Di Peco": "7995b8d4-b175-40db-9190-7719a306837c",
+  "16U - Dostaler": "1f3faad8-a77c-44a3-986c-848b65a6ac07",
 };
 
 export const idGameChanger = (v: unknown) => (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v ?? "").trim()) ? String(v).trim() : "");
@@ -169,3 +176,9 @@ export function lienGameChanger(v: unknown): string {
   const m = String(v ?? "").trim().match(/^https?:\/\/web\.gc\.com\/teams\/([A-Za-z0-9]{6,20})/i);
   return m ? `https://web.gc.com/teams/${m[1]}` : "";
 }
+
+/**
+ * Section « Organisation » : personnes de la direction et du personnel affichées sur le site.
+ * À compléter par la Direction (nom, rôle). Vide = le bloc « Direction et personnel » n'est pas affiché.
+ */
+export const EQUIPE_ORGANISATION: { nom: string; role: string }[] = [];
