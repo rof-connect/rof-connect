@@ -3,7 +3,7 @@ import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
-import { chargerStatutsJoueuses, statutSelonNaissance } from "@/lib/statuts";
+import { chargerStatutsJoueuses, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
 
 const STATUTS = [
@@ -96,21 +96,27 @@ export default async function DirectionPage() {
     n: (membres ?? []).filter((m) => m.team_id === t.id).length,
   }));
 
-  const sportDe = (m: NonNullable<typeof membres>[number]) => {
+  // Pipeline : chaque joueuse est classée selon SON statut (et non selon l'équipe où elle joue).
+  // Le sport sert seulement à répartir les blocs ; une joueuse sans équipe va dans « Sans équipe ».
+  const sportsDe = new Map<string, Set<string>>();
+  const statutsEquipes = new Map<string, number[]>();
+  membres.forEach((m) => {
     const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
-    return t?.sport;
+    if (t?.sport) sportsDe.set(m.profile_id, (sportsDe.get(m.profile_id) ?? new Set<string>()).add(t.sport));
+    statutsEquipes.set(m.profile_id, [...(statutsEquipes.get(m.profile_id) ?? []), m.status_id]);
+  });
+  const statutDe = (id: string) => statutEffectif(id, statutsJoueuses, statutsEquipes.get(id) ?? []);
+
+  const pipeline = (sport: "baseball" | "softball" | "aucune") => {
+    const joueuses = comptesActifs.filter((c) => (sport === "aucune" ? !sportsDe.has(c.id) : sportsDe.get(c.id)?.has(sport)));
+    return {
+      total: joueuses.length,
+      parStatut: STATUTS.map((s) => ({ ...s, n: joueuses.filter((c) => statutDe(c.id) === s.id).length })),
+    };
   };
-
-  const parStatutParSport = (sport: string) =>
-    STATUTS.map((s) => ({
-      ...s,
-      n: (membres ?? []).filter((m) => m.status_id === s.id && sportDe(m) === sport).length,
-    }));
-
-  const parStatutBaseball = parStatutParSport("baseball");
-  const parStatutSoftball = parStatutParSport("softball");
-  const totalBaseball = (membres ?? []).filter((m) => sportDe(m) === "baseball").length;
-  const totalSoftball = (membres ?? []).filter((m) => sportDe(m) === "softball").length;
+  const pipelineBaseball = pipeline("baseball");
+  const pipelineSoftball = pipeline("softball");
+  const pipelineAucune = pipeline("aucune");
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-5 py-10">
@@ -259,8 +265,9 @@ export default async function DirectionPage() {
       <div>
         <h3 className="mb-2 font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">Pipeline de développement</h3>
         <div className="grid gap-4 sm:grid-cols-2">
-          <PipelineSport titre="Baseball" parStatut={parStatutBaseball} total={totalBaseball} />
-          <PipelineSport titre="Softball" parStatut={parStatutSoftball} total={totalSoftball} />
+          <PipelineSport titre="Baseball" parStatut={pipelineBaseball.parStatut} total={pipelineBaseball.total} />
+          <PipelineSport titre="Softball" parStatut={pipelineSoftball.parStatut} total={pipelineSoftball.total} />
+          <PipelineSport titre="Sans équipe" parStatut={pipelineAucune.parStatut} total={pipelineAucune.total} />
         </div>
       </div>
 
