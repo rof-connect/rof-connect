@@ -193,3 +193,41 @@ html:has(.v2){scroll-behavior:smooth}
 /* Lisibilité du titre sur la photo (côté texte plus foncé) */
 .v2 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(6,15,46,.82) 0%,rgba(6,15,46,.45) 50%,rgba(6,15,46,0) 85%)}
 @media (max-width:1000px){.v2 .hero::before{background:linear-gradient(0deg,rgba(6,15,46,.7) 0%,rgba(6,15,46,.2) 70%)}}
+
+/* ===== Page roster d'une équipe (style programmes universitaires) ===== */
+.v2 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.v2 .roster-hero{position:relative;background:linear-gradient(135deg,var(--royal-deep) 0%,var(--ink) 100%);color:#fff;padding:56px 0 44px;border-bottom:4px solid var(--accent);overflow:hidden}
+.v2 .roster-hero .retour{display:flex;width:fit-content;align-items:center;min-height:44px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#C9D4EE;margin-bottom:12px}
+.v2 .roster-hero .retour:hover{color:#fff}
+.v2 .roster-hero h1{font-family:var(--display);font-size:clamp(72px,12vw,160px);line-height:.85;margin:16px 0 8px}
+.v2 .roster-hero .lead{max-width:620px;color:#DCE5F7;font-size:17px;line-height:1.55;margin-top:8px}
+.v2 .roster-meta{display:flex;gap:36px;margin-top:28px;flex-wrap:wrap}
+.v2 .roster-meta dt{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#C9D4EE}
+.v2 .roster-meta dd{font-family:var(--display);font-size:44px;line-height:1;color:var(--accent)}
+
+.v2 .roster{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+.v2 .roster-row{display:grid;grid-template-columns:64px 1.6fr 1fr .6fr .6fr 1.3fr 1fr;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink);transition:background .15s}
+.v2 .roster-row:last-child{border-bottom:0}
+.v2 a.roster-row:hover{background:var(--mist)}
+.v2 .roster-th{background:var(--royal-deep);color:#fff;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding-top:14px;padding-bottom:14px}
+.v2 .roster-row .c-photo{width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--mist);display:flex;align-items:center;justify-content:center}
+.v2 .roster-th .c-photo{background:none}
+.v2 .roster-row .c-photo img{width:100%;height:100%;object-fit:cover}
+.v2 .roster-row .initiales{font-family:var(--display);font-size:22px;color:var(--royal)}
+.v2 .roster-row .c-nom{font-family:var(--display);font-size:28px;letter-spacing:.02em;color:var(--royal-deep);line-height:1}
+.v2 .roster-row .c-pos{font-weight:600}
+.v2 .empty-clair{border:2px dashed var(--line);border-radius:8px;padding:48px 24px;text-align:center;color:#4A5570}
+.v2 .empty-clair h3{font-family:var(--display);font-size:40px;color:var(--royal-deep);margin-bottom:8px}
+.v2 .roster-note{margin-top:14px;font-size:13px;color:#4A5570}
+@media (max-width:800px){
+  .v2 .roster-th{display:none}
+  .v2 .roster-row{grid-template-columns:56px 1fr;gap:4px 14px;padding:14px}
+  .v2 .roster-row .c-photo{grid-row:span 3}
+  .v2 .roster-row .c-lf,.v2 .roster-row .c-taille,.v2 .roster-row .c-ecole,.v2 .roster-row .c-ville{grid-column:2;font-size:13px;color:#4A5570}
+  .v2 .roster-row .c-lf::before{content:"L / F : "}
+  .v2 .roster-row .c-taille::before{content:"Taille : "}
+  .v2 .roster-row .c-ecole::before{content:"École : "}
+  .v2 .roster-row .c-ville::before{content:"Ville : "}
+  .v2 .roster-row .c-lf:empty,.v2 .roster-row .c-taille:empty{display:none}
+  .v2 .roster-hero{padding:40px 0 32px}
+}

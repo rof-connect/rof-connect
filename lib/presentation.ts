@@ -61,3 +61,9 @@ export async function trouverParToken(token: string): Promise<{ profileId: strin
   const entree = Object.entries(tous).find(([, p]) => p.token === token && p.actif);
   return entree ? { profileId: entree[0], reglages: entree[1] } : null;
 }
+
+/** Réglages des pages activées (consentement donné) : sert au roster public des équipes. */
+export async function presentationsActives(): Promise<Record<string, Presentation>> {
+  const tous = await lire();
+  return Object.fromEntries(Object.entries(tous).filter(([, p]) => p.actif));
+}

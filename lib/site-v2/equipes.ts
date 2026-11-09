@@ -29,6 +29,16 @@ export function nomPublicParDefaut(nom: string) {
     .trim();
 }
 
+/** Nom affiché d'une équipe : nom saisi par la Direction, sinon le niveau (+ entraîneur si deux équipes ont le même niveau). */
+export function nomAffiche(t: { name: string; nom_public?: string | null }, equipesDuSport: { name: string }[]) {
+  const saisi = (t.nom_public ?? "").trim();
+  if (saisi) return saisi;
+  const niveau = nomPublicParDefaut(t.name);
+  const memeNiveau = equipesDuSport.filter((e) => nomPublicParDefaut(e.name) === niveau).length;
+  const suffixe = t.name.split(/\s+[-—–]\s+/)[1]?.trim();
+  return memeNiveau > 1 && suffixe ? `${niveau} · ${suffixe}` : niveau;
+}
+
 /** Équipes visibles sur le site public, décidées par la Direction dans ROF Connect. */
 export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEquipes> {
   const admin = createAdminClient();
@@ -77,18 +87,8 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
     });
   }
 
-  // Deux équipes du même niveau (ex. 12U) : on ajoute le nom de l'entraîneur pour les distinguer.
-  const niveau = (t: LigneEquipe) => nomPublicParDefaut(t.name);
-  const frequence = new Map<string, number>();
-  liste.forEach((t) => frequence.set(niveau(t), (frequence.get(niveau(t)) ?? 0) + 1));
-
   return liste.map((t) => {
-    const saisi = (t.nom_public ?? "").trim();
-    let nom = saisi || niveau(t);
-    if (!saisi && (frequence.get(niveau(t)) ?? 0) > 1) {
-      const suffixe = t.name.split(/\s+[-—–]\s+/)[1]?.trim();
-      if (suffixe) nom = `${nom} · ${suffixe}`;
-    }
+    const nom = nomAffiche(t, liste);
     return {
       id: t.id,
       nom,

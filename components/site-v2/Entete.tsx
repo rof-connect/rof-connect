@@ -4,27 +4,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-type Props = { sport: "softball" | "baseball" };
+type Props = { sport: "softball" | "baseball"; base?: string };
 
 /** En-tête collant : logo, navigation et menu mobile. */
-export function Entete({ sport }: Props) {
+export function Entete({ sport, base = "" }: Props) {
   const [ouvert, setOuvert] = useState(false);
   const ferme = () => setOuvert(false);
 
   return (
     <header className="main">
       <div className="wrap">
-        <a className="brand" href="#top">
+        <a className="brand" href={`${base}#top`}>
           <Image src="/logo-r.png" alt="" width={46} height={46} priority />
           <div className="name">
             ROYAL ON FIELD<small>{sport === "softball" ? "SOFTBALL" : "BASEBALL"}</small>
           </div>
         </a>
         <nav className={`primary${ouvert ? " open" : ""}`} id="nav" aria-label="Navigation principale">
-          <a href="#equipes" onClick={ferme}>Équipes</a>
-          <a href="#calendrier" onClick={ferme}>Calendrier</a>
-          <a href="#recrutement" onClick={ferme}>Recrutement</a>
-          <a href="#engagements" onClick={ferme}>Engagements universitaires</a>
+          <a href={`${base}#equipes`} onClick={ferme}>Équipes</a>
+          <a href={`${base}#calendrier`} onClick={ferme}>Calendrier</a>
+          <a href={`${base}#recrutement`} onClick={ferme}>Recrutement</a>
+          <a href={`${base}#engagements`} onClick={ferme}>Engagements universitaires</a>
           <Link className="cta" href="/connexion" onClick={ferme}>ROF Connect</Link>
         </nav>
         <button

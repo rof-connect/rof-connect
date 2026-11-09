@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Entete } from "@/components/site-v2/Entete";
+import { Cadre } from "@/components/site-v2/Cadre";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
 import { CONTENU, ETAPES, GALERIE, PARTENAIRES, SPORTS, sportDe } from "@/lib/site-v2/donnees";
 
@@ -29,48 +29,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
   const qEngagees = c.engagees.length ? `${c.engagees.length} athlètes signées` : "Les premiers à venir";
 
   return (
-    <div className="v2" data-sport={sport}>
-      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
-        <defs>
-          <symbol id="diamondArt" viewBox="0 0 400 400">
-            <g fill="none" stroke="#fff" strokeWidth="3">
-              <path d="M200 40 L360 200 L200 360 L40 200 Z" />
-              <path d="M200 120 L280 200 L200 280 L120 200 Z" />
-              <circle cx="200" cy="200" r="22" />
-              <path d="M200 360 A220 220 0 0 1 40 200" strokeDasharray="6 10" />
-              <path d="M200 360 A220 220 0 0 0 360 200" strokeDasharray="6 10" />
-            </g>
-          </symbol>
-        </defs>
-      </svg>
-
-      {source === "provisoire" && (
-        <div className="apercu" role="note">
-          Aperçu : toutes les équipes actives de ROF Connect sont affichées. Après la migration 0009 (Supabase), seules les équipes cochées « Visible sur le site » le seront.
-        </div>
-      )}
-
-      {/* Barre utilitaire */}
-      <div className="util">
-        <div className="wrap">
-          <div className="links">
-            <Link href="/inscription">Inscription</Link>
-            <Link href="/parcours">Questionnaire NCAA</Link>
-            <a href="#partenaires">Partenaires</a>
-          </div>
-          <div className="sport-switch" role="group" aria-label="Choisir le sport">
-            {SPORTS.map((s) => (
-              <Link key={s} href={`/site-v2?sport=${s}`} scroll={false} className={s === sport ? "on" : ""} aria-current={s === sport ? "true" : undefined}>
-                {CONTENU[s].mot}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <Entete sport={sport} />
-
-      <main id="top">
+    <Cadre sport={sport} accueil provisoire={source === "provisoire"}>
         {/* HERO */}
         <section className="hero">
           {sport === "softball" ? (
@@ -171,7 +130,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             {equipes.length > 0 ? (
               <div className="teams">
                 {equipes.map((t) => (
-                  <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href="/inscription">
+                  <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href={`/site-v2/equipes/${t.id}`}>
                     <div className="big" aria-hidden>{t.nom.replace("Varsity", "V")}</div>
                     <div className="lvl">{t.nom}</div>
                     {t.nb !== null && t.nb > 0 && (
@@ -419,48 +378,6 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             </div>
           </div>
         </section>
-      </main>
-
-      <footer>
-        <div className="wrap">
-          <div className="cols">
-            <div>
-              <div className="brand">
-                <Image src="/logo-r.png" alt="" width={46} height={46} />
-                <div className="name" style={{ color: "#fff" }}>
-                  ROYAL ON FIELD<small>OBNL · REPENTIGNY</small>
-                </div>
-              </div>
-              <div className="tag">
-                EARN THE <span>CROWN.</span>
-              </div>
-            </div>
-            <div>
-              <h5>Programmes</h5>
-              <Link href="/site-v2?sport=softball">Softball</Link>
-              <Link href="/site-v2?sport=baseball">Baseball</Link>
-              <a href="#recrutement">Le parcours Royal</a>
-            </div>
-            <div>
-              <h5>Accès</h5>
-              <a href="#equipes">Équipes</a>
-              <a href="#calendrier">Calendrier</a>
-              <a href="#engagements">Engagements</a>
-              <Link href="/connexion">ROF Connect</Link>
-            </div>
-            <div>
-              <h5>Contact</h5>
-              <a href="mailto:royal@lentrepotdubaseball.com">royal@lentrepotdubaseball.com</a>
-              <a>Repentigny, Lanaudière</a>
-              <a>#EarnTheCrown</a>
-            </div>
-          </div>
-          <div className="bottom">
-            <span>© 2026 Royal On Field — Organisme à but non lucratif</span>
-            <span>Affilié à Little League Canada · Baseball Québec · Softball Québec</span>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </Cadre>
   );
 }
