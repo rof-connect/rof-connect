@@ -96,27 +96,18 @@ export default async function DirectionPage() {
     n: (membres ?? []).filter((m) => m.team_id === t.id).length,
   }));
 
-  // Pipeline : chaque joueuse est classée selon SON statut (et non selon l'équipe où elle joue).
-  // Le sport sert seulement à répartir les blocs ; une joueuse sans équipe va dans « Sans équipe ».
-  const sportsDe = new Map<string, Set<string>>();
+  // Pipeline : toutes les joueuses ensemble (avec ou sans équipe), classées selon LEUR statut : un aperçu des âges.
   const statutsEquipes = new Map<string, number[]>();
   membres.forEach((m) => {
-    const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
-    if (t?.sport) sportsDe.set(m.profile_id, (sportsDe.get(m.profile_id) ?? new Set<string>()).add(t.sport));
     statutsEquipes.set(m.profile_id, [...(statutsEquipes.get(m.profile_id) ?? []), m.status_id]);
   });
-  const statutDe = (id: string) => statutEffectif(id, statutsJoueuses, statutsEquipes.get(id) ?? []);
-
-  const pipeline = (sport: "baseball" | "softball" | "aucune") => {
-    const joueuses = comptesActifs.filter((c) => (sport === "aucune" ? !sportsDe.has(c.id) : sportsDe.get(c.id)?.has(sport)));
-    return {
-      total: joueuses.length,
-      parStatut: STATUTS.map((s) => ({ ...s, n: joueuses.filter((c) => statutDe(c.id) === s.id).length })),
-    };
+  const pipeline = {
+    total: comptesActifs.length,
+    parStatut: STATUTS.map((s) => ({
+      ...s,
+      n: comptesActifs.filter((c) => statutEffectif(c.id, statutsJoueuses, statutsEquipes.get(c.id) ?? []) === s.id).length,
+    })),
   };
-  const pipelineBaseball = pipeline("baseball");
-  const pipelineSoftball = pipeline("softball");
-  const pipelineAucune = pipeline("aucune");
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-5 py-10">
@@ -264,11 +255,7 @@ export default async function DirectionPage() {
 
       <div>
         <h3 className="mb-2 font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">Pipeline de développement</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <PipelineSport titre="Baseball" parStatut={pipelineBaseball.parStatut} total={pipelineBaseball.total} />
-          <PipelineSport titre="Softball" parStatut={pipelineSoftball.parStatut} total={pipelineSoftball.total} />
-          <PipelineSport titre="Sans équipe" parStatut={pipelineAucune.parStatut} total={pipelineAucune.total} />
-        </div>
+        <PipelineSport titre="Toutes les joueuses" parStatut={pipeline.parStatut} total={pipeline.total} />
       </div>
 
     </main>
@@ -284,6 +271,7 @@ function PipelineSport({
   parStatut: { id: number; nom: string; n: number }[];
   total: number;
 }) {
+  const plusGrand = Math.max(0, ...parStatut.map((s) => s.n)); // barres relatives à la plus grande catégorie d'âge
   return (
     <div className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
       <p className="mb-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-gris">
@@ -295,7 +283,7 @@ function PipelineSport({
           <div className="h-3 flex-1 overflow-hidden rounded-full bg-rof-craie">
             <div
               className={`h-full rounded-full ${s.id >= 2 ? "bg-rof-or" : "bg-rof-royal"}`}
-              style={{ width: total ? `${(s.n / total) * 100}%` : "0%" }}
+              style={{ width: plusGrand ? `${(s.n / plusGrand) * 100}%` : "0%" }}
             />
           </div>
           <div className="w-6 text-right font-bold text-rof-texte">{s.n}</div>
