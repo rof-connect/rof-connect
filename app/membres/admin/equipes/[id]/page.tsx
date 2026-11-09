@@ -40,7 +40,28 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
   if (profile?.role !== "admin") redirect("/membres");
 
-  const { data: equipe } = await supabase.from("teams").select("id, name, sport, season_year, option, archived").eq("id", id).maybeSingle();
+  type EquipeFiche = {
+    id: string;
+    name: string;
+    sport: string;
+    season_year: number;
+    option: string | null;
+    archived: boolean;
+    visible_public?: boolean;
+    ordre_affichage?: number | null;
+    nom_public?: string | null;
+    description_publique?: string | null;
+  };
+  // Avec les champs du site public (migration 0009) ; sinon sans eux (la migration n'est pas encore appliquée).
+  const complet = await supabase
+    .from("teams")
+    .select("id, name, sport, season_year, option, archived, visible_public, ordre_affichage, nom_public, description_publique")
+    .eq("id", id)
+    .maybeSingle();
+  const migre = !complet.error;
+  const equipe: EquipeFiche | null = migre
+    ? (complet.data as EquipeFiche | null)
+    : ((await supabase.from("teams").select("id, name, sport, season_year, option, archived").eq("id", id).maybeSingle()).data as EquipeFiche | null);
   if (!equipe) notFound();
 
   const { data: membres } = await supabase
@@ -102,6 +123,34 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
             </select>
           </div>
         </div>
+        {migre ? (
+          <fieldset className="flex flex-col gap-3 rounded-lg border border-rof-ligne p-3">
+            <legend className="px-1 font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">Site public</legend>
+            <input type="hidden" name="champs_publics" value="1" />
+            <label className="flex items-center gap-2 text-sm text-rof-texte">
+              <input type="checkbox" name="visible_public" defaultChecked={equipe.visible_public ?? false} className="h-4 w-4" />
+              Visible sur le site public
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className={etiquette}>Nom affiché (ex. 14U)</p>
+                <input name="nom_public" maxLength={40} defaultValue={equipe.nom_public ?? ""} placeholder="Déduit du nom si vide" className={champ} />
+              </div>
+              <div>
+                <p className={etiquette}>Ordre (petit = en premier)</p>
+                <input name="ordre_affichage" type="number" defaultValue={equipe.ordre_affichage ?? ""} className={champ} />
+              </div>
+            </div>
+            <div>
+              <p className={etiquette}>Description courte (facultatif)</p>
+              <textarea name="description_publique" maxLength={240} rows={2} defaultValue={equipe.description_publique ?? ""} className={champ} />
+            </div>
+          </fieldset>
+        ) : (
+          <p className="rounded-lg border border-dashed border-rof-ligne p-3 text-xs text-rof-gris">
+            Site public : appliquer la migration 0009 dans Supabase pour choisir les équipes visibles.
+          </p>
+        )}
         <div className="flex items-center gap-4">
           <button type="submit" className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
             Enregistrer

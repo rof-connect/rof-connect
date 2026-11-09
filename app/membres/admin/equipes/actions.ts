@@ -61,6 +61,22 @@ export async function modifierEquipe(formData: FormData) {
   const supabase = await createClient();
   await supabase.from("teams").update({ name, season_year: seasonYear, option }).eq("id", teamId);
 
+  // Site public (migration 0009). Étape à part : si les colonnes n'existent pas encore, la modification du nom ci-dessus reste valide.
+  if (formData.get("champs_publics") === "1") {
+    const ordre = String(formData.get("ordre_affichage") ?? "").trim();
+    const { error } = await supabase
+      .from("teams")
+      .update({
+        visible_public: formData.get("visible_public") === "on",
+        ordre_affichage: ordre !== "" && Number.isInteger(Number(ordre)) ? Number(ordre) : null,
+        nom_public: String(formData.get("nom_public") ?? "").trim().slice(0, 40) || null,
+        description_publique: String(formData.get("description_publique") ?? "").trim().slice(0, 240) || null,
+      })
+      .eq("id", teamId);
+    if (error) console.error("equipes: champs publics", error.message);
+  }
+
+  revalidatePath("/site-v2");
   revalidatePath("/membres/admin/equipes");
   revalidatePath(`/membres/admin/equipes/${teamId}`);
   revalidatePath("/membres/admin");
