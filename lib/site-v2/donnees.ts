@@ -39,7 +39,7 @@ export const CONTENU: Record<Sport, Contenu> = {
     accroche:
       "Le programme élite de softball de Lanaudière. Performance athlétique, parcours académique et caractère — de 10U jusqu'au collège américain.",
     saison: "Saison 2027",
-    noteCalendrier: "Volet JV / Varsity",
+    noteCalendrier: "",
     engagementsSous: "Elles ont signé.",
     lead: "De l'école primaire au collège américain : un chemin clair, un accompagnement personnalisé vers la NCAA, la NAIA et la NJCAA.",
     etapes: [
@@ -67,8 +67,11 @@ export const CONTENU: Record<Sport, Contenu> = {
     ],
     calendrier: [
       { m: "MAI", y: "2027", t: "Tournoi Maryland", p: "Maryland, États-Unis", tag: "JV / Varsity" },
+      { m: "MAI", y: "2027", t: "Fastpitch Nation", p: "", tag: "Tournoi" },
       { m: "JUIN", y: "2027", t: "Alliance Softball Qualifier", p: "Syracuse, New York", tag: "Qualification", hl: true },
+      { m: "JUIN", y: "2027", t: "Binghamton", p: "Binghamton, New York", tag: "Tournoi" },
       { m: "JUIL", y: "2027", t: "PGF New Jersey", p: "New Jersey, États-Unis", tag: "Showcase" },
+      { m: "JUIL", y: "2027", t: "Championnat Canadien LL", p: "Little League Canada", tag: "Championnat", hl: true },
     ],
     palmares: [
       {

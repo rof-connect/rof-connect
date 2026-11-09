@@ -175,7 +175,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
               <h2>
                 Calendrier <em>{c.saison}</em>
               </h2>
-              <span className="pill">{c.noteCalendrier}</span>
+              {c.noteCalendrier && <span className="pill">{c.noteCalendrier}</span>}
             </div>
             <div className="sched">
               {c.calendrier.length > 0 ? (
@@ -187,7 +187,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                     </div>
                     <div>
                       <h3>{e.t}</h3>
-                      <p>{e.p}</p>
+                      {e.p && <p>{e.p}</p>}
                     </div>
                     <span className={`pill${e.hl ? " hl" : ""}`}>{e.tag}</span>
                   </div>
