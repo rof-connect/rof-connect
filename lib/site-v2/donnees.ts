@@ -88,11 +88,35 @@ export const CONTENU: Record<Sport, Contenu> = {
           "Champion canadien Softball — 12U, 14U, 16U",
           "World Series Softball — 12U, 14U, 16U",
           "Champion de l'Est du Canada (Softball Canada)",
-          "Champion Fastpitch Nation « Firecrackers » 16U",
+          "Champion Fastpitch Nation « Firecracker on the 4th » — 16U (8 victoires, 2 défaites)",
+          "Champion Fastpitch Nation « The Thin Blue Line » — 14U (5 victoires, 2 défaites)",
         ],
       },
-      { y: "2025", l: ["Champion canadien Softball — 12U, 14U, 16U", "World Series Softball — 12U, 14U, 16U"] },
-      { y: "2024", l: ["Champion canadien Softball — 12U, 14U", "World Series Softball — 12U, 14U"] },
+      {
+        y: "2025",
+        l: [
+          "Champion canadien Softball — 12U, 14U, 16U",
+          "World Series Softball — 12U, 14U, 16U",
+          "Finale canadienne 100 % On Field — Junior, équipe hôtesse",
+        ],
+      },
+      {
+        y: "2024",
+        l: [
+          "Champion canadien Softball — 12U, 14U",
+          "World Series Softball — 12U, 14U",
+          "Championnes provinciales Petite Ligue Québec — Majeur, Junior",
+          "Finalistes canadiennes — Senior",
+        ],
+      },
+      {
+        y: "2023",
+        l: ["Championnes provinciales Petite Ligue Québec — Majeur, Junior", "Finalistes canadiennes Little League — Majeur"],
+      },
+      {
+        y: "2022",
+        l: ["Championnat canadien Little League (Victoria) — U12, représentantes du Québec, demi-finale"],
+      },
     ],
     engagees: [
       { who: "Maeva Gascon", s: "North Platte Community College", m: "NJCAA D1 · Nebraska", c: "2026", photo: "/photos/committed-maeva-gascon.jpg" },
@@ -148,9 +172,19 @@ export const CONTENU: Record<Sport, Contenu> = {
     ],
     calendrier: [],
     palmares: [
+      {
+        y: "2026",
+        l: [
+          "Champions provinciaux Petite Ligue Québec — Mineur, parcours invaincu",
+          "Champions ECTBL (séries éliminatoires Minor) — 10U, victoire de 11-1 en finale",
+          "Finalistes ECTBL (séries éliminatoires Minor) — 8/9U, finale 100 % Royal On Field",
+          "Champions Ontario Rookie Invitational (Kingston) — 8U",
+          "Champions Thanksgiving Wood Bat Classic — Programme scolaire PSES",
+        ],
+      },
       { y: "2025", l: ["Champion 2025 Can-Am United League 12U"] },
       { y: "2024", l: ["Champion 2024 Can-Am United League 12U"] },
-      { y: "2023", l: ["Champion 2023 Can-Am United League 12U"] },
+      { y: "2023", l: ["Champion 2023 Can-Am United League 12U", "Champions Cornwall Invitational All-Star Tournament — 8U"] },
     ],
     engagees: [],
     videCalendrier: "Les tournois et showcases du programme baseball seront publiés ici dès qu'ils seront confirmés.",
