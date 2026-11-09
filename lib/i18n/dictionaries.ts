@@ -217,10 +217,6 @@ export const dictionnaires = {
       titre: "Vérifie ton courriel",
       texteEntraineur:
         "Ton compte a été créé. La direction va confirmer ton équipe et activer tes accès — tu seras averti(e) une fois assigné(e).",
-      depotSoftball:
-        "Un dépôt de 500 $ est demandé pour finaliser ton inscription, par virement Interac à softballfeminin@gmail.com. Communique avec François Martel pour le calendrier de paiement de la saison 2027.",
-      depotBaseball:
-        "Un dépôt de 100 $ est demandé pour finaliser ton inscription, par virement Interac à royal@lentrepotdubaseball.com.",
       texte:
         "Ton compte a été créé. Clique sur le lien de confirmation qu'on vient de t'envoyer par courriel pour pouvoir te connecter.",
       activation:
@@ -538,10 +534,6 @@ export const dictionnaires = {
       titre: "Check your email",
       texteEntraineur:
         "Your account has been created. Our staff will confirm your team and activate your access — you'll be notified once assigned.",
-      depotSoftball:
-        "A $500 deposit is required to finalize your registration, by Interac e-transfer to softballfeminin@gmail.com. Contact François Martel for the 2027 season payment schedule.",
-      depotBaseball:
-        "A $100 deposit is required to finalize your registration, by Interac e-transfer to royal@lentrepotdubaseball.com.",
       texte: "Your account has been created. Click the confirmation link we just sent you by email to log in.",
       activation:
         "Your account has been created with the Prospect status. A Royal On Field administrator will activate your platform and contact you, then you will get access to your team.",

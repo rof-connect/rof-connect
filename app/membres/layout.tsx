@@ -51,9 +51,7 @@ export default async function MembresLayout({ children }: { children: React.Reac
 
       <div className="flex flex-1 flex-col">{children}</div>
 
-      <footer className="border-t border-rof-ligne px-5 pb-28 pt-4 text-center text-xs text-rof-gris">
-        {t.confirmation.depotSoftball}
-      </footer>
+      <div className="pb-24" aria-hidden />
 
       <BarreOnglets
         estAdmin={estAdmin}
