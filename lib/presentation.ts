@@ -1,6 +1,7 @@
 import "server-only";
 import { randomBytes } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { Profil } from "@/lib/presentation-format";
 
 /** Réglages de la page de présentation d'une joueuse (publique, accessible seulement par son lien secret). */
 export type Presentation = {
@@ -9,6 +10,8 @@ export type Presentation = {
   photo: boolean; // afficher la photo de profil
   contact: boolean; // afficher le contact du parent / tuteur
   apropos: string; // court texte de présentation
+  profil?: Profil; // fiche de recrutement (taille, mesures, vidéo, calendrier…)
+  consentement_le?: string; // date de l'autorisation (parent / tuteur si moins de 18 ans)
 };
 
 const FICHIER = "presentations.json"; // bucket privé « media » : un seul fichier pour toutes les joueuses

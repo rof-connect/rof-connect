@@ -6,6 +6,7 @@ import { chargerSondages } from "@/lib/sondages";
 import { getDictionnaire } from "@/lib/i18n/server";
 import { repondre } from "@/app/membres/agenda/actions";
 import { chargerDepots, doitDepot } from "@/lib/depots";
+import { chargerStatutsJoueuses } from "@/lib/statuts";
 import { marquerDepotEnvoye } from "@/app/membres/depot/actions";
 
 type EvenementBody = { type?: string; heure?: string | null; lieu?: string | null };
@@ -79,7 +80,8 @@ export default async function MembresPage() {
   const nbAFaire = sondagesAFaire + (depotDu && etatDepot !== "envoye" ? 1 : 0);
 
   const messages = await chargerMessagesTous(locale === "en" ? "en" : "fr");
-  const aSelection = equipes.some((m) => m.role_in_team === "athlete" && m.status_id > 1);
+  const statutPropre = (await chargerStatutsJoueuses())[user!.id] ?? 1;
+  const aSelection = statutPropre > 1 || equipes.some((m) => m.role_in_team === "athlete" && m.status_id > 1);
   const messagesAffiches = [
     profile?.role === "member" ? (aSelection ? messages.selection : messages.prospect) : "",
     messages.general,

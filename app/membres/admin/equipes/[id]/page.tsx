@@ -151,13 +151,6 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
                 </option>
               ))}
             </select>
-            <select name="status_id" defaultValue={1} className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-2 text-sm text-rof-texte">
-              {STATUTS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.nom}
-                </option>
-              ))}
-            </select>
             <button type="submit" className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
               + Ajouter
             </button>

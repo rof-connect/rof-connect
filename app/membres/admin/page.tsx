@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerDepots } from "@/lib/depots";
+import { chargerStatutsJoueuses } from "@/lib/statuts";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
@@ -43,7 +44,11 @@ export default async function DirectionPage() {
   const nbComptes = comptesActifs.length;
 
   // Nouvelles connexions à gérer : Prospect = aucune équipe, ou seulement le statut Prospect.
-  const placees = new Set(membres.filter((m) => m.status_id > 1).map((m) => m.profile_id));
+  const statutsJoueuses = await chargerStatutsJoueuses();
+  const placees = new Set([
+    ...membres.filter((m) => m.status_id > 1).map((m) => m.profile_id),
+    ...Object.entries(statutsJoueuses).filter(([, st]) => st > 1).map(([id]) => id),
+  ]);
   const aGerer = comptesActifs
     .filter((c) => !placees.has(c.id))
     .sort((a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime());

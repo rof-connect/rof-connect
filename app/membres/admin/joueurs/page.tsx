@@ -2,10 +2,11 @@ import { redirect } from "next/navigation";
 import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { changerStatut, ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse } from "./actions";
+import { ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse, changerStatutJoueuse } from "./actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
 import { chargerDepots } from "@/lib/depots";
+import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { confirmerDepot } from "@/app/membres/depot/actions";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
@@ -102,6 +103,7 @@ export default async function JoueursPage({
   const archivees = await chargerArchivees();
   const tousLiens = await chargerTousLiens();
   const depots = await chargerDepots();
+  const statutsJoueuses = await chargerStatutsJoueuses();
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
   const nbArchivees = tousLesJoueurs.filter(([pid]) => archivees.has(pid)).length;
 
@@ -112,6 +114,9 @@ export default async function JoueursPage({
     if (equipe === "archivees") return archivees.has(pid);
     if (archivees.has(pid)) return false;
     if (equipe === "aucune") return j.memberships.length === 0;
+    if (statut && !sport && (!equipe || equipe === "aucune")) {
+      return String(statutEffectif(pid, statutsJoueuses, j.memberships.map((m) => m.status_id))) === statut;
+    }
     if (!sport && !equipe && !statut) return true;
     return j.memberships.some((m) => {
       const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
@@ -335,46 +340,51 @@ export default async function JoueursPage({
                 </div>
               )}
 
-              {j.memberships.length === 0 && (
-                <p className="mt-2 text-sm text-rof-gris">Aucune équipe pour le moment · statut Prospect. Ajoute-la à une équipe pour changer son statut.</p>
-              )}
+              {/* 1) Statut : propre à la joueuse, indépendant de ses équipes */}
+              <div className="mt-3 rounded-lg border border-rof-ligne p-3">
+                <p className="font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">Statut</p>
+                <form action={changerStatutJoueuse} className="mt-2 flex flex-wrap items-center gap-2">
+                  <input type="hidden" name="profile_id" value={profileId} />
+                  <select
+                    name="status_id"
+                    defaultValue={statutEffectif(profileId, statutsJoueuses, j.memberships.map((m) => m.status_id))}
+                    className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1.5 text-sm text-rof-texte"
+                  >
+                    {STATUTS.map((st) => (
+                      <option key={st.id} value={st.id}>
+                        {st.nom}
+                      </option>
+                    ))}
+                  </select>
+                  <button type="submit" className="rounded-lg bg-rof-or px-3 py-1.5 font-condensed text-xs font-bold uppercase tracking-wide text-white">
+                    Enregistrer le statut
+                  </button>
+                </form>
+                <p className="mt-1 text-xs text-rof-gris">Le statut s&apos;applique à toutes ses équipes, et même si elle n&apos;a pas d&apos;équipe.</p>
+              </div>
 
-              <div className="mt-2 flex flex-col gap-2">
-                {j.memberships.map((m) => {
-                  const team = Array.isArray(m.teams) ? m.teams[0] : m.teams;
-                  return (
-                    <div key={m.id} className="rounded-lg bg-rof-craie p-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-condensed text-sm font-bold uppercase text-rof-poudre">{team?.name ?? "—"}</span>
-                        <form action={retirerDeEquipe}>
-                          <input type="hidden" name="team_member_id" value={m.id} />
-                          <button type="submit" className="text-xs text-rof-rouge underline">
-                            Retirer
-                          </button>
-                        </form>
-                      </div>
+              {/* 2) Équipes et groupes : indépendant du statut */}
+              <div className="mt-3 rounded-lg border border-rof-ligne p-3">
+                <p className="font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">Équipes et groupes</p>
+                {j.memberships.length === 0 && <p className="mt-2 text-sm text-rof-gris">Aucune équipe pour le moment.</p>}
 
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <form action={changerStatut} className="flex items-center gap-1">
-                          <input type="hidden" name="team_member_id" value={m.id} />
-                          <select
-                            name="status_id"
-                            defaultValue={m.status_id}
-                            className="rounded-lg border border-rof-ligne bg-rof-blanc px-2 py-1 text-xs text-rof-texte"
-                          >
-                            {STATUTS.map((s) => (
-                              <option key={s.id} value={s.id}>
-                                {s.nom}
-                              </option>
-                            ))}
-                          </select>
-                          <button type="submit" className="text-xs text-rof-poudre underline">
-                            Mettre à jour
-                          </button>
-                        </form>
+                <div className="mt-2 flex flex-col gap-2">
+                  {j.memberships.map((m) => {
+                    const team = Array.isArray(m.teams) ? m.teams[0] : m.teams;
+                    return (
+                      <div key={m.id} className="rounded-lg bg-rof-craie p-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-condensed text-sm font-bold uppercase text-rof-poudre">{team?.name ?? "—"}</span>
+                          <form action={retirerDeEquipe}>
+                            <input type="hidden" name="team_member_id" value={m.id} />
+                            <button type="submit" className="text-xs text-rof-rouge underline">
+                              Retirer
+                            </button>
+                          </form>
+                        </div>
 
                         {equipesDisponibles.length > 0 && (
-                          <form action={deplacerVersEquipe} className="flex items-center gap-1">
+                          <form action={deplacerVersEquipe} className="mt-2 flex items-center gap-1">
                             <input type="hidden" name="team_member_id" value={m.id} />
                             <select
                               name="nouvelle_equipe_id"
@@ -392,40 +402,29 @@ export default async function JoueursPage({
                           </form>
                         )}
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
 
-              {equipesDisponibles.length > 0 && (
-                <form action={ajouterAEquipe} className="mt-3 flex items-center gap-1">
-                  <input type="hidden" name="profile_id" value={profileId} />
-                  <select
-                    name="team_id"
-                    className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-xs text-rof-texte"
-                  >
-                    {equipesDisponibles.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    name="status_id"
-                    defaultValue={1}
-                    className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-xs text-rof-texte"
-                  >
-                    {STATUTS.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.nom}
-                      </option>
-                    ))}
-                  </select>
-                  <button type="submit" className="text-xs text-rof-gazon underline">
-                    + Ajouter à une équipe
-                  </button>
-                </form>
-              )}
+                {equipesDisponibles.length > 0 && (
+                  <form action={ajouterAEquipe} className="mt-3 flex items-center gap-1">
+                    <input type="hidden" name="profile_id" value={profileId} />
+                    <select
+                      name="team_id"
+                      className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-xs text-rof-texte"
+                    >
+                      {equipesDisponibles.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name}
+                        </option>
+                      ))}
+                    </select>
+                    <button type="submit" className="text-xs text-rof-gazon underline">
+                      + Ajouter à une équipe
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
           );
         })}

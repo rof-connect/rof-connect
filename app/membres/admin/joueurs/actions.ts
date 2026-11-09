@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { trouverOuCreerJoueuse } from "@/lib/joueuses";
 import { definirArchivee } from "@/lib/joueuses-archivees";
+import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif } from "@/lib/statuts";
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
@@ -95,6 +96,8 @@ export async function importerJoueurs(lignes: Record<string, string>[]) {
       });
     }
 
+    if (statusId > 1) await definirStatutJoueuse(profileId, statusId);
+
     if (dateNaissance || nomParent || telParent) {
       const { data: ficheExistante } = await admin
         .from("athlete_details")
@@ -162,18 +165,39 @@ export async function changerStatut(formData: FormData) {
   const statusId = Number(formData.get("status_id") ?? 0);
   if (!teamMemberId || !statusId) return;
 
-  const supabase = await createClient();
-  await supabase.from("team_members").update({ status_id: statusId }).eq("id", teamMemberId);
+  // Le statut appartient à la joueuse : on le change pour toutes ses équipes.
+  const moi = await verifierAdmin();
+  if (!moi) return;
+  const { data: ligne } = await createAdminClient().from("team_members").select("profile_id").eq("id", teamMemberId).maybeSingle();
+  if (!ligne) return;
+  await definirStatutJoueuse(ligne.profile_id, statusId);
 
   revalidatePath("/membres/admin/joueurs");
+  revalidatePath("/membres/admin");
+}
+
+/** Gestion du statut seule (Prospect, 9U… 18U), indépendante des équipes. */
+export async function changerStatutJoueuse(formData: FormData) {
+  const moi = await verifierAdmin();
+  if (!moi) return;
+  const profileId = String(formData.get("profile_id") ?? "");
+  const statusId = Number(formData.get("status_id") ?? 0);
+  if (!profileId || !Number.isInteger(statusId) || statusId < 1 || statusId > 11) return;
+  await definirStatutJoueuse(profileId, statusId);
+  revalidatePath("/membres/admin/joueurs");
+  revalidatePath("/membres/admin");
+  revalidatePath("/membres");
 }
 
 export async function ajouterAEquipe(formData: FormData) {
   const profileId = String(formData.get("profile_id") ?? "");
   const teamId = String(formData.get("team_id") ?? "");
-  const statusId = Number(formData.get("status_id") ?? 1) || 1;
   if (!profileId || !teamId) return;
 
+  // Ajouter à une équipe ne change pas le statut : la joueuse garde le sien.
+  const admin = createAdminClient();
+  const { data: existantes } = await admin.from("team_members").select("status_id").eq("profile_id", profileId).eq("role_in_team", "athlete");
+  const statusId = statutEffectif(profileId, await chargerStatutsJoueuses(), (existantes ?? []).map((e) => e.status_id));
   const supabase = await createClient();
   await supabase.from("team_members").insert({
     team_id: teamId,
@@ -269,6 +293,8 @@ export async function creerProfilJoueuse(formData: FormData) {
         .from("team_members")
         .insert({ team_id: teamId, profile_id: res.profileId, role_in_team: "athlete", status_id: statusId });
   }
+
+  if (statusId > 1) await definirStatutJoueuse(res.profileId, statusId);
 
   revalidatePath("/membres/admin/joueurs");
   return { ok: true, erreur: null };
