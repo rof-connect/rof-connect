@@ -45,7 +45,7 @@ export const dictionnaires = {
       statsHero: [
         ["8", "Titres canadiens Softball"],
         ["8", "Équipes à la Little League World Series"],
-        ["13", "Équipes"],
+        ["8", "Équipes"],
       ] as [string, string][],
       approcheKicker: "Notre approche",
       approcheTitre: "L'expérience Royal",
@@ -368,7 +368,7 @@ export const dictionnaires = {
       statsHero: [
         ["8", "Canadian Softball titles"],
         ["8", "Teams at the Little League World Series"],
-        ["13", "Teams"],
+        ["8", "Teams"],
       ] as [string, string][],
       approcheKicker: "Our approach",
       approcheTitre: "The Royal Experience",
