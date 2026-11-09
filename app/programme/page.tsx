@@ -192,9 +192,12 @@ export default async function ProgrammePage() {
           priority
           sizes="100vw"
           className="-z-20 object-cover"
-          style={{ objectPosition: "62% 8%" }}
+          style={{ objectPosition: "62% 30%" }}
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0B0B0D] via-[#0B0B0D]/85 via-45% to-[#0B0B0D]/10" />
+        {/* Mobile : dégradé vertical (texte en bas). PC : seulement côté texte (gauche) et un léger fondu en bas, pour bien voir la photo. */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0B0B0D] via-[#0B0B0D]/85 via-45% to-[#0B0B0D]/10 lg:hidden" />
+        <div className="absolute inset-0 -z-10 hidden bg-gradient-to-r from-[#0B0B0D]/85 via-[#0B0B0D]/35 via-50% to-transparent lg:block" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 hidden h-28 bg-gradient-to-t from-[#0B0B0D] to-transparent lg:block" />
         <div className="mx-auto w-full max-w-6xl px-4 pb-10 lg:pb-16">
           <p className="text-[13px] font-bold uppercase tracking-[0.22em] text-[#D4AF4A]">{s.kicker}</p>
           <h1 className={`${TITRE} mt-3 text-[84px] leading-[0.88] text-[#F5F7FA] lg:text-[150px]`}>
