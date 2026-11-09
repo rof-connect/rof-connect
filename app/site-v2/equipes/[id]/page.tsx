@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Cadre } from "@/components/site-v2/Cadre";
+import { CalendrierGameChanger } from "@/components/site-v2/CalendrierGameChanger";
 import { CONTENU, engagementDe } from "@/lib/site-v2/donnees";
 import { chargerRoster } from "@/lib/site-v2/roster";
 
@@ -131,6 +132,34 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
           )}
         </div>
       </section>
+      {(r.gamechanger || r.gamechangerLien) && (
+        <section className="block dark" id="matchs">
+          <div className="wrap">
+            <div className="head">
+              <h2>
+                Calendrier
+                <br />
+                <em>des matchs</em>
+              </h2>
+              <span className="pill">GameChanger</span>
+            </div>
+            {r.gamechanger && (
+              <div className="gc-boite">
+                <CalendrierGameChanger widgetId={r.gamechanger} />
+              </div>
+            )}
+            {r.gamechangerLien && (
+              <a className="gc-lien" href={r.gamechangerLien} target="_blank" rel="noopener noreferrer">
+                <span>
+                  <strong>{r.gamechanger ? "Toute la saison sur GameChanger" : "Calendrier et résultats sur GameChanger"}</strong>
+                  <small>Matchs, résultats et statistiques de {r.nom}</small>
+                </span>
+                <span aria-hidden>→</span>
+              </a>
+            )}
+          </div>
+        </section>
+      )}
     </Cadre>
   );
 }

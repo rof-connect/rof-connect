@@ -149,3 +149,23 @@ export function compteTiktok(brut: string): string {
   const m = brut.trim().match(/tiktok\.com\/@([A-Za-z0-9._]{1,30})/i) ?? brut.trim().match(/^@([A-Za-z0-9._]{1,30})$/);
   return m ? m[1] : "";
 }
+
+/**
+ * Calendriers GameChanger par équipe (identifiant du widget). Sert seulement tant que la migration 0009 n'est pas appliquée ;
+ * ensuite, la Direction le saisit dans la gestion des équipes.
+ */
+export const GAMECHANGER_PROVISOIRE: Record<string, string> = {
+  "18U - Di Peco": "7995b8d4-b175-40db-9190-7719a306837c",
+};
+
+export const idGameChanger = (v: unknown) => (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v ?? "").trim()) ? String(v).trim() : "");
+
+export const GAMECHANGER_LIEN_PROVISOIRE: Record<string, string> = {
+  "16U - Dostaler": "https://web.gc.com/teams/8MQao52hpmge",
+};
+
+/** Lien de page d'équipe GameChanger (web.gc.com/teams/…), sans les paramètres de suivi. */
+export function lienGameChanger(v: unknown): string {
+  const m = String(v ?? "").trim().match(/^https?:\/\/web\.gc\.com\/teams\/([A-Za-z0-9]{6,20})/i);
+  return m ? `https://web.gc.com/teams/${m[1]}` : "";
+}

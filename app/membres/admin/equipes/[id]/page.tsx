@@ -49,6 +49,8 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
     archived: boolean;
     visible_public?: boolean;
     roster_public?: boolean | null;
+    gamechanger_widget_id?: string | null;
+    gamechanger_url?: string | null;
     ordre_affichage?: number | null;
     nom_public?: string | null;
     description_publique?: string | null;
@@ -56,7 +58,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
   // Avec les champs du site public (migration 0009) ; sinon sans eux (la migration n'est pas encore appliquée).
   const complet = await supabase
     .from("teams")
-    .select("id, name, sport, season_year, option, archived, visible_public, roster_public, ordre_affichage, nom_public, description_publique")
+    .select("id, name, sport, season_year, option, archived, visible_public, roster_public, gamechanger_widget_id, gamechanger_url, ordre_affichage, nom_public, description_publique")
     .eq("id", id)
     .maybeSingle();
   const migre = !complet.error;
@@ -145,6 +147,14 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
                 <p className={etiquette}>Ordre (petit = en premier)</p>
                 <input name="ordre_affichage" type="number" defaultValue={equipe.ordre_affichage ?? ""} className={champ} />
               </div>
+            </div>
+            <div>
+              <p className={etiquette}>Widget GameChanger (identifiant du calendrier, facultatif)</p>
+              <input name="gamechanger_widget_id" defaultValue={equipe.gamechanger_widget_id ?? ""} placeholder="ex. 7995b8d4-b175-40db-9190-7719a306837c" className={champ} />
+            </div>
+            <div>
+              <p className={etiquette}>Lien de l&apos;équipe sur GameChanger (bouton, facultatif)</p>
+              <input name="gamechanger_url" defaultValue={equipe.gamechanger_url ?? ""} placeholder="https://web.gc.com/teams/…" className={champ} />
             </div>
             <div>
               <p className={etiquette}>Description courte (facultatif)</p>

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { idGameChanger, lienGameChanger } from "@/lib/site-v2/donnees";
 
 export async function creerEquipe(formData: FormData) {
   const orgId = String(formData.get("org_id") ?? "");
@@ -69,6 +70,8 @@ export async function modifierEquipe(formData: FormData) {
       .update({
         visible_public: formData.get("visible_public") === "on",
         roster_public: formData.get("roster_public") === "on",
+        gamechanger_widget_id: idGameChanger(formData.get("gamechanger_widget_id")) || null,
+        gamechanger_url: lienGameChanger(formData.get("gamechanger_url")) || null,
         ordre_affichage: ordre !== "" && Number.isInteger(Number(ordre)) ? Number(ordre) : null,
         nom_public: String(formData.get("nom_public") ?? "").trim().slice(0, 40) || null,
         description_publique: String(formData.get("description_publique") ?? "").trim().slice(0, 240) || null,
