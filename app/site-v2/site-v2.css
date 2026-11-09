@@ -265,3 +265,13 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .engage-annee{font-family:var(--display);font-size:44px;color:rgba(255,255,255,.35);margin-top:8px}
 .v2 .badge-commit{display:inline-block;margin-left:10px;font-family:var(--body);font-style:normal;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:var(--accent);color:var(--navy);padding:3px 8px;border-radius:3px;vertical-align:middle}
 @media (max-width:800px){.v2 .engage-profil{grid-template-columns:1fr;gap:24px}.v2 .engage-photo{max-width:300px}}
+
+/* Réseaux sociaux intégrés */
+.v2 .reseaux{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:start}
+.v2 .reseau h3{font-family:var(--display);font-size:34px;line-height:1;margin-bottom:14px}
+.v2 .insta-embed,.v2 .tiktok-boite{background:#fff;border-radius:8px;overflow:hidden;min-height:200px}
+.v2 .insta-embed iframe{display:block;width:100%;height:640px;border:0}
+.v2 .tiktok-boite{padding:8px;color:var(--ink)}
+.v2 .tiktok-boite blockquote{margin:0 auto}
+.v2 .reseau-lien{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+@media (max-width:1000px){.v2 .reseaux{grid-template-columns:1fr}.v2 .insta-embed iframe{height:560px}}

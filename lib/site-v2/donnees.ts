@@ -124,3 +124,28 @@ export function engagementDe(nom: string): Engagee | null {
   const cle = sansAccent(nom);
   return Object.values(CONTENU).flatMap((c) => c.engagees).find((e) => sansAccent(e.who) === cle) ?? null;
 }
+
+/**
+ * Comptes des réseaux sociaux du programme (adresse ou @nom). À renseigner ici ou par variables d'environnement
+ * (NEXT_PUBLIC_INSTAGRAM_URL, NEXT_PUBLIC_FACEBOOK_URL, NEXT_PUBLIC_TIKTOK_URL). Vide = ce réseau n'est pas affiché
+ * (un rappel s'affiche seulement en développement).
+ */
+export const INSTAGRAM = process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "https://www.instagram.com/royal_onfield_softball/";
+export const FACEBOOK = process.env.NEXT_PUBLIC_FACEBOOK_URL ?? "https://www.facebook.com/royalonfieldsoftball";
+export const TIKTOK = process.env.NEXT_PUBLIC_TIKTOK_URL ?? "https://www.tiktok.com/@royalonfieldsoftball";
+
+export function compteInstagram(brut: string): string {
+  const m = brut.trim().match(/instagram\.com\/([A-Za-z0-9._]{1,30})/i) ?? brut.trim().match(/^@?([A-Za-z0-9._]{1,30})$/);
+  return m ? m[1] : "";
+}
+
+/** Page Facebook : adresse complète (https://www.facebook.com/nom-de-la-page). */
+export function pageFacebook(brut: string): string {
+  const m = brut.trim().match(/^(?:https?:\/\/)?(?:www\.|m\.)?facebook\.com\/([A-Za-z0-9._\-/]{2,100})/i);
+  return m ? `https://www.facebook.com/${m[1].replace(/\/+$/, "")}` : "";
+}
+
+export function compteTiktok(brut: string): string {
+  const m = brut.trim().match(/tiktok\.com\/@([A-Za-z0-9._]{1,30})/i) ?? brut.trim().match(/^@([A-Za-z0-9._]{1,30})$/);
+  return m ? m[1] : "";
+}

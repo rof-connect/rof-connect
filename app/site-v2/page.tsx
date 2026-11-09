@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
+import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
 import { CONTENU, ETAPES, GALERIE, PARTENAIRES, SPORTS, sportDe } from "@/lib/site-v2/donnees";
 
@@ -378,6 +379,8 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             </div>
           </div>
         </section>
+
+      <ReseauxSociaux />
     </Cadre>
   );
 }
