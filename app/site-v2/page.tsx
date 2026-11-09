@@ -164,18 +164,23 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             {c.volet && (
               <div className="volet">
                 <h3>{c.volet.titre}</h3>
-                <div className="volet-groupes">
-                  {c.volet.groupes.map((g) => (
-                    <div className="volet-groupe" key={g.nom}>
-                      <h4>{g.nom}</h4>
-                      <ul>
-                        {g.equipes.map((e) => (
-                          <li key={e}>{e}</li>
-                        ))}
-                      </ul>
+                {c.volet.groupes.map((g) => (
+                  <div className="volet-groupe" key={g.nom}>
+                    <h4>
+                      {g.nom}
+                      {g.sous && <small> ( {g.sous} )</small>}
+                    </h4>
+                    <div className="teams teams-volet">
+                      {g.equipes.map((e) => (
+                        <div className="team team-statique" key={e.niveau}>
+                          <div className="big" aria-hidden>{e.niveau.replace("Sec. ", "")}</div>
+                          <div className="lvl">{e.niveau}</div>
+                          <div className="team-nom">{e.nom}</div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>

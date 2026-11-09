@@ -21,6 +21,7 @@ export default function VarsityPage() {
           <h1>{v.titre}</h1>
           <span className="team-tags team-tags-hero">
             <span className="team-tag">{v.etiquette}</span>
+            <span className="team-tag team-niveau">{v.places}</span>
           </span>
           <p className="lead">{v.intro}</p>
         </div>
@@ -30,23 +31,31 @@ export default function VarsityPage() {
         <div className="wrap">
           <div className="head">
             <h2>
-              Le <em>programme</em>
+              Tu <em>veux…</em>
             </h2>
             <Link className="more" href="/inscription">Créer mon profil →</Link>
           </div>
+          <ul className="envies">
+            {v.envies.map((e) => (
+              <li key={e}>{e}</li>
+            ))}
+          </ul>
+
+          <div className="avenir-conclusion">
+            <p className="c1">{v.conclusion}</p>
+            <p className="c2">{v.signature}</p>
+          </div>
+
           <ul className="avenir-points">
             {v.details.map((d) => (
               <li key={d}>{d}</li>
             ))}
           </ul>
-          <div className="empty-clair" style={{ marginTop: 28 }}>
-            <h3>Plus d&apos;information bientôt.</h3>
-            <p>Les détails du programme (horaire, installations, coûts, admission) seront publiés ici.</p>
-          </div>
+
           <div className="org-contact">
             <div>
-              <h3>Une question?</h3>
-              <p>Écris-nous pour être informé dès l&apos;ouverture des inscriptions.</p>
+              <h3>{v.places}</h3>
+              <p>Écris-nous pour réserver ta place et être informé des prochaines étapes. Plus de détails à venir.</p>
             </div>
             <a className="btn solid" href="mailto:royal@lentrepotdubaseball.com">royal@lentrepotdubaseball.com</a>
           </div>

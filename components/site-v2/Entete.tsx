@@ -25,6 +25,7 @@ export function Entete({ sport, base = "" }: Props) {
           <a href={`${base}#calendrier`} onClick={ferme}>Calendrier</a>
           <a href={`${base}#recrutement`} onClick={ferme}>Recrutement</a>
           <a href={`${base}#engagements`} onClick={ferme}>Engagements universitaires</a>
+          <Link href={`/site-v2/centre-entrainement?sport=${sport}`} onClick={ferme}>Centre d&apos;entraînement</Link>
           <Link href={`/site-v2/organisation?sport=${sport}`} onClick={ferme}>Organisation</Link>
           <Link className="cta" href="/connexion" onClick={ferme}>ROF Connect</Link>
         </nav>

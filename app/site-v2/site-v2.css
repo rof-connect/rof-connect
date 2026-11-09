@@ -415,16 +415,30 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .avenir-points{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .v2 .avenir-points li{border:1px solid var(--line);border-top:4px solid var(--mark);border-radius:6px;padding:20px;background:#fff;font-family:var(--display);font-size:30px;line-height:1;color:var(--royal-deep)}
 
-/* Volet scolaire (sous les équipes baseball) */
+/* Volet scolaire (sous les équipes baseball) : mêmes cartes que les équipes */
 .v2 .volet{margin-top:28px}
-.v2 .volet>h3{font-family:var(--display);font-size:32px;font-weight:400;color:var(--royal-deep);margin-bottom:12px}
-.v2 .volet-groupes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.v2 .volet-groupe{border:1px solid var(--line);border-top:4px solid var(--mark);border-radius:6px;padding:16px 20px;background:#fff}
-.v2 .volet-groupe h4{font-family:var(--display);font-size:26px;font-weight:400;color:var(--royal);line-height:1}
-.v2 .volet-groupe ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.v2 .volet-groupe li{background:var(--mist);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--royal-deep)}
+.v2 .volet>h3{font-family:var(--display);font-size:32px;font-weight:400;color:var(--royal-deep);margin-bottom:10px}
+.v2 .volet-groupe{margin-bottom:16px}
+.v2 .volet-groupe h4{font-family:var(--display);font-size:24px;font-weight:400;color:var(--royal);margin-bottom:8px;line-height:1}
+.v2 .volet-groupe h4 small{font-family:var(--body);font-size:13px;font-weight:600;letter-spacing:.04em;color:#5A6680}
+.v2 .teams.teams-volet{grid-auto-flow:row;grid-template-columns:repeat(auto-fill,minmax(130px,150px));grid-auto-columns:auto;overflow:visible}
+.v2 .team.team-statique{cursor:default}
+.v2 .team.team-statique:hover{transform:none}
 
 /* Carte Varsity : le titre doit tenir dans le carré */
 .v2 .team.team-avenir .lvl{font-size:clamp(20px,2vw,28px);line-height:.9;max-width:100%;overflow-wrap:anywhere}
 .v2 .team.team-avenir .team-nom{font-size:11px;letter-spacing:.06em}
 .v2 .team.team-avenir .meta{margin-top:4px}
+
+/* Page Varsity : accroche */
+.v2 .envies{list-style:none;display:grid;gap:12px}
+.v2 .envies li{display:flex;gap:16px;align-items:center;border:1px solid var(--line);border-left:6px solid var(--mark);border-radius:6px;padding:20px 24px;background:#fff;font-family:var(--display);font-size:clamp(26px,3.2vw,40px);line-height:1;color:var(--royal-deep)}
+.v2 .envies li::before{content:"";flex:0 0 12px;height:12px;background:var(--mark);transform:rotate(45deg)}
+.v2 .avenir-conclusion{margin:36px 0 28px;padding:36px 28px;border-radius:8px;background:linear-gradient(110deg,var(--royal) 0%,var(--royal-deep) 100%);color:#fff;text-align:center}
+.v2 .avenir-conclusion .c1{font-family:var(--display);font-size:clamp(40px,6vw,80px);line-height:.9}
+.v2 .avenir-conclusion .c2{margin-top:10px;font-weight:800;font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+
+/* Page Centre d'entraînement */
+.v2 .centre-photo{position:relative;aspect-ratio:16/8;border-radius:8px;overflow:hidden;background:var(--navy)}
+.v2 .centre-photo img{object-fit:cover}
+@media (max-width:800px){.v2 .centre-photo{aspect-ratio:4/3}}

@@ -21,8 +21,8 @@ type Contenu = {
   lead: string;
   etapes: { n: string; t: string; d: string }[];
   academique: { t: string; d: string; lien?: string }[]; // parcours académique (propre au sport)
-  volet?: { titre: string; groupes: { nom: string; equipes: string[] }[] }; // volet scolaire (sous les équipes)
-  aVenir?: { etiquette: string; niveau: string; nom: string; titre: string; sous: string; details: string[]; intro: string }; // programme annoncé (carte dans Équipes) // parcours Royal
+  volet?: { titre: string; groupes: { nom: string; sous?: string; equipes: { niveau: string; nom: string }[] }[] }; // volet scolaire (sous les équipes)
+  aVenir?: { etiquette: string; niveau: string; nom: string; titre: string; sous: string; details: string[]; intro: string; places: string; envies: string[]; conclusion: string; signature: string }; // programme annoncé (carte dans Équipes) // parcours Royal
   stats: [string, string][]; // chiffres fixes (les chiffres tirés de ROF Connect s'ajoutent)
   calendrier: Evenement[];
   palmares: Palmares[];
@@ -63,6 +63,10 @@ export const CONTENU: Record<Sport, Contenu> = {
       sous: "Automne 2027",
       details: ["12 mois par année", "École en ligne", "18U · 16U"],
       intro: "Un nouveau programme Varsity/JV, à l'année, qui combine softball de haut niveau et école en ligne.",
+      places: "Places limitées",
+      envies: ["Voyager, compétitionner face aux meilleurs programmes", "Améliorer tes chances de recrutement", "Poursuivre tes études en ligne"],
+      conclusion: "C'est ici que ça commence !",
+      signature: "Programme unique au Canada",
     },
     stats: [
       ["9", "Titres canadiens"],
@@ -118,8 +122,23 @@ export const CONTENU: Record<Sport, Contenu> = {
     volet: {
       titre: "Volet scolaire",
       groupes: [
-        { nom: "PSES", equipes: ["Équipe 1", "Équipe 2"] },
-        { nom: "Collège L'Assomption", equipes: ["Équipe Secondaire 1", "Équipe Secondaire 2-3", "Équipe Secondaire 4-5"] },
+        {
+          nom: "PSES",
+          sous: "Primaire · 5e et 6e année",
+          equipes: [
+            { niveau: "Bleu", nom: "PSES" },
+            { niveau: "Noir", nom: "PSES" },
+          ],
+        },
+        {
+          nom: "Collège L'Assomption",
+          sous: "Secondaire",
+          equipes: [
+            { niveau: "Sec. 1", nom: "Collège L'Assomption" },
+            { niveau: "Sec. 2-3", nom: "Collège L'Assomption" },
+            { niveau: "Sec. 4-5", nom: "Collège L'Assomption" },
+          ],
+        },
       ],
     },
     stats: [
@@ -298,4 +317,14 @@ export const PARTENAIRES_PAR_SPORT: Record<Sport, { nom: string; src?: string }[
     ...PARTENAIRES.filter((p) => !["USA Softball", "Fastpitch Nation"].includes(p.nom)),
     { nom: "PBR Baseball" }, // logo à fournir
   ],
+};
+
+/** Page « Centre d'entraînement ». Textes à compléter par la Direction. */
+export const CENTRE = {
+  titre: "Centre d'entraînement",
+  intro:
+    "Des cages de frappe avec lanceurs automatiques et une surface dédiée à l'entraînement : un centre privé pour travailler la technique, la répétition et la confiance, au rythme de chaque athlète.",
+  photo: "/photos/centre-entrainement.webp",
+  alt: "Cages de frappe avec lanceurs automatiques et plaque sur surface rouge au centre d'entraînement privé",
+  points: ["Cages de frappe", "Lanceurs automatiques", "Surface d'entraînement dédiée", "Centre privé"],
 };
