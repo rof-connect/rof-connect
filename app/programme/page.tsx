@@ -57,8 +57,8 @@ export default async function ProgrammePage() {
     ? { titre: "Elles ont signé", sous: "Nos athlètes engagées au niveau collégial américain." }
     : { titre: "They committed", sous: "Our athletes committed to the American college level." };
   const engagees = [
-    { src: "/photos/committed-maeva-gascon.jpg", nom: "Maeva Gascon", ecole: "North Platte Community College", detail: "2026" },
-    { src: "/photos/committed-julia-collard.jpg", nom: "Julia Collard", ecole: "Dodge City Community College", detail: "Kansas" },
+    { src: "/photos/committed-maeva-gascon.jpg", nom: "Maeva Gascon", ecole: "North Platte Community College", detail: "NJCAA Division 1" },
+    { src: "/photos/committed-julia-collard.jpg", nom: "Julia Collard", ecole: "Dodge City Community College", detail: "NJCAA Division 1" },
     { src: "/photos/committed-hill-college.webp", nom: "", ecole: "Hill College", detail: "NJCAA Division 1" },
   ];
   const legendes = fr
