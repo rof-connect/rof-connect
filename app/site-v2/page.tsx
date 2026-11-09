@@ -354,7 +354,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           </div>
         </section>
 
-        <Organisation />
+        <Organisation sport={sport} />
 
         {/* PARTENAIRES */}
         <section className="block" id="partenaires" style={{ paddingTop: 0 }}>

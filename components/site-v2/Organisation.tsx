@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { dictionnaires } from "@/lib/i18n/dictionaries";
-import { EQUIPE_ORGANISATION } from "@/lib/site-v2/donnees";
+import { AFFILIATIONS, EQUIPE_ORGANISATION, type Sport } from "@/lib/site-v2/donnees";
 
 const s = dictionnaires.fr.site;
 
 /** Section « Organisation » : qui nous sommes, notre mission, nos valeurs et comment nous joindre. */
-export function Organisation() {
+export function Organisation({ sport }: { sport: Sport }) {
   return (
     <section className="block" id="organisation" style={{ paddingTop: 0 }}>
       <div className="wrap">
@@ -38,7 +38,7 @@ export function Organisation() {
               </li>
               <li>
                 <b>Affiliations</b>
-                <span>Little League Canada · Baseball Québec · Softball Québec</span>
+                <span>{AFFILIATIONS[sport].join(" · ")}</span>
               </li>
             </ul>
           </div>

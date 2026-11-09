@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Entete } from "./Entete";
-import { CONTENU, SPORTS, type Sport } from "@/lib/site-v2/donnees";
+import { AFFILIATIONS, CONTENU, SPORTS, type Sport } from "@/lib/site-v2/donnees";
 
 /** Cadre commun du site public : barre utilitaire, en-tête, pied de page et symboles SVG. */
 export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; provisoire?: boolean; accueil?: boolean; children: React.ReactNode }) {
@@ -57,7 +57,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
               <div className="brand">
                 <Image src="/logo-r.png" alt="" width={46} height={46} />
                 <div className="name" style={{ color: "#fff" }}>
-                  ROYAL ON FIELD<small>OBNL · REPENTIGNY</small>
+                  ROYAL ON FIELD<small>REPENTIGNY</small>
                 </div>
               </div>
               <div className="tag">
@@ -86,8 +86,8 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
             </div>
           </div>
           <div className="bottom">
-            <span>© 2026 Royal On Field — Organisme à but non lucratif</span>
-            <span>Affilié à Little League Canada · Baseball Québec · Softball Québec</span>
+            <span>© 2026 Royal On Field</span>
+            <span>Affiliations : {AFFILIATIONS[sport].join(" · ")}</span>
           </div>
         </div>
       </footer>
