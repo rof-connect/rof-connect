@@ -112,6 +112,8 @@ export const dictionnaires = {
         {
           annee: "2026",
           faits: [
+            { texte: "Champion canadien Softball — 12U · 14U · 16U", titre: true },
+            { texte: "Participation à la World Series Softball — 12U · 14U · 16U", titre: false },
             { texte: "Champion de l'Est du Canada — Softball Canada", titre: true },
             { texte: "Champion Fastpitch Nation « Firecrackers » — 16U", titre: true },
           ],
@@ -436,6 +438,8 @@ export const dictionnaires = {
         {
           annee: "2026",
           faits: [
+            { texte: "Canadian Softball Champions — 12U · 14U · 16U", titre: true },
+            { texte: "Softball World Series appearance — 12U · 14U · 16U", titre: false },
             { texte: "Eastern Canada Champions — Softball Canada", titre: true },
             { texte: "Fastpitch Nation \"Firecrackers\" Champions — 16U", titre: true },
           ],
