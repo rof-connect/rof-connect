@@ -19,7 +19,7 @@ type Contenu = {
   noteCalendrier: string;
   engagementsSous: string;
   lead: string;
-  etapes: { n: string; t: string; d: string }[]; // parcours Royal
+  etapes: { n: string; t: string; d: string; nb?: number }[]; // parcours Royal
   stats: [string, string][]; // chiffres fixes (les chiffres tirés de ROF Connect s'ajoutent)
   calendrier: Evenement[];
   palmares: Palmares[];
@@ -41,10 +41,10 @@ export const CONTENU: Record<Sport, Contenu> = {
     engagementsSous: "Elles ont signé.",
     lead: "De l'école primaire au collège américain : un chemin clair, un accompagnement personnalisé vers la NCAA, la NAIA et la NJCAA.",
     etapes: [
-      { n: "01", t: "Royal Junior", d: "10U à 11U — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
-      { n: "02", t: "Royal Relève", d: "12U à 13U — compétition provinciale et canadienne, avec le rêve des World Series Softball." },
-      { n: "03", t: "Royal Prospect", d: "14U à 15U — développement élite : un calibre de jeu et une préparation qui visent le niveau supérieur." },
-      { n: "04", t: "Royal Élite", d: "16U à 18U — le niveau vitrine : tournois aux États-Unis, exposition aux recruteurs et accompagnement vers la NCAA, la NAIA et la NJCAA." },
+      { n: "01", t: "Royal Junior", d: "10U à 11U — les fondations : technique, plaisir du jeu et habitudes d'athlète.", nb: 24 },
+      { n: "02", t: "Royal Relève", d: "12U à 13U — compétition provinciale et canadienne, avec le rêve des World Series Softball.", nb: 24 },
+      { n: "03", t: "Royal Prospect", d: "14U à 15U — développement élite : un calibre de jeu et une préparation qui visent le niveau supérieur.", nb: 24 },
+      { n: "04", t: "Royal Élite", d: "16U à 18U — le niveau vitrine : tournois aux États-Unis, exposition aux recruteurs et accompagnement vers la NCAA, la NAIA et la NJCAA.", nb: 36 },
     ],
     stats: [
       ["9", "Titres canadiens"],
@@ -82,7 +82,7 @@ export const CONTENU: Record<Sport, Contenu> = {
     mot: "Baseball",
     kicker: "Royal Baseball On Field · Repentigny, QC",
     accroche:
-      "Le programme élite de baseball de Lanaudière. De 10U à Varsity, bâti sur le même standard Royal : travail, caractère, excellence.",
+      "Le programme élite de baseball de Lanaudière. Du 8U au Prep School, bâti sur le même standard Royal : travail, caractère, excellence.",
     saison: "Saison 2027",
     noteCalendrier: "Calendrier en préparation",
     engagementsSous: "Les prochains noms.",
@@ -213,7 +213,6 @@ export const HERO: Record<Sport, { src: string; alt: string; position: string }>
 export const GALERIES: Record<Sport, { src: string; alt: string }[]> = {
   softball: GALERIE,
   baseball: [
-    { src: bb(3), alt: "Un entraîneur assis entre deux jeunes joueurs en uniforme noir Royal, devant le décor « Earn the Crown »" },
     { src: bb(5), alt: "Trois jeunes joueurs avec gants et bâton, une balle lancée dans les airs" },
     { src: bb(1), alt: "Quatre joueurs de Royal On Field se cachent la bouche et pointent vers la caméra" },
     { src: bb(9), alt: "Trois joueurs en position défensive, le gant près du sol" },
@@ -237,4 +236,23 @@ export const CATEGORIE_PROVISOIRE: Record<string, string> = {
   "18U - Di Peco": "NATIONAL",
   "16U - Bertrand": "RÉGIONAL",
   "16U - Dostaler": "ÉLITE",
+};
+
+/** Ordre d'affichage par défaut des équipes (quand la Direction n'a pas saisi d'ordre). */
+export const ORDRE_PUBLIC: Record<Sport, string[]> = {
+  softball: [],
+  baseball: ["8U", "9/10U", "11/12U", "13U", "14U", "16U", "Prep School"],
+};
+
+/** Texte « niveaux » de l'accès rapide Équipes. */
+export const NIVEAUX: Record<Sport, string> = { softball: "10U à Varsity", baseball: "8U à Prep School" };
+
+/** Comptes des réseaux sociaux par sport. Vide = ce réseau n'est pas affiché (le baseball n'a pas de TikTok). */
+export const RESEAUX: Record<Sport, { instagram: string; facebook: string; tiktok: string }> = {
+  softball: { instagram: INSTAGRAM, facebook: FACEBOOK, tiktok: TIKTOK },
+  baseball: {
+    instagram: "https://www.instagram.com/royal_onfield_baseball/",
+    facebook: "https://www.facebook.com/royalbaseballsubarurepentigny/",
+    tiktok: "",
+  },
 };

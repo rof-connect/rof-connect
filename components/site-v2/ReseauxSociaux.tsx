@@ -1,5 +1,5 @@
 import { IcFacebook, IcInstagram } from "@/components/programme/Icones";
-import { FACEBOOK, INSTAGRAM, TIKTOK, compteInstagram, compteTiktok, pageFacebook } from "@/lib/site-v2/donnees";
+import { RESEAUX, compteInstagram, compteTiktok, pageFacebook, type Sport } from "@/lib/site-v2/donnees";
 
 const IcTiktok = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden focusable="false">
@@ -9,10 +9,10 @@ const IcTiktok = () => (
 );
 
 /** « Suis-nous » : logos des réseaux sociaux et liens (aucune intégration externe pour l'instant). */
-export function ReseauxSociaux() {
-  const insta = compteInstagram(INSTAGRAM);
-  const fb = pageFacebook(FACEBOOK);
-  const tt = compteTiktok(TIKTOK);
+export function ReseauxSociaux({ sport }: { sport: Sport }) {
+  const insta = compteInstagram(RESEAUX[sport].instagram);
+  const fb = pageFacebook(RESEAUX[sport].facebook);
+  const tt = compteTiktok(RESEAUX[sport].tiktok);
 
   const liens = [
     insta && { nom: "Instagram", url: `https://www.instagram.com/${insta}/`, compte: `@${insta}`, icone: <IcInstagram className="h-7 w-7" /> },

@@ -38,3 +38,6 @@ update teams set categorie = 'NATIONAL'
 where archived = false and name = 'Softball 18U - Di Peco';
 update teams set categorie = 'RÉGIONAL' where archived = false and name = 'Softball 16U - Bertrand';
 update teams set categorie = 'ÉLITE' where archived = false and name = 'Softball 16U - Dostaler';
+
+-- Au départ, toutes les équipes actives sont visibles sur le site (la Direction décoche celles à masquer).
+update teams set visible_public = true where archived = false and sport in ('softball', 'baseball');

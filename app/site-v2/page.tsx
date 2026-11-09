@@ -4,7 +4,7 @@ import { Cadre } from "@/components/site-v2/Cadre";
 import { Organisation } from "@/components/site-v2/Organisation";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, GALERIES, HERO, PARTENAIRES, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, GALERIES, HERO, NIVEAUX, PARTENAIRES, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +25,9 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
   if (equipes.length > 0) {
     const mot = sport === "softball" ? "Joueuses" : "Joueurs";
     if (sport === "softball") stats.push([String(nbJoueurs), `${mot} · ${equipes.length} équipe${equipes.length > 1 ? "s" : ""}`]);
-    else stats.unshift([String(equipes.length), "Équipes"], [String(nbJoueurs), mot]);
+    else stats.unshift([String(equipes.length), "Équipes"]);
   }
-  const qEquipes = equipes.length ? `${equipes.length} équipe${equipes.length > 1 ? "s" : ""} · 10U à Varsity` : "10U à Varsity";
+  const qEquipes = equipes.length ? `${equipes.length} équipe${equipes.length > 1 ? "s" : ""} · ${NIVEAUX[sport]}` : NIVEAUX[sport];
   const qEngagees = c.engagees.length ? `${c.engagees.length} athlètes signées` : "Les premiers à venir";
 
   return (
@@ -243,6 +243,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                     <div>
                       <h4>{e.t}</h4>
                       <p>{e.d}</p>
+                      {e.nb && <span className="step-nb">{e.nb} athlètes</span>}
                     </div>
                   </div>
                 ))}
@@ -377,7 +378,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           </div>
         </section>
 
-      <ReseauxSociaux />
+      <ReseauxSociaux sport={sport} />
     </Cadre>
   );
 }

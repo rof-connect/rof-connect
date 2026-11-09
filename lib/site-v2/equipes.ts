@@ -2,7 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { comparerEquipes } from "@/lib/equipes";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
-import { CATEGORIE_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
+import { CATEGORIE_PROVISOIRE, ORDRE_PUBLIC, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
 export type EquipePublique = {
   id: string;
@@ -70,7 +70,13 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
   const liste = [...lignes].sort((a, b) => {
     const oa = a.ordre_affichage ?? Number.MAX_SAFE_INTEGER;
     const ob = b.ordre_affichage ?? Number.MAX_SAFE_INTEGER;
-    return oa !== ob ? oa - ob : comparerEquipes(a, b);
+    if (oa !== ob) return oa - ob;
+    // Ordre par défaut propre au sport (ex. baseball : 8U → Prep School), sinon tri habituel.
+    const ordre = ORDRE_PUBLIC[a.sport as Sport] ?? [];
+    const ia = ordre.indexOf(nomPublicParDefaut(a.name));
+    const ib = ordre.indexOf(nomPublicParDefaut(b.name));
+    if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    return comparerEquipes(a, b);
   });
 
   // Nombre d'athlètes par équipe (sans les joueuses archivées). Aucun nom ni donnée personnelle n'est lu.
