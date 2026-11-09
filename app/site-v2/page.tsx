@@ -4,7 +4,7 @@ import { Cadre } from "@/components/site-v2/Cadre";
 import { Organisation } from "@/components/site-v2/Organisation";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, GALERIE, PARTENAIRES, SPORTS, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, GALERIES, HERO, PARTENAIRES, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -34,13 +34,9 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
     <Cadre sport={sport} accueil provisoire={source === "provisoire"}>
         {/* HERO */}
         <section className="hero">
-          {sport === "softball" ? (
-            <div className="photo">
-              <Image src="/photos/celebration.jpg" alt="Les joueuses de Royal On Field, de dos, lèvent les bras ensemble sur le terrain" fill priority sizes="100vw" style={{ objectPosition: "62% 30%" }} />
-            </div>
-          ) : (
-            <div className="photo ph" />
-          )}
+          <div className="photo">
+            <Image src={HERO[sport].src} alt={HERO[sport].alt} fill priority sizes="100vw" style={{ objectPosition: HERO[sport].position }} />
+          </div>
           <svg className="diamond" aria-hidden>
             <use href="#diamondArt" />
           </svg>
@@ -314,8 +310,8 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                 <em>images</em>
               </h2>
             </div>
-            <div className="gallery">
-              {GALERIE.map((g) => (
+            <div className={`gallery${GALERIES[sport].length > 5 ? " gallery-auto" : ""}`}>
+              {GALERIES[sport].map((g) => (
                 <div className="g" key={g.src}>
                   <Image src={g.src} alt={g.alt} fill loading="lazy" sizes="(min-width: 1000px) 40vw, 50vw" />
                 </div>

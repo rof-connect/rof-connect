@@ -316,3 +316,10 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .commit-photo figcaption b{font-family:var(--display);font-size:34px;font-weight:400;line-height:1}
 .v2 .commit-photo figcaption span{font-weight:700}
 .v2 .commit-photo figcaption em{font-style:normal;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+
+/* Galerie à plusieurs photos (baseball) : grille régulière */
+.v2 .gallery.gallery-auto{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-template-rows:none;grid-auto-rows:300px}
+.v2 .gallery.gallery-auto .g:nth-child(n){grid-row:auto;grid-column:auto;background:var(--navy)}
+.v2 .gallery.gallery-auto .g:nth-child(1){grid-column:span 2;grid-row:span 2}
+.v2 .gallery.gallery-auto .g img{object-position:50% 25%}
+@media (max-width:1000px){.v2 .gallery.gallery-auto{grid-auto-rows:220px}.v2 .gallery.gallery-auto .g:nth-child(1){grid-column:span 2;grid-row:span 1}}

@@ -88,10 +88,10 @@ export const CONTENU: Record<Sport, Contenu> = {
     engagementsSous: "Les prochains noms.",
     lead: "Le même parcours Royal, adapté au baseball : développement, exposition et accompagnement vers les programmes collégiaux américains.",
     etapes: [
-      { n: "01", t: "PSES", d: "5e et 6e année — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
-      { n: "02", t: "Collège L'Assomption", d: "Le secondaire : conciliation sport-études et développement structuré." },
-      { n: "03", t: "JV / Varsity", d: "Le niveau vitrine : tournois aux États-Unis, préparation physique et exposition aux recruteurs." },
-      { n: "04", t: "Collège américain", d: "La signature : parcours 12e année ou cégep, dossier, vidéos et contacts avec les entraîneurs." },
+      { n: "01", t: "Royal Junior", d: "10U à 11U" },
+      { n: "02", t: "Royal Relève", d: "12U à 13U" },
+      { n: "03", t: "Royal Prospect", d: "14U à 15U" },
+      { n: "04", t: "Royal Élite", d: "16U à 18U" },
     ],
     stats: [["10U", "à Varsity"]],
     calendrier: [],
@@ -187,4 +187,37 @@ export const EQUIPE_ORGANISATION: { nom: string; role: string }[] = [];
 export const AFFILIATIONS: Record<Sport, string[]> = {
   softball: ["Little League", "Babe Ruth League", "Softball USA", "Triple Crown", "Alliance Fastpitch"],
   baseball: ["Little League", "Can-Am League"],
+};
+
+const bb = (n: number) => `/photos/baseball-${String(n).padStart(2, "0")}.jpg`;
+
+/** Photo du haut de page (baseball : photo des receveurs). */
+export const HERO: Record<Sport, { src: string; alt: string; position: string }> = {
+  softball: {
+    src: "/photos/celebration.jpg",
+    alt: "Les joueuses de Royal On Field, de dos, lèvent les bras ensemble sur le terrain",
+    position: "62% 30%",
+  },
+  baseball: {
+    src: bb(11),
+    alt: "Deux receveurs de Royal On Field, en équipement complet, tendent leur gant vers la caméra",
+    position: "50% 40%",
+  },
+};
+
+/** Galerie « En images » par sport. */
+export const GALERIES: Record<Sport, { src: string; alt: string }[]> = {
+  softball: GALERIE,
+  baseball: [
+    { src: bb(3), alt: "Un entraîneur assis entre deux jeunes joueurs en uniforme noir Royal, devant le décor « Earn the Crown »" },
+    { src: bb(5), alt: "Trois jeunes joueurs avec gants et bâton, une balle lancée dans les airs" },
+    { src: bb(1), alt: "Quatre joueurs de Royal On Field se cachent la bouche et pointent vers la caméra" },
+    { src: bb(9), alt: "Trois joueurs en position défensive, le gant près du sol" },
+    { src: bb(7), alt: "Deux jeunes joueurs souriants, l'un avec un bâton sur l'épaule, l'autre avec son gant" },
+    { src: bb(2), alt: "Deux joueurs posent en uniforme noir, l'une debout, l'autre à genoux avec un bâton multicolore" },
+    { src: bb(6), alt: "Trois joueurs font un « dab » devant le décor de l'académie" },
+    { src: bb(8), alt: "Deux jeunes joueurs debout avec un gant, une balle et un bâton" },
+    { src: bb(4), alt: "Un jeune joueur fait semblant de croquer un gant de baseball en peluche" },
+    { src: bb(10), alt: "Un jeune joueur fait semblant de frapper son entraîneur avec un bâton orange" },
+  ],
 };
