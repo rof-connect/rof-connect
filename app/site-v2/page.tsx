@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
-import { Organisation } from "@/components/site-v2/Organisation";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
 import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, PARTENAIRES, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
@@ -356,8 +355,6 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             </div>
           </div>
         </section>
-
-        <Organisation sport={sport} />
 
         {/* PARTENAIRES */}
         <section className="block" id="partenaires" style={{ paddingTop: 0 }}>

@@ -181,12 +181,6 @@ export function lienGameChanger(v: unknown): string {
   return m ? `https://web.gc.com/teams/${m[1]}` : "";
 }
 
-/**
- * Section « Organisation » : personnes de la direction et du personnel affichées sur le site.
- * À compléter par la Direction (nom, rôle). Vide = le bloc « Direction et personnel » n'est pas affiché.
- */
-export const EQUIPE_ORGANISATION: { nom: string; role: string }[] = [];
-
 /** Affiliations affichées selon le sport (pied de page et section Organisation). */
 export const AFFILIATIONS: Record<Sport, string[]> = {
   softball: ["Little League", "Babe Ruth League", "Softball USA", "Triple Crown", "Alliance Fastpitch"],

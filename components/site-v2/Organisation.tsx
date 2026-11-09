@@ -1,25 +1,15 @@
 import Link from "next/link";
 import { dictionnaires } from "@/lib/i18n/dictionaries";
-import { AFFILIATIONS, EQUIPE_ORGANISATION, type Sport } from "@/lib/site-v2/donnees";
+import { AFFILIATIONS, type Sport } from "@/lib/site-v2/donnees";
+import { DIRECTION_SITE, type Entraineur } from "@/lib/site-v2/personnel";
 
 const s = dictionnaires.fr.site;
 
-/** Section « Organisation » : qui nous sommes, notre mission, nos valeurs et comment nous joindre. */
-export function Organisation({ sport }: { sport: Sport }) {
+/** Page « Organisation » : qui nous sommes, nos piliers, la direction et les entraîneurs. */
+export function Organisation({ sport, entraineurs }: { sport: Sport; entraineurs: Entraineur[] }) {
   return (
-    <section className="block" id="organisation" style={{ paddingTop: 0 }}>
+    <section className="block" id="organisation" style={{ paddingTop: 56 }}>
       <div className="wrap">
-        <div className="head">
-          <h2>
-            L&apos;organi
-            <wbr />
-            sation
-            <br />
-            <em>Royal On Field</em>
-          </h2>
-          <Link className="more" href="/inscription">Joindre le programme →</Link>
-        </div>
-
         <div className="org">
           <div className="org-texte">
             <p className="org-lead">
@@ -49,14 +39,26 @@ export function Organisation({ sport }: { sport: Sport }) {
           </div>
         </div>
 
-        {EQUIPE_ORGANISATION.length > 0 && (
+        <div className="org-equipe">
+          <h3>Direction</h3>
+          <ul>
+            {DIRECTION_SITE.map((m) => (
+              <li key={m.nom}>
+                <b>{m.nom}</b>
+                <span>{m.role}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {entraineurs.length > 0 && (
           <div className="org-equipe">
-            <h3>Direction et personnel</h3>
+            <h3>Entraîneurs</h3>
             <ul>
-              {EQUIPE_ORGANISATION.map((m) => (
+              {entraineurs.map((m) => (
                 <li key={m.nom}>
                   <b>{m.nom}</b>
-                  <span>{m.role}</span>
+                  <span>{m.equipes.length ? m.equipes.join(" · ") : "Équipe à venir"}</span>
                 </li>
               ))}
             </ul>
@@ -68,7 +70,10 @@ export function Organisation({ sport }: { sport: Sport }) {
             <h3>Nous joindre</h3>
             <p>Une question sur le programme, l&apos;inscription ou le parcours vers le collège américain?</p>
           </div>
-          <a className="btn solid" href="mailto:royal@lentrepotdubaseball.com">royal@lentrepotdubaseball.com</a>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <a className="btn solid" href="mailto:royal@lentrepotdubaseball.com">royal@lentrepotdubaseball.com</a>
+            <Link className="btn ghost" href="/inscription">Joindre le programme</Link>
+          </div>
         </div>
       </div>
     </section>

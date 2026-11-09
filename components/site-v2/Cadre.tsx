@@ -75,7 +75,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
               <a href={`${base}#equipes`}>Équipes</a>
               <a href={`${base}#calendrier`}>Calendrier</a>
               <a href={`${base}#engagements`}>Engagements</a>
-              <a href={`${base}#organisation`}>Organisation</a>
+              <Link href={`/site-v2/organisation?sport=${sport}`}>Organisation</Link>
               <Link href="/connexion">ROF Connect</Link>
             </div>
             <div>
