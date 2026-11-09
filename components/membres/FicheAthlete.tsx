@@ -6,6 +6,7 @@ import { modifierMaFiche } from "@/app/membres/moi/actions";
 import type { Dictionnaire } from "@/lib/i18n/dictionaries";
 import { urlPhotoProfil } from "@/lib/photo-profil";
 import { liensDe } from "@/lib/liens-sociaux";
+import { parcoursOuvert } from "@/lib/statuts";
 import { presentationDe } from "@/lib/presentation";
 import { CartePresentation } from "@/components/membres/CartePresentation";
 import { FormPhotoProfil } from "@/components/membres/FormPhotoProfil";
@@ -103,6 +104,7 @@ export async function FicheAthlete({
     }
   }
 
+  const ouvert = vue ? await parcoursOuvert(profileId) : true; // parcours réservé aux joueuses non Prospect
   const [photoUrl, liens, presentation] = await Promise.all([
     urlPhotoProfil(profileId),
     liensDe(profileId),
@@ -116,7 +118,7 @@ export async function FicheAthlete({
     .map((x: string) => x[0]?.toUpperCase())
     .join("");
 
-  const bilan = (bilans ?? [])[0] ?? null;
+  const bilan = ouvert ? ((bilans ?? [])[0] ?? null) : null;
   const resultat = (bilan?.resultat ?? {}) as Resultat;
   const finSecondaire = (bilan?.reponses as { fin?: number } | null)?.fin;
   const candidats = (resultat.candidats ?? [])
@@ -229,6 +231,12 @@ export async function FicheAthlete({
               </Link>
             )}
           </>
+        ) : vue && !ouvert ? (
+          <p className="mt-1 text-sm text-rof-gris">
+            {locale === "en"
+              ? "The NCAA pathway becomes available once the staff accepts you and your status is no longer Prospect."
+              : "Le parcours NCAA sera disponible dès que la Direction t'aura acceptée et que ton statut ne sera plus Prospect."}
+          </p>
         ) : vue ? (
           <>
             <p className="mt-1 text-sm text-rof-gris">{f.aucunParcours}</p>

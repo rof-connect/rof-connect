@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getResend, EXPEDITEUR } from "@/lib/resend";
 import { calculer, resumeTexte, DIVISIONS, NIVEAUX } from "@/lib/parcours/calcul";
 import { genererBilanPdf } from "@/lib/parcours/bilan-pdf";
+import { parcoursOuvert } from "@/lib/statuts";
 
 const COURRIEL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NOTIFICATION = process.env.COURRIEL_NOTIFICATION || "royal@lentrepotdubaseball.com";
@@ -46,6 +47,10 @@ export async function soumettreParcoursMembre(b: Record<string, unknown>): Promi
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, erreur: "Connecte-toi pour envoyer le questionnaire." };
+  const { data: profil } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  if (profil?.role === "member" && !(await parcoursOuvert(user.id))) {
+    return { ok: false, erreur: "Le parcours est disponible dès que ton statut n'est plus Prospect." };
+  }
   return traiter(b, user.id);
 }
 

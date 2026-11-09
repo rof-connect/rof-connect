@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 import { QuestionnaireParcours } from "@/components/parcours/QuestionnaireParcours";
+import { parcoursOuvert } from "@/lib/statuts";
 
 export default async function ParcoursMembrePage() {
   const supabase = await createClient();
@@ -7,7 +9,27 @@ export default async function ParcoursMembrePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase.from("profiles").select("full_name, email").eq("id", user!.id).single();
+  const { data: profile } = await supabase.from("profiles").select("full_name, email, role").eq("id", user!.id).single();
+
+  // Réservé aux joueuses dont le statut n'est plus Prospect (la Direction et les entraîneurs y accèdent toujours).
+  if (profile?.role === "member" && !(await parcoursOuvert(user!.id))) {
+    return (
+      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-5 py-10">
+        <h1 className="font-condensed text-3xl font-bold uppercase text-rof-texte">Parcours NCAA</h1>
+        <div className="rounded-xl border border-rof-or bg-rof-blanc p-5">
+          <p className="text-rof-texte">
+            Le parcours NCAA sera disponible dès que la Direction aura accepté la joueuse et que son statut ne sera plus Prospect.
+          </p>
+          <p className="mt-2 text-sm text-rof-gris">
+            The NCAA pathway becomes available once the staff accepts the player and her status is no longer Prospect.
+          </p>
+          <Link href="/membres/moi" className="mt-4 inline-block text-sm text-rof-poudre underline">
+            ‹ Retour
+          </Link>
+        </div>
+      </main>
+    );
+  }
   const { data: fiche } = await supabase
     .from("athlete_details")
     .select("birth_date, position, guardian_name, guardian_phone, guardian_email")

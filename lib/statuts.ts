@@ -66,3 +66,13 @@ export function statutSelonNaissance(naissance: string | null | undefined, now =
   const statut = STATUTS.find((s) => s.nom === `${borne}U`);
   return statut ? { id: statut.id, nom: statut.nom, age } : null;
 }
+
+/** Le parcours NCAA n'est offert qu'aux joueuses dont le statut n'est plus Prospect. */
+export async function parcoursOuvert(profileId: string): Promise<boolean> {
+  const admin = createAdminClient();
+  const [statuts, { data }] = await Promise.all([
+    chargerStatutsJoueuses(),
+    admin.from("team_members").select("status_id").eq("profile_id", profileId).eq("role_in_team", "athlete"),
+  ]);
+  return statutEffectif(profileId, statuts, (data ?? []).map((d) => d.status_id)) > 1;
+}

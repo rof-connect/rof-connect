@@ -4,6 +4,7 @@ import { CarteHub } from "@/components/membres/CarteHub";
 import { FicheAthlete } from "@/components/membres/FicheAthlete";
 import { FormPhotoProfil } from "@/components/membres/FormPhotoProfil";
 import { urlPhotoProfil } from "@/lib/photo-profil";
+import { parcoursOuvert } from "@/lib/statuts";
 
 export default async function MoiPage() {
   const supabase = await createClient();
@@ -22,6 +23,7 @@ export default async function MoiPage() {
   const estEntraineur = (roles ?? []).some((r) => r.role_in_team === "coach");
   const estAthlete = (roles ?? []).some((r) => r.role_in_team === "athlete") || (profile?.role === "member" && !estEntraineur);
   const photoUrl = estAthlete ? null : await urlPhotoProfil(uid);
+  const peutParcours = profile?.role !== "member" || (await parcoursOuvert(uid));
   const nom = profile?.full_name || user?.email || "";
 
   return (
@@ -53,7 +55,7 @@ export default async function MoiPage() {
       <div className="flex flex-col gap-3">
         <CarteHub href="/membres/documents" titre={t.nav.documents} description={h.documentsDesc} />
         <CarteHub href="/membres/sondages" titre={t.nav.sondages} description={h.sondagesDesc} />
-        {!estAthlete && <CarteHub href="/membres/parcours" titre={t.nav.parcours} description={h.parcoursDesc} />}
+        {!estAthlete && peutParcours && <CarteHub href="/membres/parcours" titre={t.nav.parcours} description={h.parcoursDesc} />}
         <CarteHub href="/membres/contact" titre={t.nav.contact} description={h.contactDesc} />
       </div>
     </main>

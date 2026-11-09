@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const bouton =
-  "inline-flex items-center justify-center rounded-full px-8 py-4 font-condensed text-base font-bold uppercase tracking-wider transition";
+  "inline-flex items-center justify-center rounded-full px-6 py-2.5 font-condensed text-sm font-bold uppercase tracking-wider transition";
 
 /** Photo plein cadre avec légende en dégradé. */
 function Photo({ src, alt, legende, className = "", position = "center" }: { src: string; alt: string; legende?: string; className?: string; position?: string }) {
@@ -89,12 +89,12 @@ export default async function ProgrammePage() {
   return (
     <main className="bg-rof-noir text-rof-texte">
       {/* ───────── HERO ───────── */}
-      <section className="relative isolate flex min-h-[100svh] flex-col overflow-hidden">
+      <section className="relative isolate flex min-h-[86svh] flex-col overflow-hidden">
         <Image src="/photos/cercle-equipe.jpg" alt="" fill priority sizes="100vw" className="-z-20 object-cover" style={{ objectPosition: "50% 45%" }} />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/85 via-black/55 to-black/10" />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-1/2 bg-gradient-to-t from-rof-noir to-transparent" />
 
-        <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5">
+        <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5">
           <Link href="/programme" className="flex items-center gap-3">
             <Image src="/logo-r.png" alt="Royal On Field" width={48} height={48} priority />
             <span className="hidden font-condensed text-sm font-bold uppercase tracking-[0.3em] text-white sm:inline">Royal On Field</span>
@@ -107,14 +107,14 @@ export default async function ProgrammePage() {
           </div>
         </header>
 
-        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-5 pb-24 pt-10">
+        <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 pb-16 pt-10">
           <p className="font-condensed text-sm font-bold uppercase tracking-[0.4em] text-rof-or">{s.kicker}</p>
-          <h1 className="mt-5 max-w-4xl font-condensed text-6xl font-bold uppercase leading-[0.9] text-white sm:text-8xl lg:text-9xl">
+          <h1 className="mt-5 max-w-4xl font-condensed text-5xl font-bold uppercase leading-[0.9] text-white sm:text-7xl lg:text-8xl">
             Earn the
             <br />
             <span className="text-rof-or">Crown.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-white/85 sm:text-xl">{s.intro}</p>
+          <p className="mt-6 max-w-xl text-base text-white/85 sm:text-lg">{s.intro}</p>
           <div className="mt-9 flex flex-wrap gap-4">
             <Link href="/inscription" className={`${bouton} bg-rof-or text-black hover:brightness-110`}>
               {s.creerProfil}
@@ -132,10 +132,10 @@ export default async function ProgrammePage() {
 
       {/* ───────── CHIFFRES ───────── */}
       <section id="chiffres" className="border-y border-rof-ligne bg-rof-blanc">
-        <dl className="mx-auto grid max-w-7xl grid-cols-2 gap-y-8 px-5 py-12 text-center sm:grid-cols-3">
+        <dl className="mx-auto grid max-w-6xl grid-cols-2 gap-y-8 px-5 py-12 text-center sm:grid-cols-3">
           {s.statsHero.map(([n, l]) => (
             <div key={l}>
-              <dt className="font-condensed text-6xl font-bold leading-none text-rof-or sm:text-7xl">{n}</dt>
+              <dt className="font-condensed text-5xl font-bold leading-none text-rof-or sm:text-6xl">{n}</dt>
               <dd className="mx-auto mt-2 max-w-[12rem] text-xs uppercase tracking-widest text-rof-gris">{l}</dd>
             </div>
           ))}
@@ -143,18 +143,18 @@ export default async function ProgrammePage() {
       </section>
 
       {/* ───────── L'EXPÉRIENCE ───────── */}
-      <section id="experience" className="mx-auto max-w-7xl scroll-mt-4 px-5 py-24">
-        <h2 className="max-w-3xl font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">
+      <section id="experience" className="mx-auto max-w-6xl scroll-mt-4 px-5 py-16">
+        <h2 className="max-w-3xl font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">
           {s.approcheTitre}
         </h2>
         <p className="mt-5 max-w-2xl text-lg text-rof-gris">{s.approcheIntro}</p>
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {s.piliers.map((p, i) => (
             <article key={p.t} className="relative overflow-hidden rounded-3xl border border-rof-ligne bg-rof-blanc p-8">
-              <span className="absolute -right-3 -top-6 font-condensed text-[9rem] font-bold leading-none text-white/[0.04]" aria-hidden>
+              <span className="absolute -right-3 -top-6 font-condensed text-[7rem] font-bold leading-none text-white/[0.04]" aria-hidden>
                 {i + 1}
               </span>
-              <p className="text-5xl" aria-hidden>
+              <p className="text-4xl" aria-hidden>
                 {p.ic}
               </p>
               <h3 className="mt-5 font-condensed text-2xl font-bold uppercase text-rof-or">{p.t}</h3>
@@ -165,8 +165,8 @@ export default async function ProgrammePage() {
       </section>
 
       {/* ───────── GALERIE ───────── */}
-      <section className="mx-auto max-w-7xl px-5 pb-24">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:grid-rows-[repeat(3,280px)]">
+      <section className="mx-auto max-w-6xl px-5 pb-16">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:grid-rows-[repeat(3,230px)]">
           <Photo src="/photos/trio-sourire.jpg" alt="" legende={legendes.fieres} className="col-span-2 aspect-[5/4] lg:row-span-2 lg:aspect-auto" position="50% 30%" />
           <Photo src="/photos/receveuse.jpg" alt="" legende={legendes.focus} className="aspect-[3/4] lg:row-span-2 lg:aspect-auto" position="50% 40%" />
           <Photo src="/photos/canada.jpg" alt="" legende={legendes.canada} className="aspect-[3/4] lg:row-span-2 lg:aspect-auto" position="50% 30%" />
@@ -176,7 +176,7 @@ export default async function ProgrammePage() {
       </section>
 
       {/* ───────── EN IMAGES (bandes animées) ───────── */}
-      <section className="overflow-hidden pb-24" aria-label={fr ? "En images" : "In pictures"}>
+      <section className="overflow-hidden pb-16" aria-label={fr ? "En images" : "In pictures"}>
         <style>{`
           @keyframes defile { from { transform: translateX(0); } to { transform: translateX(-50%); } }
           .bande-piste { animation: defile 80s linear infinite; }
@@ -184,7 +184,7 @@ export default async function ProgrammePage() {
           .bande:hover .bande-piste { animation-play-state: paused; }
           @media (prefers-reduced-motion: reduce) { .bande-piste { animation: none; } .bande { overflow-x: auto; } }
         `}</style>
-        <h2 className="mx-auto max-w-7xl px-5 font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{fr ? "En images" : "In pictures"}</h2>
+        <h2 className="mx-auto max-w-6xl px-5 font-condensed text-3xl font-bold uppercase leading-none sm:text-5xl">{fr ? "En images" : "In pictures"}</h2>
         <div className="mt-8 flex flex-col gap-3">
           {[galerie.slice(0, 6), galerie.slice(6)].map((rangee, r) => (
             <div key={r} className="bande overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
@@ -194,7 +194,7 @@ export default async function ProgrammePage() {
                     <div
                       key={`${copie}-${src}`}
                       aria-hidden={copie === 1}
-                      className="relative h-44 shrink-0 overflow-hidden rounded-xl bg-rof-blanc sm:h-56"
+                      className="relative h-36 shrink-0 overflow-hidden rounded-xl bg-rof-blanc sm:h-44"
                       style={{ aspectRatio: String(Math.max(w / h, 0.75)) }}
                     >
                       <Image src={src} alt="" fill sizes="280px" loading="eager" className="object-cover" />
@@ -211,10 +211,10 @@ export default async function ProgrammePage() {
       <section className="relative isolate overflow-hidden">
         <Image src="/photos/centre-entrainement.webp" alt="" fill sizes="100vw" className="-z-20 object-cover" style={{ objectPosition: "50% 60%" }} />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/90 via-black/65 to-black/10" />
-        <div className="mx-auto flex min-h-[28rem] max-w-7xl items-center px-5 py-20">
+        <div className="mx-auto flex min-h-[22rem] max-w-6xl items-center px-5 py-14">
           <div className="max-w-xl">
             <p className="font-condensed text-sm font-bold uppercase tracking-[0.35em] text-rof-or">Royal On Field</p>
-            <h2 className="mt-3 font-condensed text-5xl font-bold uppercase leading-none text-white sm:text-7xl">{centre.titre}</h2>
+            <h2 className="mt-3 font-condensed text-4xl font-bold uppercase leading-none text-white sm:text-6xl">{centre.titre}</h2>
             <p className="mt-5 text-lg text-white/85">{centre.texte}</p>
           </div>
         </div>
@@ -222,12 +222,12 @@ export default async function ProgrammePage() {
 
       {/* ───────── PALMARÈS ───────── */}
       <section className="border-y border-rof-ligne bg-gradient-to-b from-rof-royal-sombre/40 to-rof-noir">
-        <div className="mx-auto max-w-7xl px-5 py-24">
-          <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">{s.resultatsTitre}</h2>
+        <div className="mx-auto max-w-6xl px-5 py-16">
+          <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{s.resultatsTitre}</h2>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {s.palmares.map((a) => (
               <article key={a.annee} className="rounded-3xl border border-rof-ligne bg-rof-noir/80 p-8">
-                <p className="font-condensed text-7xl font-bold leading-none text-rof-or">{a.annee}</p>
+                <p className="font-condensed text-6xl font-bold leading-none text-rof-or">{a.annee}</p>
                 <ul className="mt-5 flex flex-col gap-3">
                   {a.faits.map((f) => (
                     <li key={f.texte} className={`flex gap-3 ${f.titre ? "font-semibold text-white" : "text-rof-texte/90"}`}>
@@ -244,9 +244,9 @@ export default async function ProgrammePage() {
 
       {/* ───────── PROGRAMME SCOLAIRE (pleine largeur) ───────── */}
       <section className="border-t border-rof-ligne">
-        <div className="mx-auto max-w-7xl px-5 py-24">
-          <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">{s.scolaireTitre}</h2>
-          <p className="mt-4 max-w-3xl text-lg text-rof-gris">{s.scolaireIntro}</p>
+        <div className="mx-auto max-w-6xl px-5 py-16">
+          <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{s.scolaireTitre}</h2>
+          <p className="mt-4 max-w-3xl text-base text-rof-gris">{s.scolaireIntro}</p>
           <ul className="mt-10 grid gap-5 md:grid-cols-2">
             {s.scolaire.map((e) => (
               <li key={e.n} className="rounded-3xl border border-rof-ligne bg-rof-blanc p-8">
@@ -261,9 +261,9 @@ export default async function ProgrammePage() {
 
       {/* ───────── PLACEMENT & RECRUTEMENT (pleine largeur) ───────── */}
       <section className="border-t border-rof-ligne bg-gradient-to-b from-rof-royal-sombre/30 to-transparent">
-        <div className="mx-auto max-w-7xl px-5 py-24">
-          <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">{s.recrutementTitre}</h2>
-          <p className="mt-4 max-w-3xl text-lg text-rof-gris">{s.recrutementIntro}</p>
+        <div className="mx-auto max-w-6xl px-5 py-16">
+          <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{s.recrutementTitre}</h2>
+          <p className="mt-4 max-w-3xl text-base text-rof-gris">{s.recrutementIntro}</p>
           <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {s.placement.map((p) => (
               <li key={p} className="flex gap-3 rounded-2xl border border-rof-ligne bg-rof-noir/70 p-5 text-rof-texte">
@@ -274,13 +274,13 @@ export default async function ProgrammePage() {
               </li>
             ))}
           </ul>
-          <p className="mt-10 font-condensed text-5xl font-bold uppercase text-rof-or">{s.builtRoyal}</p>
+          <p className="mt-10 font-condensed text-4xl font-bold uppercase text-rof-or">{s.builtRoyal}</p>
         </div>
       </section>
 
       {/* ───────── COMMITTED ───────── */}
-      <section className="mx-auto max-w-7xl px-5 py-24">
-        <h2 className="font-condensed text-5xl font-bold uppercase leading-none sm:text-7xl">
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">
           <span className="text-rof-or">Committed.</span> {committed.titre}
         </h2>
         <p className="mt-4 max-w-2xl text-lg text-rof-gris">{committed.sous}</p>
@@ -310,8 +310,8 @@ export default async function ProgrammePage() {
       <section className="relative isolate overflow-hidden">
         <Image src="/photos/celebration.jpg" alt="" fill sizes="100vw" className="-z-20 object-cover" style={{ objectPosition: "50% 40%" }} />
         <div className="absolute inset-0 -z-10 bg-black/70" />
-        <div className="mx-auto max-w-3xl px-5 py-28 text-center">
-          <h2 className="font-condensed text-5xl font-bold uppercase leading-none text-white sm:text-7xl">{s.admissionTitre}</h2>
+        <div className="mx-auto max-w-3xl px-5 py-14 text-center">
+          <h2 className="font-condensed text-4xl font-bold uppercase leading-none text-white sm:text-6xl">{s.admissionTitre}</h2>
           <p className="mx-auto mt-5 max-w-xl text-lg text-white/85" dangerouslySetInnerHTML={{ __html: s.admissionIntro }} />
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <Link href="/inscription" className={`${bouton} bg-rof-or text-black hover:brightness-110`}>
