@@ -6,7 +6,7 @@ import { ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, a
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
 import { chargerDepots } from "@/lib/depots";
-import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
+import { chargerStatutsJoueuses, premierSeptembre, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { confirmerDepot } from "@/app/membres/depot/actions";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
@@ -360,6 +360,28 @@ export default async function JoueursPage({
                     Enregistrer le statut
                   </button>
                 </form>
+                {(() => {
+                  const suggere = statutSelonNaissance(j.naissance);
+                  const actuel = statutEffectif(profileId, statutsJoueuses, j.memberships.map((m) => m.status_id));
+                  const ref = premierSeptembre().toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" });
+                  if (!suggere) return <p className="mt-1 text-xs text-rof-rouge">Date de naissance manquante : impossible de calculer le statut selon l&apos;âge.</p>;
+                  return (
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-rof-gris">
+                      <span>
+                        Selon son âge au {ref} ({suggere.age} ans) : <strong className="text-rof-texte">{suggere.nom}</strong>
+                      </span>
+                      {suggere.id !== actuel && (
+                        <form action={changerStatutJoueuse}>
+                          <input type="hidden" name="profile_id" value={profileId} />
+                          <input type="hidden" name="status_id" value={suggere.id} />
+                          <button type="submit" className="text-rof-poudre underline">
+                            {actuel === 1 ? "Accepter la joueuse" : "Appliquer"} → {suggere.nom}
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  );
+                })()}
                 <p className="mt-1 text-xs text-rof-gris">Le statut s&apos;applique à toutes ses équipes, et même si elle n&apos;a pas d&apos;équipe.</p>
               </div>
 

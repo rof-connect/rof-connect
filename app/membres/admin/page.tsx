@@ -4,7 +4,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerDepots } from "@/lib/depots";
-import { chargerStatutsJoueuses } from "@/lib/statuts";
+import { chargerStatutsJoueuses, statutSelonNaissance } from "@/lib/statuts";
+import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
@@ -52,6 +53,11 @@ export default async function DirectionPage() {
   const aGerer = comptesActifs
     .filter((c) => !placees.has(c.id))
     .sort((a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime());
+  const { data: naissances } = await supabase
+    .from("athlete_details")
+    .select("profile_id, birth_date")
+    .in("profile_id", aGerer.length ? aGerer.map((c) => c.id) : ["00000000-0000-0000-0000-000000000000"]);
+  const naissanceDe = new Map((naissances ?? []).map((n) => [n.profile_id, n.birth_date as string | null]));
 
   // À faire : tout ce qui attend une action de la Direction. Ajouter ici chaque nouvelle tâche.
   const { count: nbParcoursNouveaux } = await supabase
@@ -159,7 +165,7 @@ export default async function DirectionPage() {
         <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-or">À faire</h2>
         <ul className="mt-2 flex flex-col divide-y divide-rof-ligne">
           {[
-            { n: aGerer.length, texte: "nouvelle(s) connexion(s) Prospect à gérer", href: "#prospects" },
+            { n: aGerer.length, texte: "joueuse(s) Prospect (sans statut) à accepter", href: "#prospects" },
             { n: nbMessagesEnAttente, texte: "conversation(s) privée(s) en attente de réponse", href: "/membres/messages" },
             { n: nbDepotsAConfirmer, texte: "dépôt(s) de 500 $ envoyé(s) à confirmer", href: "/membres/admin/joueurs?sport=softball" },
             { n: nbDepotsEnAttente, texte: "joueuse(s) de softball qui n'ont pas encore envoyé leur dépôt de 500 $", href: "/membres/admin/joueurs?sport=softball" },
@@ -205,22 +211,34 @@ export default async function DirectionPage() {
           </Link>
         </div>
         <div className="grid gap-2">
-          {aGerer.slice(0, 10).map((c) => (
-            <Link
-              key={c.id}
-              href={`/membres/admin/joueurs?id=${c.id}`}
-              className="flex items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-2.5 hover:border-rof-or"
-            >
-              <div className="min-w-0">
-                <span className="font-semibold text-rof-texte">{c.full_name || c.email || "—"}</span>
-                <span className="ml-2 rounded-md bg-rof-craie px-1.5 py-0.5 text-xs text-rof-gris">Prospect</span>
+          {aGerer.slice(0, 10).map((c) => {
+            const suggere = statutSelonNaissance(naissanceDe.get(c.id));
+            return (
+              <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-2.5">
+                <Link href={`/membres/admin/joueurs?id=${c.id}`} className="min-w-0 flex-1 hover:text-rof-or">
+                  <span className="font-semibold text-rof-texte">{c.full_name || c.email || "—"}</span>
+                  <span className="ml-2 rounded-md bg-rof-craie px-1.5 py-0.5 text-xs text-rof-gris">Prospect</span>
+                  <span className="ml-2 text-xs text-rof-gris">{c.created_at ? new Date(c.created_at).toLocaleDateString("fr-CA") : ""}</span>
+                </Link>
+                {suggere ? (
+                  <form action={accepterJoueuse}>
+                    <input type="hidden" name="profile_id" value={c.id} />
+                    <button
+                      type="submit"
+                      className="rounded-full bg-rof-or px-4 py-1.5 font-condensed text-xs font-bold uppercase tracking-wide text-black"
+                      title={`${suggere.age} ans au 1er septembre`}
+                    >
+                      Accepter → {suggere.nom}
+                    </button>
+                  </form>
+                ) : (
+                  <Link href={`/membres/admin/joueurs?id=${c.id}`} className="text-xs text-rof-rouge underline">
+                    Date de naissance manquante
+                  </Link>
+                )}
               </div>
-              <span className="flex shrink-0 items-center gap-2 text-xs text-rof-gris">
-                {c.created_at ? new Date(c.created_at).toLocaleDateString("fr-CA") : ""}
-                <span aria-hidden>›</span>
-              </span>
-            </Link>
-          ))}
+            );
+          })}
           {aGerer.length === 0 && <p className="text-sm text-rof-gris">Aucune nouvelle connexion à gérer.</p>}
           {aGerer.length > 10 && <p className="text-xs text-rof-gris">+ {aGerer.length - 10} autres : « Voir tous ».</p>}
         </div>

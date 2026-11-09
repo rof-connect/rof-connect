@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { trouverOuCreerJoueuse } from "@/lib/joueuses";
 import { definirArchivee } from "@/lib/joueuses-archivees";
-import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif } from "@/lib/statuts";
+import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
@@ -325,4 +325,19 @@ export async function archiverJoueuse(formData: FormData) {
   await definirArchivee(profileId, formData.get("archiver") === "1");
   revalidatePath("/membres/admin/joueurs");
   revalidatePath("/membres/admin");
+}
+
+/** Accepter une joueuse : elle passe de Prospect au statut de son âge au 1er septembre de la saison en cours. */
+export async function accepterJoueuse(formData: FormData) {
+  const moi = await verifierAdmin();
+  if (!moi) return;
+  const profileId = String(formData.get("profile_id") ?? "");
+  if (!profileId) return;
+  const { data: fiche } = await createAdminClient().from("athlete_details").select("birth_date").eq("profile_id", profileId).maybeSingle();
+  const statut = statutSelonNaissance(fiche?.birth_date);
+  if (!statut) return; // date de naissance manquante : à compléter dans la fiche
+  await definirStatutJoueuse(profileId, statut.id);
+  revalidatePath("/membres/admin/joueurs");
+  revalidatePath("/membres/admin");
+  revalidatePath("/membres");
 }

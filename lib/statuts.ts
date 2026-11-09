@@ -47,3 +47,22 @@ export async function definirStatutJoueuse(profileId: string, statusId: number) 
 export function statutEffectif(profileId: string, statuts: Record<string, number>, statutsEquipes: number[] = []) {
   return statuts[profileId] ?? (statutsEquipes.length ? Math.max(...statutsEquipes) : 1);
 }
+
+/** 1er septembre de la saison en cours : le plus récent 1er septembre qui n'est pas dans le futur. */
+export function premierSeptembre(now = new Date()) {
+  const annee = now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+  return new Date(annee, 8, 1);
+}
+
+/** Statut selon l'âge au 1er septembre de la saison en cours (14 ans = 14U). Entre 9U et 18U. null si la date est invalide. */
+export function statutSelonNaissance(naissance: string | null | undefined, now = new Date()): { id: number; nom: string; age: number } | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(naissance ?? "");
+  if (!m) return null;
+  const ref = premierSeptembre(now);
+  let age = ref.getFullYear() - Number(m[1]);
+  if (Number(m[2]) > 9 || (Number(m[2]) === 9 && Number(m[3]) > 1)) age--;
+  if (age < 0 || age > 60) return null;
+  const borne = Math.min(18, Math.max(9, age));
+  const statut = STATUTS.find((s) => s.nom === `${borne}U`);
+  return statut ? { id: statut.id, nom: statut.nom, age } : null;
+}
