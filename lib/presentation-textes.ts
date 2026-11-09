@@ -1,0 +1,105 @@
+// Textes fixes de la page publique de présentation (français / anglais). Le contenu saisi par la joueuse reste tel quel.
+
+export type LangueFiche = "fr" | "en";
+
+export const TEXTES = {
+  fr: {
+    profil: "Profil de recrutement",
+    contacter: "Contacter",
+    promotion: "Promotion",
+    classe: (a: string) => `Promotion ${a}`,
+    taille: "Taille",
+    poids: "Poids",
+    lance: "Lance",
+    frappe: "Frappe",
+    moyenne: "Moyenne",
+    apropos: "À propos",
+    video: "Vidéo de présentation",
+    mesures: "Mesures athlétiques",
+    exitVelo: "Exit Velo",
+    pitchingVelo: "Pitching Velo",
+    course60: "Course 60'",
+    popTime: "Pop Time",
+    realisations: "Réalisations et honneurs",
+    etudes: "Études",
+    domaine: "Domaine d'études visé",
+    langue: "Langue",
+    moyenneScolaire: "Moyenne scolaire",
+    divisions: "Divisions visées",
+    anglais: "Anglais",
+    calendrier: "Calendrier des matchs et compétitions",
+    liens: "Liens",
+    reference: "Référence",
+    contact: "Contact (parent / tuteur)",
+    pied: "Page de présentation partagée par la joueuse · Royal On Field · Repentigny, Lanaudière",
+    sujet: "Recrutement",
+    loc: "fr-CA",
+  },
+  en: {
+    profil: "Recruiting profile",
+    contacter: "Contact",
+    promotion: "Class",
+    classe: (a: string) => `Class of ${a}`,
+    taille: "Height",
+    poids: "Weight",
+    lance: "Throws",
+    frappe: "Bats",
+    moyenne: "GPA",
+    apropos: "About",
+    video: "Highlight video",
+    mesures: "Athletic measurables",
+    exitVelo: "Exit Velo",
+    pitchingVelo: "Pitching Velo",
+    course60: "60-ft dash",
+    popTime: "Pop Time",
+    realisations: "Achievements and honors",
+    etudes: "Academics",
+    domaine: "Intended major",
+    langue: "Language",
+    moyenneScolaire: "Academic average",
+    divisions: "Target divisions",
+    anglais: "English",
+    calendrier: "Game and tournament schedule",
+    liens: "Links",
+    reference: "Reference",
+    contact: "Contact (parent / guardian)",
+    pied: "Profile shared by the player · Royal On Field · Repentigny, Lanaudière, Québec",
+    sujet: "Recruiting",
+    loc: "en-CA",
+  },
+} as const;
+
+const MOTS_EN: Record<string, string> = {
+  // positions
+  lanceuse: "Pitcher",
+  lanceur: "Pitcher",
+  "lanceur·euse": "Pitcher",
+  receveuse: "Catcher",
+  receveur: "Catcher",
+  "receveur·euse": "Catcher",
+  "avant-champ": "Infield",
+  voltigeuse: "Outfield",
+  voltigeur: "Outfield",
+  "champ extérieur": "Outfield",
+  polyvalente: "Utility",
+  utilitaire: "Utility",
+  "1er but": "First base",
+  "2e but": "Second base",
+  "3e but": "Third base",
+  "arrêt-court": "Shortstop",
+  // main
+  droite: "Right",
+  gauche: "Left",
+  ambidextre: "Switch",
+  // niveaux d'anglais
+  débutant: "Beginner",
+  intermédiaire: "Intermediate",
+  avancé: "Advanced",
+  bilingue: "Bilingual",
+};
+
+/** Traduit un mot fixe saisi dans un menu (position, main, niveau) ; sinon laisse le texte tel quel. */
+export function traduire(valeur: string, langue: LangueFiche) {
+  if (langue === "fr") return valeur;
+  return MOTS_EN[valeur.trim().toLowerCase()] ?? valeur;
+}

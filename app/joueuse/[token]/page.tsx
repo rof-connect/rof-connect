@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { headers } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { trouverParToken } from "@/lib/presentation";
 import { liensDe } from "@/lib/liens-sociaux";
 import { urlPhotoProfil } from "@/lib/photo-profil";
+import { TEXTES, traduire, type LangueFiche } from "@/lib/presentation-textes";
 
 // Page privée par lien secret : jamais indexée par les moteurs de recherche.
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: Promise<{ token: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ token: string }>; searchParams: Promise<{ lang?: string }> }): Promise<Metadata> {
   const { token } = await params;
+  const { lang } = await searchParams;
   const trouve = await trouverParToken(token);
   let nom = "Joueuse";
   if (trouve) {
@@ -17,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
     nom = data?.full_name || nom;
   }
   return {
-    title: `${nom} | Profil de recrutement | Royal On Field`,
+    title: `${nom} | ${lang === "en" ? TEXTES.en.profil : TEXTES.fr.profil} | Royal On Field`,
     robots: { index: false, follow: false, nocache: true },
   };
 }
@@ -35,12 +39,17 @@ type Fiche = {
 const titreSection = "font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-or";
 const carte = "rounded-xl border border-rof-ligne bg-rof-blanc p-5";
 
-function dateFr(iso: string) {
-  return new Date(iso + "T12:00:00").toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" });
+function dateFr(iso: string, loc: string) {
+  return new Date(iso + "T12:00:00").toLocaleDateString(loc, { day: "numeric", month: "long", year: "numeric" });
 }
 
-export default async function PagePresentation({ params }: { params: Promise<{ token: string }> }) {
+export default async function PagePresentation({ params, searchParams }: { params: Promise<{ token: string }>; searchParams: Promise<{ lang?: string }> }) {
   const { token } = await params;
+  const { lang } = await searchParams;
+  // Langue de la personne qui regarde : choix explicite (?lang=), sinon la langue de son navigateur.
+  const accept = (await headers()).get("accept-language") ?? "";
+  const langue: LangueFiche = lang === "en" || lang === "fr" ? lang : /^\s*en/i.test(accept) ? "en" : "fr";
+  const T = TEXTES[langue];
   const trouve = await trouverParToken(token);
   if (!trouve) notFound();
   const { profileId, reglages } = trouve;
@@ -69,7 +78,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
     .slice(0, 2)
     .map((x: string) => x[0]?.toUpperCase())
     .join("");
-  const positions = (f.position ?? "").split(",").map((p) => p.trim()).filter(Boolean);
+  const positions = (f.position ?? "").split(",").map((p) => traduire(p.trim(), langue)).filter(Boolean);
   const equipesListe = (equipes ?? [])
     .map((e) => (Array.isArray(e.teams) ? e.teams[0] : e.teams) as { name: string; sport: string } | null)
     .filter(Boolean) as { name: string; sport: string }[];
@@ -77,26 +86,34 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
   const promotion = Number.isInteger(fin) && fin > 2000 ? String(fin) : "";
   const domaine = profil.domaine || reponses.domaine || "";
   // « Langue » saisie par la joueuse; à défaut, le niveau d'anglais du questionnaire de parcours.
-  const langue = profil.anglais || (reponses.anglais ? `Anglais : ${reponses.anglais}` : "");
+  const parle = profil.anglais || (reponses.anglais ? `${T.anglais} : ${traduire(reponses.anglais, langue)}` : "");
   const divisions = reponses.divisions ?? [];
 
   // Bandeau de faits clés, façon fiche de recrutement.
   const faits = [
-    ["Promotion", promotion],
-    ["Taille", profil.taille],
-    ["Poids", profil.poids],
-    ["Lance", f.throws],
-    ["Frappe", f.bats],
-    ["Moyenne", profil.moyenne],
+    [T.promotion, promotion],
+    [T.taille, profil.taille],
+    [T.poids, profil.poids],
+    [T.lance, f.throws ? traduire(f.throws, langue) : ""],
+    [T.frappe, f.bats ? traduire(f.bats, langue) : ""],
+    [T.moyenne, profil.moyenne],
   ].filter(([, v]) => v) as string[][];
 
   const lieu = [profil.ecole, profil.ville].filter(Boolean).join(" · ");
   const etudes = [
-    ["Domaine d'études visé", domaine],
-    ["Langue", langue],
-    ["Moyenne scolaire", profil.moyenne],
-    ["Divisions visées", divisions.join(", ")],
+    [T.domaine, domaine],
+    [T.langue, parle],
+    [T.moyenneScolaire, profil.moyenne],
+    [T.divisions, divisions.join(", ")],
   ].filter(([, v]) => v) as string[][];
+
+  const mesures = [
+    { label: T.exitVelo, valeur: profil.exitVelo ?? "" },
+    { label: T.pitchingVelo, valeur: profil.pitchingVelo ?? "" },
+    { label: T.course60, valeur: profil.course60 ?? "" },
+    { label: T.popTime, valeur: profil.popTime ?? "" },
+    ...(profil.mesures ?? []),
+  ].filter((m) => m.valeur);
 
   const aujourdhui = new Date().toISOString().slice(0, 10);
   const evenements = [...(profil.evenements ?? [])].sort((a, b) => a.date.localeCompare(b.date));
@@ -117,16 +134,30 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
       <header className="sticky top-0 z-10 border-b border-rof-ligne bg-rof-noir/95 backdrop-blur">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-5 py-3">
           <span className="font-condensed text-sm font-bold uppercase tracking-[0.3em] text-rof-or">Royal On Field</span>
-          {aContact && f.guardian_email ? (
-            <a
-              href={`mailto:${f.guardian_email}?subject=${encodeURIComponent("Recrutement : " + nom)}`}
-              className="rounded-full bg-rof-or px-4 py-1.5 font-condensed text-sm font-bold uppercase tracking-wide text-black"
-            >
-              Contacter
-            </a>
-          ) : (
-            <span className="text-xs uppercase tracking-widest text-rof-gris">Profil de recrutement</span>
-          )}
+          <div className="flex items-center gap-3">
+            <nav aria-label="Langue / Language" className="flex overflow-hidden rounded-full border border-rof-ligne font-condensed text-sm font-bold uppercase">
+              {(["fr", "en"] as const).map((l) => (
+                <Link
+                  key={l}
+                  href={`?lang=${l}`}
+                  replace
+                  hrefLang={l}
+                  aria-current={langue === l ? "true" : undefined}
+                  className={`px-3 py-1 ${langue === l ? "bg-rof-or text-black" : "text-rof-gris hover:text-rof-texte"}`}
+                >
+                  {l === "fr" ? "Français" : "English"}
+                </Link>
+              ))}
+            </nav>
+            {aContact && f.guardian_email && (
+              <a
+                href={`mailto:${f.guardian_email}?subject=${encodeURIComponent(T.sujet + " : " + nom)}`}
+                className="rounded-full bg-rof-or px-4 py-1.5 font-condensed text-sm font-bold uppercase tracking-wide text-black"
+              >
+                {T.contacter}
+              </a>
+            )}
+          </div>
         </div>
       </header>
 
@@ -141,7 +172,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
             )}
           </div>
           <div className="min-w-0 flex-1">
-            {promotion && <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Promotion {promotion}</p>}
+            {promotion && <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">{T.classe(promotion)}</p>}
             <h1 className="mt-1 font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{nom}</h1>
             {positions.length > 0 && <p className="mt-2 font-condensed text-xl uppercase tracking-wide text-rof-or">{positions.join(" · ")}</p>}
             {lieu && <p className="mt-1 text-sm text-rof-gris">{lieu}</p>}
@@ -172,18 +203,18 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
 
         {reglages.apropos && (
           <section className={carte}>
-            <h2 className={titreSection}>À propos</h2>
+            <h2 className={titreSection}>{T.apropos}</h2>
             <p className="mt-2 whitespace-pre-line text-rof-texte">{reglages.apropos}</p>
           </section>
         )}
 
         {profil.video && (
           <section className={carte}>
-            <h2 className={titreSection}>Vidéo de présentation</h2>
+            <h2 className={titreSection}>{T.video}</h2>
             <div className="mt-3 aspect-video overflow-hidden rounded-lg bg-black">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${profil.video}`}
-                title={`Vidéo de ${nom}`}
+                title={`${T.video} : ${nom}`}
                 loading="lazy"
                 allow="encrypted-media; picture-in-picture"
                 referrerPolicy="strict-origin-when-cross-origin"
@@ -194,11 +225,11 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
           </section>
         )}
 
-        {(profil.mesures ?? []).length > 0 && (
+        {mesures.length > 0 && (
           <section className={carte}>
-            <h2 className={titreSection}>Mesures athlétiques</h2>
+            <h2 className={titreSection}>{T.mesures}</h2>
             <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {(profil.mesures ?? []).map((m) => (
+              {mesures.map((m) => (
                 <div key={m.label} className="rounded-lg border border-rof-ligne bg-rof-craie p-3">
                   <p className="font-condensed text-2xl font-bold text-rof-texte">{m.valeur}</p>
                   <p className="text-xs uppercase tracking-wide text-rof-gris">{m.label}</p>
@@ -210,7 +241,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
 
         {(profil.realisations ?? []).length > 0 && (
           <section className={carte}>
-            <h2 className={titreSection}>Réalisations et honneurs</h2>
+            <h2 className={titreSection}>{T.realisations}</h2>
             <ul className="mt-3 flex flex-col gap-2">
               {(profil.realisations ?? []).map((r) => (
                 <li key={r} className="flex gap-2 text-rof-texte">
@@ -226,7 +257,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
 
         {etudes.length > 0 && (
           <section className={carte}>
-            <h2 className={titreSection}>Études</h2>
+            <h2 className={titreSection}>{T.etudes}</h2>
             <dl className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
               {etudes.map(([etiquette, valeur]) => (
                 <div key={etiquette}>
@@ -240,13 +271,13 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
 
         {(aVenir.length > 0 || passes.length > 0) && (
           <section className={carte}>
-            <h2 className={titreSection}>Calendrier des matchs et compétitions</h2>
+            <h2 className={titreSection}>{T.calendrier}</h2>
             <ul className="mt-3 flex flex-col divide-y divide-rof-ligne">
               {aVenir.map((e) => (
                 <li key={e.date + e.nom} className="flex flex-wrap items-baseline justify-between gap-2 py-2">
                   <span className="font-semibold text-rof-texte">{e.nom}</span>
                   <span className="text-sm text-rof-gris">
-                    {dateFr(e.date)}
+                    {dateFr(e.date, T.loc)}
                     {e.lieu ? ` · ${e.lieu}` : ""}
                   </span>
                 </li>
@@ -255,7 +286,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
                 <li key={e.date + e.nom} className="flex flex-wrap items-baseline justify-between gap-2 py-2 opacity-60">
                   <span className="text-rof-texte">{e.nom}</span>
                   <span className="text-sm text-rof-gris">
-                    {dateFr(e.date)}
+                    {dateFr(e.date, T.loc)}
                     {e.lieu ? ` · ${e.lieu}` : ""}
                   </span>
                 </li>
@@ -266,7 +297,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
 
         {boutons.length > 0 && (
           <section className={carte}>
-            <h2 className={titreSection}>Liens</h2>
+            <h2 className={titreSection}>{T.liens}</h2>
             <div className="mt-3 flex flex-wrap gap-3">
               {boutons.map(([etiquette, url]) => (
                 <a
@@ -287,7 +318,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
           <section className="grid gap-6 sm:grid-cols-2">
             {profil.reference && (
               <div className={carte}>
-                <h2 className={titreSection}>Référence</h2>
+                <h2 className={titreSection}>{T.reference}</h2>
                 <p className="mt-2 font-semibold text-rof-texte">{profil.reference.nom}</p>
                 {profil.reference.role && <p className="text-sm text-rof-gris">{profil.reference.role}</p>}
                 {profil.reference.contact && <p className="text-sm text-rof-texte">{profil.reference.contact}</p>}
@@ -295,7 +326,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
             )}
             {aContact && (
               <div className={carte}>
-                <h2 className={titreSection}>Contact (parent / tuteur)</h2>
+                <h2 className={titreSection}>{T.contact}</h2>
                 {f.guardian_name && <p className="mt-2 font-semibold text-rof-texte">{f.guardian_name}</p>}
                 {f.guardian_phone && (
                   <p>
@@ -317,7 +348,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
         )}
 
         <footer className="border-t border-rof-ligne pt-5 text-center text-xs text-rof-gris">
-          Page de présentation partagée par la joueuse · Royal On Field · Repentigny, Lanaudière
+          {T.pied}
         </footer>
       </div>
     </main>

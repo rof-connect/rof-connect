@@ -10,7 +10,11 @@ export type Profil = {
   moyenne?: string;
   domaine?: string;
   anglais?: string;
-  mesures?: Mesure[];
+  exitVelo?: string; // vitesse de la balle frappée (Exit Velo)
+  pitchingVelo?: string; // vitesse de lancer (Pitching Velo)
+  course60?: string; // course de 60 pieds
+  popTime?: string; // temps de réception au 2e but (receveuse)
+  mesures?: Mesure[]; // autres mesures saisies librement
   realisations?: string[];
   video?: string; // identifiant YouTube
   evenements?: Evenement[];
@@ -72,6 +76,10 @@ export function profilDuFormulaire(formData: FormData): Profil {
     moyenne: nettoyer(formData.get("moyenne"), 20),
     domaine: nettoyer(formData.get("domaine"), 80),
     anglais: nettoyer(formData.get("anglais"), 30),
+    exitVelo: nettoyer(formData.get("exit_velo"), 20),
+    pitchingVelo: nettoyer(formData.get("pitching_velo"), 20),
+    course60: nettoyer(formData.get("course_60"), 20),
+    popTime: nettoyer(formData.get("pop_time"), 20),
     mesures,
     realisations: lignes(formData.get("realisations"), 8),
     video: idYoutube(formData.get("video")),

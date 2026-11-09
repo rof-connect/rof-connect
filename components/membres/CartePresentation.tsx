@@ -93,8 +93,26 @@ export function CartePresentation({ reglages, lectureSeule = false }: { reglages
           Domaine d&apos;études visé
           <input name="domaine" defaultValue={p.domaine ?? ""} placeholder="Ex. : Kinésiologie" className={champ} />
         </label>
+        <div className="grid grid-cols-2 gap-3">
+          <label className="flex flex-col gap-1 text-xs text-rof-gris">
+            Exit Velo
+            <input name="exit_velo" defaultValue={p.exitVelo ?? ""} placeholder="Ex. : 68 mi/h" className={champ} />
+          </label>
+          <label className="flex flex-col gap-1 text-xs text-rof-gris">
+            Pitching Velo
+            <input name="pitching_velo" defaultValue={p.pitchingVelo ?? ""} placeholder="Ex. : 62 mi/h" className={champ} />
+          </label>
+          <label className="flex flex-col gap-1 text-xs text-rof-gris">
+            Course 60&apos;
+            <input name="course_60" defaultValue={p.course60 ?? ""} placeholder="Ex. : 8,4 s" className={champ} />
+          </label>
+          <label className="flex flex-col gap-1 text-xs text-rof-gris">
+            Pop Time (receveuse)
+            <input name="pop_time" defaultValue={p.popTime ?? ""} placeholder="Ex. : 1,85 s" className={champ} />
+          </label>
+        </div>
         <label className="flex flex-col gap-1 text-xs text-rof-gris">
-          Mesures athlétiques (une par ligne : « Libellé : valeur »)
+          Autres mesures athlétiques (une par ligne : « Libellé : valeur »)
           <textarea name="mesures" rows={4} defaultValue={mesuresEnTexte(p.mesures)} placeholder={"Vitesse de lancer : 62 mi/h\n60 verges : 8,4 s\nTemps de réception au 2e but : 1,85 s"} className={champ} />
         </label>
         <label className="flex flex-col gap-1 text-xs text-rof-gris">
