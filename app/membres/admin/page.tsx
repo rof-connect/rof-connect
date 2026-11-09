@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerStatutsJoueuses, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
+import { chargerConnexions, ilYa } from "@/lib/dernieres-connexions";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
@@ -28,6 +29,8 @@ export default async function DirectionPage() {
 
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
   if (profile?.role !== "admin") redirect("/membres");
+
+  const connexions = (await chargerConnexions()).filter((c) => c.vue).slice(0, 8);
 
   const { data: teamsBrut } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
   const teams = trierEquipes(teamsBrut);
@@ -225,6 +228,28 @@ export default async function DirectionPage() {
           })}
           {aGerer.length === 0 && <p className="text-sm text-rof-gris">Aucune nouvelle connexion à gérer.</p>}
           {aGerer.length > 10 && <p className="text-xs text-rof-gris">+ {aGerer.length - 10} autres : « Voir tous ».</p>}
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-2 flex items-baseline justify-between">
+          <h3 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">Dernières connexions</h3>
+          <Link href="/membres/admin/connexions" className="text-sm text-rof-poudre underline">
+            Voir toutes
+          </Link>
+        </div>
+        <div className="grid gap-2">
+          {connexions.map((c) => (
+            <Link
+              key={c.id}
+              href={`/membres/admin/joueurs?id=${c.id}`}
+              className="flex items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-2.5 hover:border-rof-or"
+            >
+              <span className="min-w-0 truncate font-semibold text-rof-texte">{c.nom || c.courriel || "—"}</span>
+              <span className="shrink-0 text-xs text-rof-gris">{ilYa(c.vue!)}</span>
+            </Link>
+          ))}
+          {connexions.length === 0 && <p className="text-sm text-rof-gris">Aucune connexion enregistrée.</p>}
         </div>
       </div>
 

@@ -1,23 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { chargerConnexions, ilYa } from "@/lib/dernieres-connexions";
 
 export const dynamic = "force-dynamic";
 
 const ROLES: Record<string, string> = { admin: "Direction", coach: "Entraîneur", member: "Membre" };
-
-function ilYa(date: Date) {
-  const min = Math.floor((Date.now() - date.getTime()) / 60000);
-  if (min < 1) return "à l'instant";
-  if (min < 60) return `il y a ${min} min`;
-  const h = Math.floor(min / 60);
-  if (h < 24) return `il y a ${h} h`;
-  const j = Math.floor(h / 24);
-  if (j < 30) return `il y a ${j} jour${j > 1 ? "s" : ""}`;
-  const m = Math.floor(j / 30);
-  return `il y a ${m} mois`;
-}
 
 export default async function ConnexionsPage({ searchParams }: { searchParams: Promise<{ role?: string }> }) {
   const { role: filtre } = await searchParams;
@@ -28,26 +16,8 @@ export default async function ConnexionsPage({ searchParams }: { searchParams: P
   const { data: moi } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
   if (moi?.role !== "admin") redirect("/membres");
 
-  const admin = createAdminClient();
-  const [{ data: profils }, utilisateurs] = await Promise.all([
-    admin.from("profiles").select("id, full_name, email, role, parent_id"),
-    admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
-  ]);
-
-  const derniere = new Map<string, string | null>();
-  (utilisateurs.data?.users ?? []).forEach((u) => derniere.set(u.id, u.last_sign_in_at ?? null));
-
-  // Les profils d'enfants (rattachés à un parent) n'ont pas de connexion propre : on les omet.
-  const lignes = (profils ?? [])
-    .filter((p) => !p.parent_id)
-    .map((p) => ({ ...p, vue: derniere.get(p.id) ?? null }))
-    .filter((p) => !filtre || p.role === filtre)
-    .sort((a, b) => {
-      if (a.vue && b.vue) return b.vue.localeCompare(a.vue);
-      if (a.vue) return -1;
-      if (b.vue) return 1;
-      return (a.full_name ?? "").localeCompare(b.full_name ?? "", "fr");
-    });
+  const toutes = await chargerConnexions();
+  const lignes = toutes.filter((l) => !filtre || l.role === filtre);
 
   const jamais = lignes.filter((l) => !l.vue).length;
   const chip = (valeur: string | undefined, label: string) => (
@@ -85,14 +55,14 @@ export default async function ConnexionsPage({ searchParams }: { searchParams: P
             <li key={l.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-3">
               <div className="min-w-0">
                 <Link href={`/membres/admin/joueurs?id=${l.id}`} className="font-semibold text-rof-texte hover:text-rof-or">
-                  {l.full_name || l.email || "—"}
+                  {l.nom || l.courriel || "—"}
                 </Link>
                 <span className="ml-2 rounded-md bg-rof-craie px-1.5 py-0.5 text-xs text-rof-gris">{ROLES[l.role] ?? l.role}</span>
               </div>
               <div className="text-right text-sm">
                 {d ? (
                   <>
-                    <span className="text-rof-texte">{ilYa(d)}</span>
+                    <span className="text-rof-texte">{ilYa(l.vue!)}</span>
                     <span className="block text-xs text-rof-gris">
                       {d.toLocaleString("fr-CA", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Toronto" })}
                     </span>
