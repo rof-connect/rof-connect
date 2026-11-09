@@ -85,8 +85,8 @@ export function CartePresentation({ reglages, lectureSeule = false }: { reglages
             <input name="moyenne" defaultValue={p.moyenne ?? ""} placeholder="Ex. : 85 %" className={champ} />
           </label>
           <label className="flex flex-col gap-1 text-xs text-rof-gris">
-            Anglais
-            <input name="anglais" defaultValue={p.anglais ?? ""} placeholder="Ex. : Bilingue" className={champ} />
+            Langue
+            <input name="anglais" defaultValue={p.anglais ?? ""} placeholder="Ex. : Français, anglais" className={champ} />
           </label>
         </div>
         <label className="flex flex-col gap-1 text-xs text-rof-gris">

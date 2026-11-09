@@ -76,7 +76,8 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
   const fin = Number(reponses.fin);
   const promotion = Number.isInteger(fin) && fin > 2000 ? String(fin) : "";
   const domaine = profil.domaine || reponses.domaine || "";
-  const anglais = profil.anglais || reponses.anglais || "";
+  // « Langue » saisie par la joueuse; à défaut, le niveau d'anglais du questionnaire de parcours.
+  const langue = profil.anglais || (reponses.anglais ? `Anglais : ${reponses.anglais}` : "");
   const divisions = reponses.divisions ?? [];
 
   // Bandeau de faits clés, façon fiche de recrutement.
@@ -92,7 +93,7 @@ export default async function PagePresentation({ params }: { params: Promise<{ t
   const lieu = [profil.ecole, profil.ville].filter(Boolean).join(" · ");
   const etudes = [
     ["Domaine d'études visé", domaine],
-    ["Anglais", anglais],
+    ["Langue", langue],
     ["Moyenne scolaire", profil.moyenne],
     ["Divisions visées", divisions.join(", ")],
   ].filter(([, v]) => v) as string[][];
