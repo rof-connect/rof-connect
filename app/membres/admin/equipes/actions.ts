@@ -72,6 +72,7 @@ export async function modifierEquipe(formData: FormData) {
         roster_public: formData.get("roster_public") === "on",
         gamechanger_widget_id: idGameChanger(formData.get("gamechanger_widget_id")) || null,
         gamechanger_url: lienGameChanger(formData.get("gamechanger_url")) || null,
+        niveau_public: String(formData.get("niveau_public") ?? "").trim().slice(0, 30) || null,
         categorie: String(formData.get("categorie") ?? "").trim().slice(0, 30) || null,
         ordre_affichage: ordre !== "" && Number.isInteger(Number(ordre)) ? Number(ordre) : null,
         nom_public: String(formData.get("nom_public") ?? "").trim().slice(0, 40) || null,

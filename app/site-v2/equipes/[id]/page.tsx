@@ -32,7 +32,12 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
           </Link>
           <div className="kicker">Royal {c.mot} On Field · Saison {r.saison}</div>
           <h1>{r.nom}</h1>
-          {r.categorie && <span className="team-tag team-tag-hero">{r.categorie}</span>}
+          {(r.categorie || r.niveau) && (
+            <span className="team-tags team-tags-hero">
+              {r.categorie && <span className="team-tag">{r.categorie}</span>}
+              {r.niveau && <span className="team-tag team-niveau">{r.niveau}</span>}
+            </span>
+          )}
           {r.description && <p className="lead">{r.description}</p>}
           <dl className="roster-meta">
             <div>

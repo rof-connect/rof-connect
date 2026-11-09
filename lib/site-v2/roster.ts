@@ -6,7 +6,7 @@ import { urlPhotoProfil } from "@/lib/photo-profil";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { nomAffiche, nomPublicParDefaut } from "./equipes";
-import { CATEGORIE_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
+import { CATEGORIE_PROVISOIRE, NIVEAU_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
 export type JoueuseRoster = {
   id: string;
@@ -31,6 +31,7 @@ export type RosterEquipe = {
   total: number;
   joueuses: JoueuseRoster[];
   categorie: string;
+  niveau: string;
   gamechangerLien: string; // page de l'équipe sur GameChanger (bouton)
   gamechanger: string; // identifiant du widget calendrier GameChanger (vide = aucun)
   afficher: boolean; // la Direction autorise l'affichage du roster (par défaut : oui)
@@ -59,13 +60,14 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
     gamechanger_widget_id?: string | null;
     gamechanger_url?: string | null;
     categorie?: string | null;
+    niveau_public?: string | null;
   };
   let provisoire = false;
   let equipe: Ligne | null = null;
 
   const complet = await admin
     .from("teams")
-    .select("id, name, sport, season_year, nom_public, description_publique, roster_public, gamechanger_widget_id, gamechanger_url, categorie")
+    .select("id, name, sport, season_year, nom_public, description_publique, roster_public, gamechanger_widget_id, gamechanger_url, categorie, niveau_public")
     .eq("id", teamId)
     .eq("archived", false)
     .eq("visible_public", true)
@@ -87,6 +89,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
     sport: equipe.sport,
     saison: equipe.season_year,
     description: (equipe.description_publique ?? "").trim(),
+    niveau: ((equipe.niveau_public ?? "").trim() || NIVEAU_PROVISOIRE[nomPublicParDefaut(equipe.name)] || "").slice(0, 30),
     categorie: ((equipe.categorie ?? "").trim() || CATEGORIE_PROVISOIRE[nomPublicParDefaut(equipe.name)] || "").slice(0, 30),
     gamechangerLien: lienGameChanger(equipe.gamechanger_url) || lienGameChanger(GAMECHANGER_LIEN_PROVISOIRE[nomPublicParDefaut(equipe.name)]),
     gamechanger: idGameChanger(equipe.gamechanger_widget_id) || idGameChanger(GAMECHANGER_PROVISOIRE[nomPublicParDefaut(equipe.name)]),

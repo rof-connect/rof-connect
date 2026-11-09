@@ -261,3 +261,9 @@ export function lienFieldLevel(v: string): string {
   const m = v.trim().match(/^https:\/\/www\.fieldlevel\.com\/app\/organization\/([a-z0-9]{6,12})\/(softball|baseball)\/overview/i);
   return m ? `https://www.fieldlevel.com/app/organization/${m[1]}/${m[2].toLowerCase()}/overview` : "";
 }
+
+/** Niveau affiché avec la catégorie (ex. NATIONAL · VARSITY). Sert seulement tant que la migration 0009 n'est pas appliquée. */
+export const NIVEAU_PROVISOIRE: Record<string, string> = {
+  "18U - Di Peco": "VARSITY",
+  "16U - Bertrand": "JV",
+};

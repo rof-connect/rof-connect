@@ -2,7 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { comparerEquipes } from "@/lib/equipes";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
-import { CATEGORIE_PROVISOIRE, ORDRE_PUBLIC, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
+import { CATEGORIE_PROVISOIRE, NIVEAU_PROVISOIRE, ORDRE_PUBLIC, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
 export type EquipePublique = {
   id: string;
@@ -10,6 +10,7 @@ export type EquipePublique = {
   description: string;
   nb: number | null; // nombre de joueuses/joueurs, calculé depuis ROF Connect
   vedette: boolean;
+  niveau: string; // niveau (ex. VARSITY, JV), vide si aucun
   categorie: string; // étiquette (ex. NATIONAL), vide si aucune
   matchs: boolean; // calendrier GameChanger disponible (widget ou lien)
   roster: boolean; // la Direction autorise l'affichage du roster (par défaut : oui)
@@ -41,7 +42,7 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("teams")
-    .select("id, name, sport, nom_public, description_publique, ordre_affichage, roster_public, gamechanger_widget_id, gamechanger_url, categorie")
+    .select("id, name, sport, nom_public, description_publique, ordre_affichage, roster_public, gamechanger_widget_id, gamechanger_url, categorie, niveau_public")
     .eq("sport", sport)
     .eq("visible_public", true)
     .eq("archived", false);
@@ -68,6 +69,7 @@ type LigneEquipe = {
   gamechanger_widget_id?: string | null;
   gamechanger_url?: string | null;
   categorie?: string | null;
+  niveau_public?: string | null;
 };
 
 async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAdminClient>): Promise<{ equipes: EquipePublique[]; joueuses: number }> {
@@ -108,6 +110,7 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
       nb: compte.get(t.id) ?? 0,
       vedette: /varsity/i.test(nom),
       roster: t.roster_public !== false,
+      niveau: ((t.niveau_public ?? "").trim() || NIVEAU_PROVISOIRE[nomPublicParDefaut(t.name)] || "").slice(0, 30),
       categorie: ((t.categorie ?? "").trim() || CATEGORIE_PROVISOIRE[nomPublicParDefaut(t.name)] || "").slice(0, 30),
       matchs: Boolean(
         idGameChanger(t.gamechanger_widget_id) ||
