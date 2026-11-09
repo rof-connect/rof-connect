@@ -175,17 +175,33 @@ export default async function ProgrammePage() {
         </div>
       </section>
 
-      {/* ───────── EN IMAGES ───────── */}
-      <section className="mx-auto max-w-7xl px-5 pb-24">
-        <h2 className="font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{fr ? "En images" : "In pictures"}</h2>
-        <div className="mt-8 columns-2 gap-3 sm:gap-4 lg:columns-3">
-          {galerie.map(([src, w, h]) => (
-            <div
-              key={src}
-              className="relative mb-3 overflow-hidden rounded-2xl bg-rof-blanc sm:mb-4"
-              style={{ aspectRatio: String(Math.max(w / h, 0.75)) }}
-            >
-              <Image src={src} alt="" fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-cover transition duration-700 hover:scale-105" />
+      {/* ───────── EN IMAGES (bandes animées) ───────── */}
+      <section className="overflow-hidden pb-24" aria-label={fr ? "En images" : "In pictures"}>
+        <style>{`
+          @keyframes defile { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+          .bande-piste { animation: defile 80s linear infinite; }
+          .bande-inverse { animation-direction: reverse; animation-duration: 95s; }
+          .bande:hover .bande-piste { animation-play-state: paused; }
+          @media (prefers-reduced-motion: reduce) { .bande-piste { animation: none; } .bande { overflow-x: auto; } }
+        `}</style>
+        <h2 className="mx-auto max-w-7xl px-5 font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{fr ? "En images" : "In pictures"}</h2>
+        <div className="mt-8 flex flex-col gap-3">
+          {[galerie.slice(0, 6), galerie.slice(6)].map((rangee, r) => (
+            <div key={r} className="bande overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+              <div className={`bande-piste flex w-max gap-3 ${r === 1 ? "bande-inverse" : ""}`}>
+                {[0, 1].map((copie) =>
+                  rangee.map(([src, w, h]) => (
+                    <div
+                      key={`${copie}-${src}`}
+                      aria-hidden={copie === 1}
+                      className="relative h-44 shrink-0 overflow-hidden rounded-xl bg-rof-blanc sm:h-56"
+                      style={{ aspectRatio: String(Math.max(w / h, 0.75)) }}
+                    >
+                      <Image src={src} alt="" fill sizes="280px" loading="eager" className="object-cover" />
+                    </div>
+                  )),
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -286,22 +302,6 @@ export default async function ProgrammePage() {
         </div>
       </section>
 
-      {/* ───────── NOS PARTENAIRES ───────── */}
-      <section className="border-t border-rof-ligne">
-        <div className="mx-auto max-w-7xl px-5 py-20">
-          <h2 className="text-center font-condensed text-4xl font-bold uppercase leading-none sm:text-6xl">{fr ? "Nos partenaires" : "Our partners"}</h2>
-          <ul className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {partenaires.map((p) => (
-              <li key={p.nom} className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl bg-white p-6 transition hover:-translate-y-1">
-                <div className="relative h-full w-full" style={{ transform: `scale(${p.zoom})` }}>
-                  <Image src={p.src} alt={p.nom} fill sizes="(min-width: 1024px) 20vw, 50vw" className="object-contain" />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       {/* ───────── APPEL FINAL ───────── */}
       <section className="relative isolate overflow-hidden">
         <Image src="/photos/celebration.jpg" alt="" fill sizes="100vw" className="-z-20 object-cover" style={{ objectPosition: "50% 40%" }} />
@@ -324,6 +324,20 @@ export default async function ProgrammePage() {
             </Link>
           </p>
         </div>
+      </section>
+
+      {/* ───────── NOS PARTENAIRES (discret, en bas de page) ───────── */}
+      <section className="border-t border-rof-ligne px-5 py-8">
+        <p className="text-center font-condensed text-xs uppercase tracking-[0.35em] text-rof-gris">{fr ? "Nos partenaires" : "Our partners"}</p>
+        <ul className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-3">
+          {partenaires.map((p) => (
+            <li key={p.nom} title={p.nom} className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-lg bg-white p-1.5 opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0">
+              <div className="relative h-full w-full" style={{ transform: `scale(${p.zoom})` }}>
+                <Image src={p.src} alt={p.nom} fill sizes="56px" className="object-contain" />
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <footer className="border-t border-rof-ligne px-5 py-10 text-center">
