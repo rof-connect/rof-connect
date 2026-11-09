@@ -332,3 +332,6 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .team-tag-hero{position:static;display:inline-block;margin:6px 0 4px}
 
 .v2 .step-nb{display:inline-block;margin-top:8px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;background:var(--royal);color:#fff;padding:5px 10px;border-radius:3px}
+
+.v2 .btn.ghost-clair{border:2px solid var(--royal);color:var(--royal)}
+.v2 .btn.ghost-clair:hover{background:var(--royal);color:#fff}

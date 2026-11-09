@@ -4,7 +4,7 @@ import { Cadre } from "@/components/site-v2/Cadre";
 import { Organisation } from "@/components/site-v2/Organisation";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, GALERIES, HERO, NIVEAUX, PARTENAIRES, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, PARTENAIRES, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -250,6 +250,11 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                 <div className="actions">
                   <Link className="btn blue" href="/parcours">Questionnaire de parcours →</Link>
                   <Link className="btn solid" href="/inscription">Créer mon profil</Link>
+                  {lienFieldLevel(FIELDLEVEL[sport]) && (
+                    <a className="btn ghost-clair" href={lienFieldLevel(FIELDLEVEL[sport])} target="_blank" rel="noopener noreferrer">
+                      Notre profil FieldLevel
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

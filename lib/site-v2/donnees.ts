@@ -256,3 +256,14 @@ export const RESEAUX: Record<Sport, { instagram: string; facebook: string; tikto
     tiktok: "",
   },
 };
+
+/** Profil FieldLevel de l'organisation, par sport (plateforme de recrutement). */
+export const FIELDLEVEL: Record<Sport, string> = {
+  softball: "https://www.fieldlevel.com/app/organization/gtgm4xht/softball/overview",
+  baseball: "https://www.fieldlevel.com/app/organization/x4r3yyfa/baseball/overview",
+};
+
+export function lienFieldLevel(v: string): string {
+  const m = v.trim().match(/^https:\/\/www\.fieldlevel\.com\/app\/organization\/([a-z0-9]{6,12})\/(softball|baseball)\/overview/i);
+  return m ? `https://www.fieldlevel.com/app/organization/${m[1]}/${m[2].toLowerCase()}/overview` : "";
+}
