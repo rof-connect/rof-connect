@@ -14,8 +14,11 @@ export type EquipePublique = {
 
 export type ResultatEquipes = {
   equipes: EquipePublique[];
-  /** « bd » : lu dans ROF Connect. « apercu » : la migration 0009 n'est pas encore appliquée, exemples temporaires. */
-  source: "bd" | "apercu";
+  /**
+   * « bd » : équipes cochées « Visible sur le site » par la Direction.
+   * « provisoire » : la migration 0009 n'est pas encore appliquée, on affiche toutes les équipes actives de ROF Connect.
+   */
+  source: "bd" | "provisoire";
 };
 
 /** « Softball 14U — Riley » → « 14U ». Utilisé seulement si la Direction n'a pas saisi de nom public. */
@@ -25,26 +28,6 @@ export function nomPublicParDefaut(nom: string) {
     .split(/\s+[-—–]\s+/)[0]
     .trim();
 }
-
-// Exemples affichés UNIQUEMENT tant que la migration 0009 n'est pas appliquée (aperçu avant mise en ligne).
-const APERCU: Record<Sport, { nom: string; description: string }[]> = {
-  softball: [
-    { nom: "Varsity", description: "Le sommet du programme : vitrine aux recruteurs universitaires américains." },
-    { nom: "JV", description: "Transition vers le niveau collégial, tournois aux États-Unis." },
-    { nom: "14U", description: "Championne canadienne 2024 · 2025 · 2026." },
-    { nom: "12U", description: "Championne canadienne 2024 · 2025 · 2026." },
-    { nom: "10U", description: "Les fondations : technique, plaisir et compétition." },
-  ],
-  baseball: [
-    { nom: "Varsity", description: "Le niveau vitrine du programme baseball." },
-    { nom: "16U", description: "Préparation au niveau collégial." },
-    { nom: "14U", description: "Développement élite et compétition provinciale." },
-    { nom: "13U", description: "Transition vers le grand terrain." },
-    { nom: "12U", description: "Little League — le chemin vers les championnats." },
-    { nom: "11U", description: "Fondamentaux et compétition." },
-    { nom: "10U", description: "Les premiers pas dans le standard Royal." },
-  ],
-};
 
 /** Équipes visibles sur le site public, décidées par la Direction dans ROF Connect. */
 export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEquipes> {
@@ -57,14 +40,25 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
     .eq("archived", false);
 
   if (error) {
-    // Colonnes absentes (migration pas encore appliquée) : aperçu temporaire.
-    return {
-      source: "apercu",
-      equipes: APERCU[sport].map((e, i) => ({ id: `apercu-${i}`, ...e, nb: null, vedette: /varsity/i.test(e.nom) })),
-    };
+    // Migration 0009 pas encore appliquée : toutes les équipes actives de ROF Connect (provisoire).
+    const { data: actives } = await admin.from("teams").select("id, name, sport").eq("sport", sport).eq("archived", false);
+    return { source: "provisoire", equipes: await enrichir((actives ?? []).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null })), admin) };
   }
 
-  const liste = [...(data ?? [])].sort((a, b) => {
+  return { source: "bd", equipes: await enrichir(data ?? [], admin) };
+}
+
+type LigneEquipe = {
+  id: string;
+  name: string;
+  sport: string;
+  nom_public: string | null;
+  description_publique: string | null;
+  ordre_affichage: number | null;
+};
+
+async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAdminClient>): Promise<EquipePublique[]> {
+  const liste = [...lignes].sort((a, b) => {
     const oa = a.ordre_affichage ?? Number.MAX_SAFE_INTEGER;
     const ob = b.ordre_affichage ?? Number.MAX_SAFE_INTEGER;
     return oa !== ob ? oa - ob : comparerEquipes(a, b);
@@ -83,17 +77,24 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
     });
   }
 
-  return {
-    source: "bd",
-    equipes: liste.map((t) => {
-      const nom = (t.nom_public ?? "").trim() || nomPublicParDefaut(t.name);
-      return {
-        id: t.id,
-        nom,
-        description: (t.description_publique ?? "").trim(),
-        nb: compte.get(t.id) ?? 0,
-        vedette: /varsity/i.test(nom),
-      };
-    }),
-  };
+  // Deux équipes du même niveau (ex. 12U) : on ajoute le nom de l'entraîneur pour les distinguer.
+  const niveau = (t: LigneEquipe) => nomPublicParDefaut(t.name);
+  const frequence = new Map<string, number>();
+  liste.forEach((t) => frequence.set(niveau(t), (frequence.get(niveau(t)) ?? 0) + 1));
+
+  return liste.map((t) => {
+    const saisi = (t.nom_public ?? "").trim();
+    let nom = saisi || niveau(t);
+    if (!saisi && (frequence.get(niveau(t)) ?? 0) > 1) {
+      const suffixe = t.name.split(/\s+[-—–]\s+/)[1]?.trim();
+      if (suffixe) nom = `${nom} · ${suffixe}`;
+    }
+    return {
+      id: t.id,
+      nom,
+      description: (t.description_publique ?? "").trim(),
+      nb: compte.get(t.id) ?? 0,
+      vedette: /varsity/i.test(nom),
+    };
+  });
 }

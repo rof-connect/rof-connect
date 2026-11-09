@@ -20,7 +20,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
 
   const nbJoueurs = equipes.reduce((s, e) => s + (e.nb ?? 0), 0);
   const stats: [string, string][] = [...c.stats];
-  if (source === "bd" && equipes.length > 0) {
+  if (equipes.length > 0) {
     const mot = sport === "softball" ? "Joueuses" : "Joueurs";
     if (sport === "softball") stats.push([String(nbJoueurs), `${mot} · ${equipes.length} équipe${equipes.length > 1 ? "s" : ""}`]);
     else stats.unshift([String(equipes.length), "Équipes"], [String(nbJoueurs), mot]);
@@ -44,9 +44,9 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
         </defs>
       </svg>
 
-      {source === "apercu" && (
+      {source === "provisoire" && (
         <div className="apercu" role="note">
-          Aperçu : les équipes ci-dessous sont des exemples. Appliquer la migration 0009 dans Supabase, puis cocher « Visible sur le site » dans la gestion des équipes.
+          Aperçu : toutes les équipes actives de ROF Connect sont affichées. Après la migration 0009 (Supabase), seules les équipes cochées « Visible sur le site » le seront.
         </div>
       )}
 
