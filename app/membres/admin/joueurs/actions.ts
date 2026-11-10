@@ -9,7 +9,7 @@ import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif, statutSel
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 import { cheminPhotoProfil } from "@/lib/photo-profil";
 import { definirNumeros } from "@/lib/numeros-chandail";
-import { chargerSportsJoueuses, definirSportJoueuse, sportEffectif, verifierSportEquipe } from "@/lib/sport-joueuses";
+import { definirSportJoueuse, verifierSportEquipe } from "@/lib/sport-joueuses";
 import { presentationDe, majPresentation } from "@/lib/presentation";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
@@ -342,23 +342,14 @@ export async function archiverJoueuse(formData: FormData) {
   revalidatePath("/membres/admin");
 }
 
-/** Accepter une joueuse : elle passe de Prospect au statut de son âge (charte Little League au baseball, 1er septembre au softball). */
+/** Accepter une joueuse : elle passe de Prospect au statut de son âge selon la charte Little League (31 août de l'année du printemps), dans les deux sports. */
 export async function accepterJoueuse(formData: FormData) {
   const moi = await verifierAdmin();
   if (!moi) return;
   const profileId = String(formData.get("profile_id") ?? "");
   if (!profileId) return;
-  const admin = createAdminClient();
-  const [{ data: fiche }, sports, { data: liens }] = await Promise.all([
-    admin.from("athlete_details").select("birth_date").eq("profile_id", profileId).maybeSingle(),
-    chargerSportsJoueuses(),
-    admin.from("team_members").select("teams (sport, archived)").eq("profile_id", profileId).eq("role_in_team", "athlete"),
-  ]);
-  const sportsEquipes = (liens ?? [])
-    .map((l) => (Array.isArray(l.teams) ? l.teams[0] : l.teams) as { sport: string; archived: boolean } | null)
-    .filter((t): t is { sport: string; archived: boolean } => !!t && !t.archived)
-    .map((t) => t.sport);
-  const statut = statutSelonNaissance(fiche?.birth_date, sportEffectif(profileId, sports, sportsEquipes));
+  const { data: fiche } = await createAdminClient().from("athlete_details").select("birth_date").eq("profile_id", profileId).maybeSingle();
+  const statut = statutSelonNaissance(fiche?.birth_date);
   if (!statut) return; // date de naissance manquante : à compléter dans la fiche
   await definirStatutJoueuse(profileId, statut.id);
   revalidatePath("/membres/admin/joueurs");

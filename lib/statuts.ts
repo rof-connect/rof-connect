@@ -55,25 +55,22 @@ export function premierSeptembre(now = new Date()) {
 }
 
 /**
- * Date à laquelle l'âge est calculé, selon le sport.
- * - Baseball : charte d'âge Little League — âge au 31 août de l'année du printemps
- *   (saisons Automne 2026 et Printemps 2027 → 31 août 2027).
- * - Softball (et sport non défini) : âge au 1er septembre du début de la saison en cours.
+ * Date à laquelle l'âge est calculé, pour le baseball ET le softball (choix de la Direction) :
+ * charte d'âge Little League — âge au 31 août de l'année du printemps
+ * (saisons Automne 2026 et Printemps 2027 → 31 août 2027).
  */
-export function dateReferenceAge(sport?: string | null, now = new Date()) {
-  const debut = premierSeptembre(now);
-  return sport === "baseball" ? new Date(debut.getFullYear() + 1, 7, 31) : debut;
+export function dateReferenceAge(now = new Date()) {
+  return new Date(premierSeptembre(now).getFullYear() + 1, 7, 31);
 }
 
-/** Statut selon l'âge à la date de référence du sport (12 ans = 12U). Entre 9U et 18U. null si la date est invalide. */
+/** Statut selon l'âge à la date de référence (12 ans = 12U). Entre 9U et 18U. null si la date est invalide. */
 export function statutSelonNaissance(
   naissance: string | null | undefined,
-  sport?: string | null,
   now = new Date(),
 ): { id: number; nom: string; age: number; ref: Date } | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(naissance ?? "");
   if (!m) return null;
-  const ref = dateReferenceAge(sport, now);
+  const ref = dateReferenceAge(now);
   const moisRef = ref.getMonth() + 1;
   const jourRef = ref.getDate();
   let age = ref.getFullYear() - Number(m[1]);

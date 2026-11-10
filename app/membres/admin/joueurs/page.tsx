@@ -456,14 +456,13 @@ export default async function JoueursPage({
                   </button>
                 </form>
                 {(() => {
-                  const suggere = statutSelonNaissance(j.naissance, sportDeLaJoueuse);
+                  const suggere = statutSelonNaissance(j.naissance);
                   const actuel = statutEffectif(profileId, statutsJoueuses, j.memberships.map((m) => m.status_id));
                   if (!suggere) return <p className="mt-1 text-xs text-rof-rouge">Date de naissance manquante : impossible de calculer le statut selon l&apos;âge.</p>;
                   return (
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-rof-gris">
                       <span>
-                        Selon son âge au {suggere.ref.toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" })} ({suggere.age} ans
-                        {sportDeLaJoueuse === "baseball" ? ", charte Little League" : ""}) : <strong className="text-rof-texte">{suggere.nom}</strong>
+                        Selon son âge au {suggere.ref.toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" })} ({suggere.age} ans, charte Little League) : <strong className="text-rof-texte">{suggere.nom}</strong>
                       </span>
                       {suggere.id !== actuel && (
                         <form action={changerStatutJoueuse}>
