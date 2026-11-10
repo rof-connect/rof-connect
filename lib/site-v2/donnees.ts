@@ -405,3 +405,9 @@ export const CENTRE = {
   alt: "Cages de frappe avec lanceurs automatiques et plaque sur surface rouge au centre d'entraînement privé",
   points: ["Cages de frappe", "Lanceurs automatiques", "Surface d'entraînement dédiée", "Centre privé"],
 };
+
+/** Profil de recrutement FieldLevel d'une joueuse (https://www.fieldlevel.com/app/profile/…). Tout autre lien est refusé. */
+export function profilFieldLevel(v: unknown): string {
+  const m = String(v ?? "").trim().match(/^https:\/\/www\.fieldlevel\.com\/app\/profile\/([A-Za-z0-9._-]{2,60})\/(softball|baseball)(\?m=\d)?/i);
+  return m ? `https://www.fieldlevel.com/app/profile/${m[1]}/${m[2].toLowerCase()}` : "";
+}

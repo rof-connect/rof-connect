@@ -7,7 +7,7 @@ import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
 import { STATUTS, chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { nomAffiche, nomPublicParDefaut } from "./equipes";
-import { NIVEAU_COMPETITION_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
+import { NIVEAU_COMPETITION_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, profilFieldLevel, type Sport } from "./donnees";
 
 /** Le site est en français : les positions saisies en anglais sont traduites à l'affichage (les données ne sont pas modifiées). */
 const POSITIONS_FR: Record<string, string> = {
@@ -40,6 +40,7 @@ export type JoueuseRoster = {
   ecole: string;
   ville: string;
   statut: string; // âge de la saison (statut), ex. « 15U »
+  fieldlevel: string; // profil FieldLevel intégré à sa page (vide si aucun)
   grad: string; // année de graduation (« grad year »), vide si non saisie
   photo: string | null;
   lien: string; // sa page sur le site (fiche de recrutement incluse si elle l'a activée)
@@ -141,7 +142,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
   if (ids.length) {
     const [{ data: profils }, { data: fiches }] = await Promise.all([
       admin.from("profiles").select("id, full_name").in("id", ids),
-      admin.from("athlete_details").select("profile_id, position, throws, bats").in("profile_id", ids),
+      admin.from("athlete_details").select("profile_id, position, throws, bats, fieldlevel_url").in("profile_id", ids),
     ]);
     const nomDe = new Map((profils ?? []).map((p) => [p.id, (p.full_name ?? "").trim()]));
     const ficheDe = new Map((fiches ?? []).map((f) => [f.profile_id, f]));
@@ -162,6 +163,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           ecole: infos[id]?.ecole || profil.ecole || "",
           ville: infos[id]?.ville || profil.ville || "",
           grad: infos[id]?.grad ?? "",
+          fieldlevel: profilFieldLevel(fiche?.fieldlevel_url),
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise
           lien: `/site-v2/joueuses/${id}`,
         };
@@ -192,6 +194,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
       ecole: ["Collège L'Assomption", "École Le Prélude", "Collège L'Assomption", "Polyvalente Lionel-Groulx", "Collège L'Assomption", "École Le Prélude"][i],
       ville: ["Repentigny", "L'Assomption", "Repentigny", "Terrebonne", "Charlemagne", "Repentigny"][i],
       grad: String(2026 + (i % 3)),
+      fieldlevel: "",
       photo: null,
       lien: "#",
     }));

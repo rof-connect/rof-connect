@@ -654,3 +654,9 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .reco-cal li.passe{opacity:.6}
 .v2 .reco-cal span{font-size:14px;color:#4A5570}
 .v2 .reco-liens{display:flex;flex-wrap:wrap;gap:12px}
+
+/* Profil FieldLevel intégré */
+.v2 .bloc-fl{margin-top:30px}
+.v2 .reco-fl{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin-bottom:12px}
+.v2 .reco-fl iframe{display:block;width:100%;height:760px;border:0}
+@media (max-width:700px){.v2 .reco-fl iframe{height:640px}}

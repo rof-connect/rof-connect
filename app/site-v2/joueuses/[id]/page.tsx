@@ -96,6 +96,24 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
               <dd>{e.nom}</dd>
             </div>
           </dl>
+          {j.fieldlevel && (
+            <section className="bloc-reco bloc-fl">
+              <h3>Profil FieldLevel</h3>
+              <div className="reco-fl">
+                <iframe
+                  src={j.fieldlevel}
+                  title={`Profil FieldLevel de ${j.nom}`}
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                />
+              </div>
+              <a className="btn ghost-clair" href={j.fieldlevel} target="_blank" rel="noopener noreferrer nofollow">
+                Ouvrir sur FieldLevel ↗
+              </a>
+            </section>
+          )}
+
           {!fiche && <p className="roster-note">La fiche de recrutement détaillée (mesures, vidéo, calendrier) sera ajoutée ici lorsque la joueuse l&apos;aura complétée dans ROF Connect.</p>}
 
           {fiche && (
