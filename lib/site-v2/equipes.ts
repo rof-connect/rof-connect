@@ -13,6 +13,8 @@ export type EquipePublique = {
   vedette: boolean;
   categorie: string; // niveau de compétition (softball : NATIONAL, RÉGIONAL, ÉLITE), vide si aucun
   matchs: boolean; // calendrier GameChanger disponible (widget ou lien)
+  gamechanger: string; // identifiant du widget calendrier GameChanger (vide = aucun)
+  gamechangerLien: string; // lien de la page de l'équipe sur GameChanger (vide = aucun)
   roster: boolean; // la Direction autorise l'affichage du roster (par défaut : oui)
 };
 
@@ -112,6 +114,8 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
       vedette: /varsity/i.test(nom),
       roster: t.roster_public !== false,
       categorie: ((t.niveau_competition ?? "").trim() || NIVEAU_COMPETITION_PROVISOIRE[nomPublicParDefaut(t.name)] || "").slice(0, 30),
+      gamechanger: idGameChanger(t.gamechanger_widget_id) || idGameChanger(GAMECHANGER_PROVISOIRE[nomPublicParDefaut(t.name)]),
+      gamechangerLien: lienGameChanger(t.gamechanger_url) || lienGameChanger(GAMECHANGER_LIEN_PROVISOIRE[nomPublicParDefaut(t.name)]),
       matchs: Boolean(
         idGameChanger(t.gamechanger_widget_id) ||
           lienGameChanger(t.gamechanger_url) ||

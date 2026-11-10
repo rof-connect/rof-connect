@@ -7,6 +7,15 @@ import type { Banniere } from "@/lib/site-v2/donnees";
  * Trois styles : « canam » (noir et or, liseré orange), « canada » (blanc, liseré orange, bleu marine) et « provincial » (bleu royal).
  * Dessin propre au site : l'emblème est le logo Royal On Field, pas celui des ligues.
  */
+/** Logos affichés sur les bannières (fournis par le club). */
+const LOGOS: Record<string, { src: string; alt: string }> = {
+  ll: { src: "/partenaires/n-little-league.png", alt: "Little League" },
+  tc: { src: "/partenaires/n-triple-crown.png", alt: "Triple Crown Fastpitch" },
+  fpn: { src: "/partenaires/n-fpn.png", alt: "Fastpitch Nation Park" },
+  homerun: { src: "/partenaires/n-homerun.png", alt: "Homerun Softball & Baseball" },
+  nsa: { src: "/partenaires/n-nsa.png", alt: "NSA Softball" },
+};
+
 /** Drapeau du Canada (dessin simple, feuille d'érable à 11 pointes). */
 function DrapeauCanada() {
   return (
@@ -37,7 +46,7 @@ export function Bannieres({ items, titre, bande = false }: { items: Banniere[]; 
             <div className="b-emblemes">
               <Image className="b-logo" src="/logo-r.png" alt="" width={56} height={56} />
               {b.embleme === "canada" && <DrapeauCanada />}
-              {b.embleme === "ll" && <Image className="b-logo b-ll" src="/partenaires/n-little-league.png" alt="Little League" width={56} height={56} />}
+              {b.embleme && LOGOS[b.embleme] && <Image className="b-logo b-ll" src={LOGOS[b.embleme].src} alt={LOGOS[b.embleme].alt} width={56} height={56} />}
             </div>
             <p className="b-annee">{b.annee}</p>
             <p className="b-mention">{b.mention}</p>

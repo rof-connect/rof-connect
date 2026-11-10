@@ -579,3 +579,18 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .bannieres-bande .banniere .b-emblemes{margin:6px 0 2px;gap:5px}
 .v2 .bannieres-bande .banniere .b-drapeau{width:30px;height:15px}
 .v2 .bannieres-bande .banniere .b-ll{width:28px;height:28px}
+
+/* Page Calendrier des équipes */
+.v2 .cal-equipes{display:grid;gap:22px}
+.v2 .cal-equipe{border:1px solid var(--line);border-top:5px solid var(--mark);border-radius:6px;background:#fff;overflow:hidden}
+.v2 .cal-equipe>header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.v2 .cal-equipe h2{font-family:var(--display);font-size:clamp(32px,4vw,44px);font-weight:400;line-height:1;color:var(--royal-deep)}
+.v2 .cal-equipe .team-tag{position:static;background:var(--royal);color:#fff}
+.v2 .cal-lien{margin-left:auto;display:inline-flex;align-items:center;min-height:44px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--royal)}
+.v2 .cal-equipe .gc-boite{border-radius:0;padding:12px}
+.v2 .cal-vide{padding:22px 20px;color:#5A6680;font-size:15px}
+@media (max-width:600px){.v2 .cal-lien{margin-left:0}}
+
+/* Logos de ligues sur les bannières : boîte blanche, logo entier visible */
+.v2 .banniere .b-ll{object-fit:contain;padding:2px;background:#fff;border-radius:4px;width:52px;height:44px}
+.v2 .bannieres-bande .banniere .b-ll{width:34px;height:28px}

@@ -16,7 +16,7 @@ export type Banniere = {
   annee: string;
   mention: string; // ex. « Champions »
   categorie: string; // ex. « 12U »
-  embleme?: "canada" | "ll"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
+  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
 };
 export type Engagee = { who: string; s: string; m: string; c: string; photo?: string };
 
@@ -96,13 +96,14 @@ export const CONTENU: Record<Sport, Contenu> = {
       { style: "canada", titre: "World Series", sous: "Softball", annee: "2026", mention: "Participation", categorie: "12U · 14U · 16U", embleme: "ll" },
       { style: "canada", titre: "Eastern Canadian Championship", sous: "Softball Canada", annee: "2026", mention: "Champions", categorie: "Est du Canada", embleme: "canada" },
       { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2026", mention: "Championnes", categorie: "17U" },
-      { style: "tournoi", titre: "Fastpitch Nation", sous: "Firecracker on the 4th", annee: "2026", mention: "Championnes", categorie: "16U · 8-2" },
-      { style: "tournoi", titre: "Fastpitch Nation", sous: "The Thin Blue Line", annee: "2026", mention: "Championnes", categorie: "14U · 5-2" },
-      { style: "tournoi", titre: "Homerun Softball", sous: "Binghamton", annee: "2026", mention: "Championnes", categorie: "14U · 16U" },
+      { style: "tournoi", titre: "Fastpitch Nation", sous: "Firecracker on the 4th", annee: "2026", mention: "Championnes", categorie: "16U · 8-2", embleme: "fpn" },
+      { style: "tournoi", titre: "Fastpitch Nation", sous: "The Thin Blue Line", annee: "2026", mention: "Championnes", categorie: "14U · 5-2", embleme: "fpn" },
+      { style: "tournoi", titre: "Homerun Softball", sous: "Binghamton", annee: "2026", mention: "Championnes", categorie: "14U · 16U", embleme: "homerun" },
+      { style: "tournoi", titre: "NSA", sous: "Lakeland, Floride", annee: "2026", mention: "Championnes", categorie: "14U · 16U", embleme: "nsa" },
       { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2025", mention: "Championnes", categorie: "12U · 14U · 16U", embleme: "canada" },
       { style: "canada", titre: "World Series", sous: "Softball", annee: "2025", mention: "Participation", categorie: "12U · 14U · 16U", embleme: "ll" },
       { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2025", mention: "Championnes", categorie: "15U" },
-      { style: "tournoi", titre: "Triple Crown", sous: "Binghamton", annee: "2025", mention: "Championnes", categorie: "Binghamton" },
+      { style: "tournoi", titre: "Triple Crown", sous: "Binghamton", annee: "2025", mention: "Championnes", categorie: "Binghamton", embleme: "tc" },
       { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2024", mention: "Championnes", categorie: "12U · 14U", embleme: "canada" },
       { style: "canada", titre: "World Series", sous: "Softball", annee: "2024", mention: "Participation", categorie: "12U · 14U", embleme: "ll" },
       { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2024", mention: "Championnes", categorie: "Majeur · Junior" },
@@ -239,6 +240,11 @@ export const PARTENAIRES: { nom: string; src?: string; sports?: Sport[] }[] = [
   { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png", sports: ["softball"] },
   { nom: "Babe Ruth Softball", src: "/partenaires/n-babe-ruth-softball.png", sports: ["softball"] },
   { nom: "PGF · Premier Girls Fastpitch", src: "/partenaires/n-pgf.png", sports: ["softball"] },
+  { nom: "Triple Crown Fastpitch", src: "/partenaires/n-triple-crown.png", sports: ["softball"] },
+  { nom: "Homerun Softball & Baseball", src: "/partenaires/n-homerun.png", sports: ["softball"] },
+  { nom: "NSA Softball", src: "/partenaires/n-nsa.png", sports: ["softball"] },
+  { nom: "Salt City Sports", src: "/partenaires/n-salt-city.png", sports: ["softball"] },
+  { nom: "Accelerate Sports", src: "/partenaires/n-accelerate.png", sports: ["softball"] },
   { nom: "Ligue Fastpitch Junior Majeur du Québec (LFJMQ)", src: "/partenaires/n-lfjmq.png", sports: ["softball"] },
   { nom: "L'Entrepôt du Baseball", src: "/partenaires/n-entrepot-du-baseball.png" },
   { nom: "Sébastien Gervais Photo", src: "/partenaires/n-sebastien-gervais-photo.png" },

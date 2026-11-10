@@ -195,6 +195,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                 Calendrier <em>{c.saison}</em>
               </h2>
               {c.noteCalendrier && <span className="pill">{c.noteCalendrier}</span>}
+              <Link className="more" href={`/site-v2/calendrier?sport=${sport}`} style={{ color: "#fff" }}>Horaire de chaque équipe →</Link>
             </div>
             <div className="sched">
               {c.calendrier.length > 0 ? (
