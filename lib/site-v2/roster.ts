@@ -64,8 +64,8 @@ export type RosterEquipe = {
 /**
  * Roster public d'une équipe. Les alignements sont affichés ; la Direction peut en retirer un par équipe (nouvelle équipe : masqué par défaut).
  * Sont listées les joueuses de l'équipe dont le statut n'est plus Prospect, sans les archivées.
- * Données publiées : nom, positions, lance/frappe. Taille et grad year si saisis. École et ville sauf si la famille a décoché
- * « Afficher mon école et ma ville sur le site public ». La photo seulement avec l'autorisation de photo de l'inscription. Jamais : date de naissance,
+ * Données publiées : nom, positions, lance/frappe. Taille et grad year si saisis. École et ville sauf si la famille a coché
+ * « Masquer mon école et ma ville » ; la joueuse n'est pas listée si la famille a coché « Masquer mon profil du site public ». La photo seulement avec l'autorisation de photo de l'inscription. Jamais : date de naissance,
  * coordonnées, courriel, notes médicales.
  */
 export async function chargerRoster(teamId: string, apercu = false): Promise<RosterEquipe | null> {
@@ -134,7 +134,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
   const ids = [
     ...new Set(
       (membres ?? [])
-        .filter((m) => !archivees.has(m.profile_id) && statutEffectif(m.profile_id, statuts, [m.status_id]) > 1)
+        .filter((m) => !archivees.has(m.profile_id) && !fichesPres[m.profile_id]?.profil?.masquerSite && statutEffectif(m.profile_id, statuts, [m.status_id]) > 1)
         .map((m) => m.profile_id),
     ),
   ];
@@ -161,9 +161,9 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           lance: fiche?.throws ?? "",
           frappe: fiche?.bats ?? "",
           taille: fichesPres[id]?.profil?.taille || infos[id]?.taille || "",
-          // École et ville : affichées (autorisation des parents obtenue par la Direction) sauf si la famille a décoché « Afficher mon école et ma ville sur le site public ».
-          ecole: fichesPres[id]?.profil?.ecoleVillePublic !== false ? fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "" : "",
-          ville: fichesPres[id]?.profil?.ecoleVillePublic !== false ? fichesPres[id]?.profil?.ville || infos[id]?.ville || "" : "",
+          // École et ville : affichées (autorisation des parents obtenue par la Direction) sauf si la famille a coché « Masquer mon école et ma ville ». « Masquer mon profil du site public » retire la joueuse de l'alignement.
+          ecole: fichesPres[id]?.profil?.masquerEcoleVille !== true ? fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "" : "",
+          ville: fichesPres[id]?.profil?.masquerEcoleVille !== true ? fichesPres[id]?.profil?.ville || infos[id]?.ville || "" : "",
           grad: fichesPres[id]?.profil?.grad || infos[id]?.grad || "",
           fieldlevel: profilFieldLevel(fiche?.fieldlevel_url),
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise
