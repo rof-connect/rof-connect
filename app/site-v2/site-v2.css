@@ -794,3 +794,14 @@ html:has(.v2){scroll-behavior:smooth}
   .v2 .bannieres-bande .banniere{flex:1 0 116px;width:auto;max-width:156px}
   .v2 .bannieres-bande .banniere .tringle{width:100%}
 }
+
+/* Photos moins grandes : cartes « Committed » de taille fixe (environ 260 px de large, rangée qui se remplit) et galerie plus basse */
+.v2 .commits{grid-template-columns:repeat(auto-fill,minmax(210px,260px));justify-content:start;gap:16px}
+.v2 .commit-visuel{aspect-ratio:4/5}
+.v2 .gallery{grid-template-rows:170px 170px}
+@media (max-width:1000px){
+  .v2 .commits{grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch}
+  .v2 .gallery{grid-template-rows:150px 150px 150px}
+}
+.v2 .gallery.gallery-auto{grid-auto-rows:200px}
+@media (max-width:1000px){.v2 .gallery.gallery-auto{grid-auto-rows:170px}}
