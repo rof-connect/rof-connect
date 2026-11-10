@@ -783,3 +783,14 @@ html:has(.v2){scroll-behavior:smooth}
   .v2 .hero .content{padding-left:var(--gouttiere);padding-right:var(--gouttiere)}
 }
 @media (max-width:700px){.v2 .hero .content{padding-left:20px;padding-right:20px}}
+
+/* Bande de bannières : pleine largeur comme la photo d'accueil (le fond sombre va jusqu'aux bords, les bannières se centrent quand elles tiennent, sinon la bande défile) */
+.v2 .bande-bann{margin-left:calc(-1 * var(--gouttiere));margin-right:calc(-1 * var(--gouttiere));border-radius:0}
+.v2 .bannieres.bannieres-bande{margin:0 auto}
+@media (min-width:601px){.v2 .bande-bann .piste{padding-left:calc(var(--gouttiere) + 44px);padding-right:calc(var(--gouttiere) + 44px)}}
+/* Sur très grand écran, les bannières s'élargissent un peu pour remplir la largeur (sinon la bande défile) */
+@media (min-width:1400px){
+  .v2 .bannieres.bannieres-bande{min-width:100%}
+  .v2 .bannieres-bande .banniere{flex:1 0 116px;width:auto;max-width:156px}
+  .v2 .bannieres-bande .banniere .tringle{width:100%}
+}
