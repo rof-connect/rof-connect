@@ -775,8 +775,8 @@ html:has(.v2){scroll-behavior:smooth}
   .v2 .hero .content{padding-left:clamp(28px,3.5vw,56px);padding-right:28px}
 }
 
-/* Largeur du site : tout (en-tête, photo d'accueil, sections, pied de page) occupe la largeur de l'écran, avec une petite gouttière à gauche et à droite */
-.v2{--largeur:1840px;--gouttiere:clamp(20px,3vw,48px)}
+/* Largeur du site : tout (en-tête, photo d'accueil, sections, pied de page) occupe la largeur de l'écran, avec une petite gouttière à gauche et à droite (aucune largeur maximale) */
+.v2{--largeur:none;--gouttiere:clamp(20px,3vw,48px)}
 .v2 .wrap{max-width:var(--largeur);padding-left:var(--gouttiere);padding-right:var(--gouttiere)}
 @media (min-width:1001px){
   .v2 .hero{width:100%;max-width:var(--largeur);margin:0 auto;border-radius:0}
