@@ -4,7 +4,8 @@ import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { presentationsActives } from "@/lib/presentation";
 import { urlPhotoProfil } from "@/lib/photo-profil";
 import { chargerNumeros } from "@/lib/numeros-chandail";
-import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
+import { chargerInfosRoster } from "@/lib/infos-roster";
+import { STATUTS, chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { nomAffiche, nomPublicParDefaut } from "./equipes";
 import { NIVEAU_COMPETITION_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
@@ -18,6 +19,8 @@ export type JoueuseRoster = {
   taille: string;
   ecole: string;
   ville: string;
+  statut: string; // âge de la saison (statut), ex. « 15U »
+  grad: string; // année de graduation (« grad year »), vide si non saisie
   photo: string | null;
   lien: string; // sa fiche de recrutement si elle a activé sa page publique, sinon sa page de profil du site
 };
@@ -95,13 +98,17 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
   };
   if (!afficher) return { ...base, total: 0, joueuses: [] };
 
-  const [{ data: membres }, archivees, statuts, actives, numeros] = await Promise.all([
+  const [{ data: membres }, archivees, statuts, actives, numeros, infos] = await Promise.all([
     admin.from("team_members").select("profile_id, status_id").eq("team_id", teamId).eq("role_in_team", "athlete"),
     chargerArchivees(),
     chargerStatutsJoueuses(),
     presentationsActives(),
     chargerNumeros(),
+    chargerInfosRoster(),
   ]);
+  const statutsParJoueuse = new Map<string, number[]>();
+  (membres ?? []).forEach((m) => statutsParJoueuse.set(m.profile_id, [...(statutsParJoueuse.get(m.profile_id) ?? []), m.status_id]));
+  const nomStatut = (id: string) => STATUTS.find((x) => x.id === statutEffectif(id, statuts, statutsParJoueuse.get(id) ?? []))?.nom ?? "";
   const ids = [
     ...new Set(
       (membres ?? [])
@@ -127,12 +134,14 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           id,
           nom: nomDe.get(id) || "Joueuse",
           numero: numeros[id] ?? "",
+          statut: nomStatut(id),
           positions: (fiche?.position ?? "").split(",").map((x: string) => x.trim()).filter(Boolean),
           lance: fiche?.throws ?? "",
           frappe: fiche?.bats ?? "",
           taille: profil.taille ?? "",
           ecole: profil.ecole ?? "",
-          ville: profil.ville ?? "",
+          ville: infos[id]?.ville || profil.ville || "",
+          grad: infos[id]?.grad ?? "",
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise
           lien: reglages ? `/joueuse/${reglages.token}` : `/site-v2/joueuses/${id}`,
         };
@@ -155,12 +164,14 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
       id: `exemple-${i}`,
       nom,
       numero: String([7, 12, 18, 24, 27, 67][i]),
+      statut: ["18U", "17U", "16U", "16U", "15U", "18U"][i],
       positions: [pos[i], ...(i % 2 ? ["Champ extérieur"] : [])],
       lance: i % 4 === 0 ? "Gauche" : "Droite",
       frappe: i % 3 === 0 ? "Gauche" : "Droite",
       taille: `5'${4 + (i % 5)}"`,
       ecole: ["Collège L'Assomption", "École Le Prélude", "Collège L'Assomption", "Polyvalente Lionel-Groulx", "Collège L'Assomption", "École Le Prélude"][i],
       ville: ["Repentigny", "L'Assomption", "Repentigny", "Terrebonne", "Charlemagne", "Repentigny"][i],
+      grad: String(2026 + (i % 3)),
       photo: null,
       lien: "#",
     }));

@@ -42,3 +42,6 @@ update teams set niveau_competition = 'ÉLITE' where archived = false and name =
 -- Au départ, toutes les équipes actives sont visibles sur le site (la Direction décoche celles à masquer).
 update teams set visible_public = true where archived = false and sport in ('softball', 'baseball');
 
+-- Lien GameChanger de 18U - Di Peco.
+update teams set gamechanger_url = 'https://web.gc.com/teams/t4fZDVd8st2F'
+where archived = false and name = 'Softball 18U - Di Peco';

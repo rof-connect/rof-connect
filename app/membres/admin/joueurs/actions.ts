@@ -9,6 +9,7 @@ import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif, statutSel
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 import { cheminPhotoProfil } from "@/lib/photo-profil";
 import { definirNumeros } from "@/lib/numeros-chandail";
+import { definirInfosRoster } from "@/lib/infos-roster";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
   prospect: 1,
@@ -361,6 +362,16 @@ export async function changerNumeroJoueuse(formData: FormData) {
   const profileId = String(formData.get("profile_id") ?? "");
   if (!/^[0-9a-f-]{36}$/i.test(profileId)) return;
   await definirNumeros({ [profileId]: String(formData.get("numero") ?? "") });
+  revalidatePath("/membres/admin/joueurs");
+  revalidatePath("/site-v2");
+}
+
+/** La Direction saisit la ville et l'année de graduation d'une joueuse (affichées dans le roster du site public). */
+export async function changerInfosRoster(formData: FormData) {
+  if (!(await verifierAdmin())) return;
+  const profileId = String(formData.get("profile_id") ?? "");
+  if (!/^[0-9a-f-]{36}$/i.test(profileId)) return;
+  await definirInfosRoster({ [profileId]: { ville: String(formData.get("ville") ?? ""), grad: String(formData.get("grad") ?? "") } });
   revalidatePath("/membres/admin/joueurs");
   revalidatePath("/site-v2");
 }

@@ -108,9 +108,7 @@ export const CONTENU: Record<Sport, Contenu> = {
       { style: "tournoi", titre: "Triple Crown", sous: "Binghamton", annee: "2025", mention: "Championnes", categorie: "Binghamton", embleme: "tc" },
       { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2024", mention: "Championnes", categorie: "12U · 14U", embleme: "canada" },
       { style: "canada", titre: "World Series", sous: "Softball", annee: "2024", mention: "Participation", categorie: "12U · 14U", embleme: "ll" },
-      { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2024", mention: "Championnes", categorie: "Majeur · Junior" },
       { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2024", mention: "Championnes", categorie: "15U" },
-      { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2023", mention: "Championnes", categorie: "Majeur · Junior" },
     ],
     palmares: [
       {
@@ -135,12 +133,11 @@ export const CONTENU: Record<Sport, Contenu> = {
         l: [
           "Champion canadien Softball — 12U, 14U",
           "World Series Softball — 12U, 14U",
-          "Championnes provinciales Petite Ligue Québec — Majeur, Junior",
         ],
       },
       {
         y: "2023",
-        l: ["Championnes provinciales Petite Ligue Québec — Majeur, Junior"],
+        l: [],
       },
     ],
     engagees: [
@@ -302,6 +299,7 @@ export const GAMECHANGER_PROVISOIRE: Record<string, string> = {
 export const idGameChanger = (v: unknown) => (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v ?? "").trim()) ? String(v).trim() : "");
 
 export const GAMECHANGER_LIEN_PROVISOIRE: Record<string, string> = {
+  "18U Di Peco": "https://web.gc.com/teams/t4fZDVd8st2F",
   "16U Dostaler": "https://web.gc.com/teams/8MQao52hpmge",
 };
 

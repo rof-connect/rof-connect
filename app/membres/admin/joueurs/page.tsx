@@ -5,8 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse, changerStatutJoueuse } from "./actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
-import { changerNumeroJoueuse } from "@/app/membres/admin/joueurs/actions";
+import { changerNumeroJoueuse, changerInfosRoster } from "@/app/membres/admin/joueurs/actions";
 import { chargerNumeros } from "@/lib/numeros-chandail";
+import { chargerInfosRoster } from "@/lib/infos-roster";
 import { FormPhotoJoueuse } from "@/components/membres/FormPhotoJoueuse";
 import { chargerStatutsJoueuses, premierSeptembre, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
@@ -105,6 +106,7 @@ export default async function JoueursPage({
   const tousLiens = await chargerTousLiens();
   const statutsJoueuses = await chargerStatutsJoueuses();
   const numeros = await chargerNumeros();
+  const infosRoster = await chargerInfosRoster();
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
   const nbArchivees = tousLesJoueurs.filter(([pid]) => archivees.has(pid)).length;
 
@@ -335,6 +337,35 @@ export default async function JoueursPage({
                   maxLength={2}
                   defaultValue={numeros[profileId] ?? ""}
                   className="w-16 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
+                />
+                <button type="submit" className="text-rof-poudre underline">
+                  Enregistrer
+                </button>
+              </form>
+
+              <form action={changerInfosRoster} className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                <input type="hidden" name="profile_id" value={profileId} />
+                <label htmlFor={`ville-${profileId}`} className="text-rof-gris">
+                  Ville (site public)
+                </label>
+                <input
+                  id={`ville-${profileId}`}
+                  name="ville"
+                  maxLength={60}
+                  defaultValue={infosRoster[profileId]?.ville ?? ""}
+                  className="w-44 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
+                />
+                <label htmlFor={`grad-${profileId}`} className="text-rof-gris">
+                  Grad
+                </label>
+                <input
+                  id={`grad-${profileId}`}
+                  name="grad"
+                  inputMode="numeric"
+                  maxLength={4}
+                  placeholder="2027"
+                  defaultValue={infosRoster[profileId]?.grad ?? ""}
+                  className="w-20 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
                 />
                 <button type="submit" className="text-rof-poudre underline">
                   Enregistrer

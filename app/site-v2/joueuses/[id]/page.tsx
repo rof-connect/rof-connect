@@ -27,6 +27,8 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
     ["Position", j.positions.join(" · ")],
     ["Lance", j.lance],
     ["Frappe", j.frappe],
+    ["Âge de la saison", j.statut],
+    ["Grad", j.grad],
     ["Taille", j.taille],
     ["École", j.ecole],
     ["Ville", j.ville],
@@ -61,6 +63,10 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
               {j.numero && <span className="profil-no">#{j.numero}</span>} {j.nom}
             </h1>
             {j.positions.length > 0 && <p className="lead">{j.positions.join(" · ")}</p>}
+            <p className="profil-puces">
+              {j.statut && <span className="team-tag">{j.statut}</span>}
+              {j.grad && <span className="team-tag team-niveau">Grad {j.grad}</span>}
+            </p>
           </div>
         </div>
       </section>

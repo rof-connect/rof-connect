@@ -82,6 +82,7 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
                 <span role="columnheader">Nom</span>
                 <span role="columnheader">Pos.</span>
                 <span role="columnheader" className="c-lf">L / F</span>
+                <span role="columnheader" className="c-grad">Grad</span>
                 <span role="columnheader" className="c-taille">Taille</span>
                 <span role="columnheader" className="c-ecole">École</span>
                 <span role="columnheader" className="c-ville">Ville</span>
@@ -107,6 +108,7 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
                     <span role="cell" className="c-nom">{j.nom}{engagementDe(j.nom) && <em className="badge-commit">Committed {engagementDe(j.nom)?.c}</em>}</span>
                     <span role="cell" className="c-pos">{j.positions.join(" · ") || "—"}</span>
                     <span role="cell" className="c-lf">{[j.lance && j.lance.slice(0, 1).toUpperCase(), j.frappe && j.frappe.slice(0, 1).toUpperCase()].filter(Boolean).join(" / ") || "—"}</span>
+                    <span role="cell" className="c-grad">{j.grad || "—"}</span>
                     <span role="cell" className="c-taille">{j.taille || "—"}</span>
                     <span role="cell" className="c-ecole">{j.ecole || "—"}</span>
                     <span role="cell" className="c-ville">{j.ville || "—"}</span>

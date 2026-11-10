@@ -206,7 +206,7 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .roster-meta dd{font-family:var(--display);font-size:44px;line-height:1;color:var(--accent)}
 
 .v2 .roster{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
-.v2 .roster-row{display:grid;grid-template-columns:52px 64px 1.6fr 1fr .6fr .6fr 1.3fr 1fr;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink);transition:background .15s}
+.v2 .roster-row{display:grid;grid-template-columns:52px 64px 1.6fr 1fr .6fr .6fr .6fr 1.3fr 1fr;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink);transition:background .15s}
 .v2 .roster-row:last-child{border-bottom:0}
 .v2 a.roster-row:hover{background:var(--mist)}
 .v2 .roster-th{background:var(--royal-deep);color:#fff;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding-top:14px;padding-bottom:14px}
@@ -618,3 +618,22 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .cal-tournois .l{font-size:14px;color:#4A5570}
 .v2 .cal-tournois .g{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--mist);border-radius:999px;padding:6px 12px}
 @media (max-width:700px){.v2 .cal-tournois li{grid-template-columns:1fr;gap:4px}}
+
+/* ===== Emblèmes sous l'âge, sans cadre ni fond ===== */
+.v2 .banniere .toile{padding-bottom:64px;min-height:340px}
+.v2 .banniere .b-emblemes{margin:8px 0 0;display:flex;align-items:center;justify-content:center}
+.v2 .banniere .b-ll{width:auto;max-width:86px;height:40px;padding:0;background:none;border-radius:0;object-fit:contain}
+.v2 .banniere .b-drapeau{width:52px;height:26px;border-radius:0;box-shadow:none}
+/* sur les bannières foncées : un mince liseré blanc suit la forme du logo (aucune boîte) */
+.v2 .banniere-tournoi .b-ll,.v2 .banniere-provincial .b-ll,.v2 .banniere-canam .b-ll{filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}
+.v2 .bannieres-bande .banniere .toile{min-height:236px;padding-bottom:46px}
+.v2 .bannieres-bande .banniere .b-ll{height:26px;max-width:64px}
+.v2 .bannieres-bande .banniere .b-drapeau{width:34px;height:17px}
+.v2 .bannieres-bande .banniere .b-emblemes{margin-top:4px}
+
+.v2 .roster-row .c-grad{font-weight:700;color:var(--royal-deep)}
+@media (max-width:800px){.v2 .roster-row .c-grad{grid-column:3;font-size:13px;color:#4A5570}.v2 .roster-row .c-grad::before{content:"Grad : "}}
+
+/* Profil joueuse : âge de la saison et grad year en puces */
+.v2 .profil-puces{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.v2 .profil-puces .team-tag{position:static;font-size:14px;padding:7px 14px;letter-spacing:.14em}
