@@ -395,7 +395,7 @@ export const NIVEAU_COMPETITION_PROVISOIRE: Record<string, string> = {
 /** Ordre d'affichage par défaut des équipes (quand la Direction n'a pas saisi d'ordre). */
 export const ORDRE_PUBLIC: Record<Sport, string[]> = {
   softball: [],
-  baseball: ["8U", "9/10U", "11/12U", "13U", "14U", "16U", "Prep School"],
+  baseball: ["8U", "9/10U Di Peco", "11/12U Allard", "13U Dostaler", "14U Wagner", "16U", "Prep School"],
 };
 
 /** Texte « niveaux » de l'accès rapide Équipes. */
