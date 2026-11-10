@@ -738,3 +738,14 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .faq-rep{padding:0 20px 20px;color:#3B4660;font-size:16px;line-height:1.6}
 .v2 .faq-rep ul{margin:0;padding-left:20px;display:grid;gap:8px}
 .v2 .faq-boutons{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+
+/* V5 : texte d'accueil plus à gauche et plus petit pour mieux voir la photo ; marge latérale d'au moins 20 px (le padding du .content écrasait celui du .wrap) */
+.v2 .hero .content{max-width:none;margin:0;padding:0 clamp(20px,4vw,64px) 70px}
+.v2 .hero h1{font-size:clamp(72px,10.5vw,164px)}
+.v2 .hero p.lead{max-width:520px}
+.v2 .hero::before{background:linear-gradient(90deg,rgba(6,15,46,.78) 0%,rgba(6,15,46,.34) 38%,rgba(6,15,46,0) 62%)}
+@media (max-width:1000px){.v2 .hero::before{background:linear-gradient(0deg,rgba(6,15,46,.7) 0%,rgba(6,15,46,.2) 70%)}}
+@media (max-width:700px){
+  .v2 .hero .content{padding:0 20px 48px}
+  .v2 .hero h1{font-size:clamp(56px,21vw,110px)}
+}
