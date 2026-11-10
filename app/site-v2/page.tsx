@@ -59,7 +59,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
 
         {/* Chiffres */}
         <div className="statbar">
-          <div className="wrap" style={{ gridTemplateColumns: `repeat(${Math.min(stats.length, 4)},1fr)` }}>
+          <div className="wrap" data-n={Math.min(stats.length, 4)}>
             {stats.map(([b, s]) => (
               <div className="stat" key={s}>
                 <b>{b}</b>
@@ -414,7 +414,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
               {PARTENAIRES_PAR_SPORT[sport].map((p) =>
                 p.src ? (
                   <div className="logo" key={p.nom}>
-                    <Image src={p.src} alt={p.nom} fill loading="lazy" sizes="150px" />
+                    <Image src={p.src} alt={p.nom} fill loading="lazy" sizes="(max-width: 600px) 50vw, 200px" />
                   </div>
                 ) : (
                   <div key={p.nom}>{p.nom}</div>

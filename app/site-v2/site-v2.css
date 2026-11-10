@@ -521,3 +521,61 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .bande-bann .fleche-g{left:6px}
 .v2 .bande-bann .fleche-d{right:6px}
 @media (max-width:600px){.v2 .bande-bann .piste{padding:6px 12px}.v2 .bande-bann .fleche{display:none}}
+
+/* ===== A1 · Mobile : rien ne dépasse à 360, 390 et 768 px ===== */
+.v2{overflow-x:clip}
+.v2 .statbar .wrap[data-n="1"]{grid-template-columns:1fr}
+.v2 .statbar .wrap[data-n="2"]{grid-template-columns:repeat(2,1fr)}
+.v2 .statbar .wrap[data-n="3"]{grid-template-columns:repeat(3,1fr)}
+.v2 .statbar .wrap[data-n="4"]{grid-template-columns:repeat(4,1fr)}
+.v2 .stat b{font-size:clamp(36px,9vw,64px)}
+.v2 .stat span{font-size:clamp(11px,2.8vw,12px);letter-spacing:.06em;overflow-wrap:break-word}
+.v2 .btn{max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;justify-content:center}
+.v2 footer a{overflow-wrap:anywhere}
+.v2 .hero .diamond{max-width:70vw}
+@media (max-width:1000px){
+  .v2 .wrap{padding:0 20px}
+  .v2 .statbar .wrap[data-n="4"]{grid-template-columns:repeat(2,1fr)}
+  .v2 .statbar .wrap[data-n="4"] .stat:nth-child(2n){border-right:0}
+  .v2 .statbar .wrap[data-n="4"] .stat:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.1)}
+  .v2 .stat{padding:22px 10px}
+}
+@media (max-width:700px){
+  .v2 .hero h1{font-size:clamp(56px,21vw,110px)}
+  .v2 .hero .content{padding-bottom:48px}
+  .v2 .hero p.lead{font-size:16px}
+  .v2 .stat{padding:18px 6px;text-align:center}
+  /* Accès rapides : 2 colonnes, la 5e en pleine largeur, aucune bordure ne dépasse */
+  .v2 .quick .wrap{padding:0;gap:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .v2 .quick a{border-left:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 14px;min-width:0}
+  .v2 .quick a:nth-child(2n){border-right:0}
+  .v2 .quick a:last-child{grid-column:1/-1;border-right:0}
+  .v2 .quick strong{font-size:22px}
+  .v2 .quick small{overflow-wrap:anywhere}
+  /* Cartes d'équipes : défilement contenu, la carte suivante visible à moitié */
+  .v2 .teams{grid-auto-columns:calc((100% - 20px) / 2.5);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;overscroll-behavior-x:contain}
+  .v2 .team{scroll-snap-align:start;min-width:0}
+  .v2 .team.team-avenir{min-width:0}
+  /* Pied de page : une colonne */
+  .v2 footer .cols{grid-template-columns:1fr}
+  .v2 footer .tag{font-size:44px}
+  .v2 .org-contact{padding:24px 20px}
+  .v2 .org-contact .btn{width:100%}
+  .v2 .head h2{font-size:clamp(30px,9vw,54px)}
+}
+
+/* Logos partenaires : tous dans une même boîte, même taille visuelle */
+.v2 .partners{gap:14px;justify-content:center}
+.v2 .partners .logo{position:relative;width:200px;height:110px;padding:0;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.v2 .partners .logo img{object-fit:contain;padding:6px}
+.v2 .partners div:not(.logo){width:200px;height:110px;text-align:center;line-height:1.2}
+@media (max-width:600px){.v2 .partners .logo,.v2 .partners div:not(.logo){width:calc(50% - 7px);height:96px}}
+
+/* Emblèmes des bannières : logo du club + drapeau du Canada ou logo Little League */
+.v2 .banniere .b-emblemes{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 4px}
+.v2 .banniere .b-emblemes .b-logo{margin:0}
+.v2 .banniere .b-drapeau{width:46px;height:23px;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.v2 .banniere .b-ll{width:44px;height:44px;border-radius:4px;background:#fff}
+.v2 .bannieres-bande .banniere .b-emblemes{margin:6px 0 2px;gap:5px}
+.v2 .bannieres-bande .banniere .b-drapeau{width:30px;height:15px}
+.v2 .bannieres-bande .banniere .b-ll{width:28px;height:28px}

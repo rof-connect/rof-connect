@@ -16,6 +16,7 @@ export type Banniere = {
   annee: string;
   mention: string; // ex. « Champions »
   categorie: string; // ex. « 12U »
+  embleme?: "canada" | "ll"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
 };
 export type Engagee = { who: string; s: string; m: string; c: string; photo?: string };
 
@@ -91,19 +92,19 @@ export const CONTENU: Record<Sport, Contenu> = {
       { m: "JUIL", y: "2027", t: "Championnat Canadien LL", p: "Little League Canada", tag: "Championnat", hl: true },
     ],
     bannieres: [
-      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2026", mention: "Championnes", categorie: "12U · 14U · 16U" },
-      { style: "canada", titre: "World Series", sous: "Softball", annee: "2026", mention: "Participation", categorie: "12U · 14U · 16U" },
-      { style: "canada", titre: "Eastern Canadian Championship", sous: "Softball Canada", annee: "2026", mention: "Champions", categorie: "Est du Canada" },
+      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2026", mention: "Championnes", categorie: "12U · 14U · 16U", embleme: "canada" },
+      { style: "canada", titre: "World Series", sous: "Softball", annee: "2026", mention: "Participation", categorie: "12U · 14U · 16U", embleme: "ll" },
+      { style: "canada", titre: "Eastern Canadian Championship", sous: "Softball Canada", annee: "2026", mention: "Champions", categorie: "Est du Canada", embleme: "canada" },
       { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2026", mention: "Championnes", categorie: "17U" },
       { style: "tournoi", titre: "Fastpitch Nation", sous: "Firecracker on the 4th", annee: "2026", mention: "Championnes", categorie: "16U · 8-2" },
       { style: "tournoi", titre: "Fastpitch Nation", sous: "The Thin Blue Line", annee: "2026", mention: "Championnes", categorie: "14U · 5-2" },
       { style: "tournoi", titre: "Homerun Softball", sous: "Binghamton", annee: "2026", mention: "Championnes", categorie: "14U · 16U" },
-      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2025", mention: "Championnes", categorie: "12U · 14U · 16U" },
-      { style: "canada", titre: "World Series", sous: "Softball", annee: "2025", mention: "Participation", categorie: "12U · 14U · 16U" },
+      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2025", mention: "Championnes", categorie: "12U · 14U · 16U", embleme: "canada" },
+      { style: "canada", titre: "World Series", sous: "Softball", annee: "2025", mention: "Participation", categorie: "12U · 14U · 16U", embleme: "ll" },
       { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2025", mention: "Championnes", categorie: "15U" },
       { style: "tournoi", titre: "Triple Crown", sous: "Binghamton", annee: "2025", mention: "Championnes", categorie: "Binghamton" },
-      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2024", mention: "Championnes", categorie: "12U · 14U" },
-      { style: "canada", titre: "World Series", sous: "Softball", annee: "2024", mention: "Participation", categorie: "12U · 14U" },
+      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2024", mention: "Championnes", categorie: "12U · 14U", embleme: "canada" },
+      { style: "canada", titre: "World Series", sous: "Softball", annee: "2024", mention: "Participation", categorie: "12U · 14U", embleme: "ll" },
       { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2024", mention: "Championnes", categorie: "Majeur · Junior" },
       { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2024", mention: "Championnes", categorie: "15U" },
       { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2023", mention: "Championnes", categorie: "Majeur · Junior" },
@@ -231,13 +232,18 @@ export const GALERIE: { src: string; alt: string }[] = [
   { src: "/photos/galerie-01.jpg", alt: "Une jeune lanceuse tend une balle de softball vers la caméra" },
 ];
 
-export const PARTENAIRES: { nom: string; src?: string }[] = [
-  { nom: "Little League Canada", src: "/partenaires/little-league.jpg" },
-  { nom: "USA Softball", src: "/partenaires/usa-softball.png" },
-  { nom: "Fastpitch Nation", src: "/partenaires/fastpitch-nation.jpg" },
-  { nom: "L'Entrepôt du Baseball", src: "/partenaires/entrepot-du-baseball.png" },
-  { nom: "Sébastien Gervais Photo", src: "/partenaires/sebastien-gervais-photo.jpg" },
-  { nom: "Gym L'Armure" }, // logo à fournir
+export const PARTENAIRES: { nom: string; src?: string; sports?: Sport[] }[] = [
+  { nom: "Little League Canada", src: "/partenaires/n-little-league.png" },
+  { nom: "USA Softball", src: "/partenaires/n-usa-softball.png", sports: ["softball"] },
+  { nom: "Fastpitch Nation", src: "/partenaires/n-fastpitch-nation.png", sports: ["softball"] },
+  { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png", sports: ["softball"] },
+  { nom: "Babe Ruth Softball", src: "/partenaires/n-babe-ruth-softball.png", sports: ["softball"] },
+  { nom: "PGF · Premier Girls Fastpitch", src: "/partenaires/n-pgf.png", sports: ["softball"] },
+  { nom: "Ligue Fastpitch Junior Majeur du Québec (LFJMQ)", src: "/partenaires/n-lfjmq.png", sports: ["softball"] },
+  { nom: "L'Entrepôt du Baseball", src: "/partenaires/n-entrepot-du-baseball.png" },
+  { nom: "Sébastien Gervais Photo", src: "/partenaires/n-sebastien-gervais-photo.png" },
+  { nom: "Gym L'Armure", src: "/partenaires/n-gym-armure.png" },
+  { nom: "Remorques Dionne", src: "/partenaires/n-remorques-dionne.png" },
 ];
 
 const sansAccent = (n: string) => n.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
@@ -380,11 +386,8 @@ export function lienFieldLevel(v: string): string {
 
 /** Partenaires par sport (le baseball n'affiche ni USA Softball ni Fastpitch Nation ; ajoute PBR Baseball, logo à fournir). */
 export const PARTENAIRES_PAR_SPORT: Record<Sport, { nom: string; src?: string }[]> = {
-  softball: PARTENAIRES,
-  baseball: [
-    ...PARTENAIRES.filter((p) => !["USA Softball", "Fastpitch Nation"].includes(p.nom)),
-    { nom: "PBR Baseball" }, // logo à fournir
-  ],
+  softball: PARTENAIRES.filter((p) => !p.sports || p.sports.includes("softball")),
+  baseball: [...PARTENAIRES.filter((p) => !p.sports || p.sports.includes("baseball")), { nom: "PBR Baseball" }], // PBR : logo à fournir
 };
 
 /** Page « Centre d'entraînement ». Textes à compléter par la Direction. */
