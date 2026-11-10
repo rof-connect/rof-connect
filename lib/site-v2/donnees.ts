@@ -86,11 +86,11 @@ export const CONTENU: Record<Sport, Contenu> = {
       ["3", "Athlètes signées"],
     ],
     calendrier: [
-      { m: "MAI", y: "2027", t: "Tournoi Maryland", p: "Maryland, États-Unis", tag: "Tournoi" },
-      { m: "MAI", y: "2027", t: "Fastpitch Nation", p: "Lieu à confirmer", tag: "Tournoi", important: true },
-      { m: "JUIN", y: "2027", t: "Alliance Softball Qualifier", p: "Syracuse, New York", tag: "Qualification", hl: true, important: true },
+      { m: "MAI", y: "2027", t: "Memorial Day Madness", p: "Maryland, États-Unis", tag: "Tournoi", important: true },
+      { m: "MAI", y: "2027", t: "Fastpitch Nation", p: "Lieu à confirmer", tag: "Tournoi" },
+      { m: "JUIN", y: "2027", t: "Alliance Softball Qualifier", p: "Syracuse, New York", tag: "Qualification", hl: true },
       { m: "JUIN", y: "2027", t: "Binghamton", p: "Binghamton, New York", tag: "Tournoi" },
-      { m: "JUIL", y: "2027", t: "PGF New Jersey", p: "New Jersey, États-Unis", tag: "Showcase" },
+      { m: "JUIL", y: "2027", t: "PGF New Jersey", p: "New Jersey, États-Unis", tag: "Showcase", important: true },
       { m: "JUIL", y: "2027", t: "Championnat Canadien LL", p: "Lieu à confirmer", tag: "Championnat", hl: true, important: true },
     ],
     bannieres: [
