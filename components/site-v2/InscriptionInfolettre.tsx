@@ -3,7 +3,8 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { sInscrireInfolettre, type EtatInfolettre } from "@/app/site-v2/infolettre-actions";
 
-const CLE = "rof-infolettre"; // mémorise le choix du visiteur dans son navigateur : « inscrit » ou « refus:<date> »
+const CLE = "rof-infolettre"; // « inscrit » : on ne redemande plus, ni en softball ni en baseball
+const cleRefus = (sport: string) => `rof-infolettre-refus-${sport}`; // refus mémorisé séparément pour chaque sport : le volet baseball redemande même si le volet softball a été refusé
 const PAUSE_REFUS_JOURS = 90;
 
 const initial: EtatInfolettre = { ok: false, erreur: null };
@@ -18,34 +19,35 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
 
   const deja = () => {
     try {
-      const v = localStorage.getItem(CLE);
-      if (!v) return false;
-      if (v === "inscrit") return true;
-      const t = Number(v.split(":")[1]);
-      return Number.isFinite(t) && Date.now() - t < PAUSE_REFUS_JOURS * 86400000;
+      if (localStorage.getItem(CLE) === "inscrit") return true;
+      const t = Number(localStorage.getItem(cleRefus(sport)));
+      return Number.isFinite(t) && t > 0 && Date.now() - t < PAUSE_REFUS_JOURS * 86400000;
     } catch {
       return false;
     }
   };
-  const retenir = (valeur: string) => {
+  const retenir = (cle: string, valeur: string) => {
     try {
-      localStorage.setItem(CLE, valeur);
+      localStorage.setItem(cle, valeur);
     } catch {
       /* navigation privée : on ne retient rien */
     }
   };
 
+  // Réévalué à chaque changement de sport : ouvrir le volet baseball affiche la demande même si le softball a été refusé.
   useEffect(() => {
+    setOuvert(false);
     if (deja()) return;
     const t = setTimeout(() => {
       avant.current = document.activeElement as HTMLElement | null;
       setOuvert(true);
     }, 1800);
     return () => clearTimeout(t);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sport]);
 
   useEffect(() => {
-    if (etat.ok) retenir("inscrit");
+    if (etat.ok) retenir(CLE, "inscrit");
   }, [etat.ok]);
 
   useEffect(() => {
@@ -53,7 +55,7 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
   }, [ouvert]);
 
   const fermer = (refus: boolean) => {
-    if (refus && !etat.ok) retenir("refus:" + Date.now());
+    if (refus && !etat.ok) retenir(cleRefus(sport), String(Date.now()));
     setOuvert(false);
     avant.current?.focus?.();
   };

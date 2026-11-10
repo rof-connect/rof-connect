@@ -49,7 +49,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
       </div>
 
       <Entete sport={sport} base={base} />
-      {accueil && <InscriptionInfolettre sport={sport} />}
+      {accueil && <InscriptionInfolettre key={sport} sport={sport} />}
 
       <main id="top">{children}</main>
 
