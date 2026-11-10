@@ -147,6 +147,9 @@ export default async function DirectionPage() {
           <Link href="/membres/admin/connexions" className="text-sm text-rof-poudre underline">
             Dernières connexions
           </Link>
+          <Link href="/membres/admin/infolettre" className="text-sm text-rof-poudre underline">
+            Infolettre
+          </Link>
         </div>
       </div>
 

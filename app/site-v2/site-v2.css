@@ -749,3 +749,22 @@ html:has(.v2){scroll-behavior:smooth}
   .v2 .hero .content{padding:0 20px 48px}
   .v2 .hero h1{font-size:clamp(56px,21vw,110px)}
 }
+
+/* Fenêtre d'inscription à l'infolettre */
+.v2 .infolettre-fond{position:fixed;inset:0;z-index:200;background:rgba(6,15,46,.62);display:flex;align-items:center;justify-content:center;padding:20px}
+.v2 .infolettre{position:relative;width:100%;max-width:460px;background:#fff;color:var(--ink);border-top:6px solid var(--accent);border-radius:8px;padding:30px 28px 24px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.v2 .infolettre h2{font-family:var(--display);font-weight:400;font-size:44px;line-height:.95;color:var(--royal-deep);margin:0 36px 10px 0}
+.v2 .infolettre p{font-size:16px;line-height:1.5;color:#3B4660;margin:0 0 16px}
+.v2 .infolettre label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--royal-deep)}
+.v2 .infolettre input[type=email]{width:100%;min-height:48px;border:2px solid #9AA6C2;border-radius:6px;padding:0 14px;font-size:16px;color:var(--ink);background:#fff}
+.v2 .infolettre input[type=email]:focus-visible{outline:2px solid var(--royal);outline-offset:2px;border-color:var(--royal)}
+.v2 .infolettre-piege{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.v2 .infolettre-erreur{color:#B00020;font-weight:700;font-size:14px;margin:8px 0 0}
+.v2 .infolettre-boutons{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 12px}
+.v2 .infolettre-boutons .btn{min-height:48px}
+.v2 .infolettre .btn.ghost{color:var(--royal-deep);border-color:#9AA6C2}
+.v2 .infolettre-note{font-size:12.5px!important;color:#5B6580!important;margin:0!important}
+.v2 .infolettre-x{position:absolute;top:10px;right:10px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:0;color:var(--royal-deep);cursor:pointer;border-radius:6px}
+.v2 .infolettre-x:hover{background:#EEF2FB}
+.v2 .infolettre-x:focus-visible{outline:2px solid var(--royal);outline-offset:1px}
+@media (max-width:480px){.v2 .infolettre{padding:26px 20px 20px}.v2 .infolettre h2{font-size:38px}}

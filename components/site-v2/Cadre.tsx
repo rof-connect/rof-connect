@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Entete } from "./Entete";
+import { InscriptionInfolettre } from "./InscriptionInfolettre";
 import { affiliationsDe, CONTENU, SPORTS, type Sport } from "@/lib/site-v2/donnees";
 import { liensUtilitaires } from "@/lib/site-v2/menu";
 
@@ -48,6 +49,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
       </div>
 
       <Entete sport={sport} base={base} />
+      {accueil && <InscriptionInfolettre sport={sport} />}
 
       <main id="top">{children}</main>
 
