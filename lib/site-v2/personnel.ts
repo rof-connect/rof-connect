@@ -9,10 +9,15 @@ export const DIRECTION_SITE: { nom: string; role: string }[] = [
   { nom: "Nicholas Di Peco", role: "Directeur Excellence" },
   { nom: "Eric Dostaler", role: "Directeur Administratif" },
   { nom: "François Martel", role: "Directeur Financier" },
+  { nom: "Bryan Riley", role: "Directeur Adjoint Excellence" },
 ];
 
-/** Membres de la direction qui sont aussi entraîneurs (leur compte ROF Connect est « Direction », pas « entraîneur »). */
-const ENTRAINEURS_DIRECTION: { nom: string; sport: Sport; equipes: string[] }[] = [{ nom: "Eric Dostaler", sport: "softball", equipes: ["16U Dostaler"] }];
+/** Entraîneurs sans compte « entraîneur » dans ROF Connect (direction, ou pas encore de compte) : affichés sur le site. */
+const ENTRAINEURS_SANS_COMPTE: { nom: string; sport: Sport; equipes: string[] }[] = [
+  { nom: "Eric Dostaler", sport: "softball", equipes: ["16U Dostaler"] },
+  { nom: "Bryan Riley", sport: "softball", equipes: ["14U Riley"] },
+  { nom: "Olivier Bertrand", sport: "softball", equipes: ["16U Bertrand"] },
+];
 
 /** Sport d'un entraîneur qui n'a pas encore d'équipe (équipe à venir). */
 const SPORT_SANS_EQUIPE: Record<string, Sport> = {
@@ -56,6 +61,6 @@ export async function chargerEntraineurs(sport: Sport): Promise<Entraineur[]> {
     }
   }
 
-  ENTRAINEURS_DIRECTION.filter((e) => e.sport === sport).forEach((e) => resultat.push({ nom: e.nom, equipes: e.equipes }));
+  ENTRAINEURS_SANS_COMPTE.filter((e) => e.sport === sport).forEach((e) => resultat.push({ nom: e.nom, equipes: e.equipes }));
   return resultat.sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
 }
