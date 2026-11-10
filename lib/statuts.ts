@@ -43,6 +43,24 @@ export async function definirStatutJoueuse(profileId: string, statusId: number) 
   await admin.from("team_members").update({ status_id: statusId }).eq("profile_id", profileId).eq("role_in_team", "athlete");
 }
 
+/**
+ * Définit le statut de plusieurs joueuses d'un coup (une seule écriture du fichier de statuts).
+ * Même effet que definirStatutJoueuse pour chacune : statut à son nom + recopié sur ses équipes.
+ */
+export async function definirStatutsJoueuses(changements: Record<string, number>) {
+  const ids = Object.keys(changements);
+  if (!ids.length) return;
+  const admin = createAdminClient();
+  const tous = await chargerStatutsJoueuses();
+  Object.assign(tous, changements);
+  await admin
+    .storage.from("media")
+    .upload(FICHIER, new Blob([JSON.stringify(tous)], { type: "application/json" }), { upsert: true, contentType: "application/json" });
+  for (const id of ids) {
+    await admin.from("team_members").update({ status_id: changements[id] }).eq("profile_id", id).eq("role_in_team", "athlete");
+  }
+}
+
 /** Statut effectif : celui de la joueuse, sinon le plus élevé de ses équipes, sinon Prospect. */
 export function statutEffectif(profileId: string, statuts: Record<string, number>, statutsEquipes: number[] = []) {
   return statuts[profileId] ?? (statutsEquipes.length ? Math.max(...statutsEquipes) : 1);

@@ -148,6 +148,9 @@ export default async function DirectionPage() {
           <Link href="/membres/admin/joueurs" className="text-sm text-rof-poudre underline">
             Gérer les joueurs
           </Link>
+          <Link href="/membres/admin/statuts" className="text-sm text-rof-poudre underline">
+            Recalculer les statuts
+          </Link>
           <Link href="/membres/admin/messages" className="text-sm text-rof-poudre underline">
             Messages à tous
           </Link>
