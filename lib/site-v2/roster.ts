@@ -9,6 +9,26 @@ import { STATUTS, chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { nomAffiche, nomPublicParDefaut } from "./equipes";
 import { NIVEAU_COMPETITION_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
+/** Le site est en français : les positions saisies en anglais sont traduites à l'affichage (les données ne sont pas modifiées). */
+const POSITIONS_FR: Record<string, string> = {
+  outfield: "Champ extérieur",
+  outfielder: "Champ extérieur",
+  "1st base": "1er but",
+  "first base": "1er but",
+  "2nd base": "2e but",
+  "second base": "2e but",
+  "3rd base": "3e but",
+  "third base": "3e but",
+  "1b": "1er but",
+  "2b": "2e but",
+  "3b": "3e but",
+  ss: "Arrêt-court",
+  shortstop: "Arrêt-court",
+  pitcher: "Lanceur·euse",
+  catcher: "Receveur·euse",
+};
+const positionFr = (p: string) => POSITIONS_FR[p.toLowerCase()] ?? p;
+
 export type JoueuseRoster = {
   id: string;
   nom: string;
@@ -135,11 +155,11 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           nom: nomDe.get(id) || "Joueuse",
           numero: numeros[id] ?? "",
           statut: nomStatut(id),
-          positions: (fiche?.position ?? "").split(",").map((x: string) => x.trim()).filter(Boolean),
+          positions: (fiche?.position ?? "").split(",").map((x: string) => positionFr(x.trim())).filter(Boolean),
           lance: fiche?.throws ?? "",
           frappe: fiche?.bats ?? "",
-          taille: profil.taille ?? "",
-          ecole: profil.ecole ?? "",
+          taille: infos[id]?.taille || profil.taille || "",
+          ecole: infos[id]?.ecole || profil.ecole || "",
           ville: infos[id]?.ville || profil.ville || "",
           grad: infos[id]?.grad ?? "",
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise

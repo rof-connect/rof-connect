@@ -367,6 +367,27 @@ export default async function JoueursPage({
                   defaultValue={infosRoster[profileId]?.grad ?? ""}
                   className="w-20 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
                 />
+                <label htmlFor={`taille-${profileId}`} className="text-rof-gris">
+                  Taille
+                </label>
+                <input
+                  id={`taille-${profileId}`}
+                  name="taille"
+                  maxLength={12}
+                  placeholder={"5'6\""}
+                  defaultValue={infosRoster[profileId]?.taille ?? ""}
+                  className="w-20 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
+                />
+                <label htmlFor={`ecole-${profileId}`} className="text-rof-gris">
+                  École
+                </label>
+                <input
+                  id={`ecole-${profileId}`}
+                  name="ecole"
+                  maxLength={80}
+                  defaultValue={infosRoster[profileId]?.ecole ?? ""}
+                  className="w-44 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
+                />
                 <button type="submit" className="text-rof-poudre underline">
                   Enregistrer
                 </button>

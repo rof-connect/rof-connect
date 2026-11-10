@@ -371,7 +371,14 @@ export async function changerInfosRoster(formData: FormData) {
   if (!(await verifierAdmin())) return;
   const profileId = String(formData.get("profile_id") ?? "");
   if (!/^[0-9a-f-]{36}$/i.test(profileId)) return;
-  await definirInfosRoster({ [profileId]: { ville: String(formData.get("ville") ?? ""), grad: String(formData.get("grad") ?? "") } });
+  await definirInfosRoster({
+    [profileId]: {
+      ville: String(formData.get("ville") ?? ""),
+      grad: String(formData.get("grad") ?? ""),
+      taille: String(formData.get("taille") ?? ""),
+      ecole: String(formData.get("ecole") ?? ""),
+    },
+  });
   revalidatePath("/membres/admin/joueurs");
   revalidatePath("/site-v2");
 }
