@@ -16,7 +16,7 @@ export type Banniere = {
   annee: string;
   mention: string; // ex. « Champions »
   categorie: string; // ex. « 12U »
-  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa" | "pbr" | "otw"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
+  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa" | "pbr" | "otw" | "canam" | "sandlot"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
 };
 export type Engagee = { who: string; s: string; m: string; c: string; photo?: string };
 
@@ -194,16 +194,16 @@ export const CONTENU: Record<Sport, Contenu> = {
     ],
     calendrier: [],
     bannieres: [
-      { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2026", mention: "Champions invaincus", categorie: "Mineur" },
-      { style: "tournoi", titre: "ECTBL", sous: "Séries Minor", annee: "2026", mention: "Champions", categorie: "10U · 11-1" },
+      { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2026", mention: "Champions invaincus", categorie: "Mineur", embleme: "ll" },
+      { style: "tournoi", titre: "ECTBL", sous: "Séries Minor", annee: "2026", mention: "Champions", categorie: "10U · 11-1", embleme: "ll" },
       { style: "tournoi", titre: "PBR Baseball", sous: "Cortland, NY", annee: "2026", mention: "Champions", categorie: "8U", embleme: "pbr" },
       { style: "tournoi", titre: "Peter Loyen Classic", sous: "PBR Baseball · Ottawa West", annee: "2026", mention: "Champions", categorie: "10U", embleme: "otw" },
-      { style: "tournoi", titre: "Ontario Rookie Invitational", sous: "Kingston", annee: "2026", mention: "Champions", categorie: "8U" },
-      { style: "tournoi", titre: "Thanksgiving Wood Bat Classic", sous: "Le Sandlot", annee: "2026", mention: "Champions", categorie: "PSES" },
-      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2025", mention: "Playoff Champions", categorie: "12U" },
-      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2024", mention: "Playoff Champions", categorie: "12U" },
-      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2023", mention: "Playoff Champions", categorie: "12U" },
-      { style: "tournoi", titre: "Cornwall Invitational", sous: "All-Star Tournament", annee: "2023", mention: "Champions", categorie: "8U" },
+      { style: "tournoi", titre: "Ontario Rookie Invitational", sous: "Kingston", annee: "2026", mention: "Champions", categorie: "8U", embleme: "ll" },
+      { style: "tournoi", titre: "Thanksgiving Wood Bat Classic", sous: "Le Sandlot", annee: "2026", mention: "Champions", categorie: "PSES", embleme: "sandlot" },
+      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2025", mention: "Playoff Champions", categorie: "12U", embleme: "canam" },
+      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2024", mention: "Playoff Champions", categorie: "12U", embleme: "canam" },
+      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2023", mention: "Playoff Champions", categorie: "12U", embleme: "canam" },
+      { style: "tournoi", titre: "Cornwall Invitational", sous: "All-Star Tournament", annee: "2023", mention: "Champions", categorie: "8U", embleme: "ll" },
     ],
     palmares: [
       {

@@ -16,6 +16,8 @@ const LOGOS: Record<string, { src: string; alt: string }> = {
   nsa: { src: "/partenaires/b-nsa.png", alt: "NSA Softball" },
   pbr: { src: "/partenaires/b-pbr.png", alt: "PBR Baseball" },
   otw: { src: "/partenaires/b-otw.png", alt: "Ottawa West" },
+  sandlot: { src: "/partenaires/b-sandlot.png", alt: "Le Sandlot" },
+  canam: { src: "/partenaires/b-canam.png", alt: "Can-Am United" },
 };
 
 /** Drapeau du Canada (dessin simple, feuille d'érable à 11 pointes). */
