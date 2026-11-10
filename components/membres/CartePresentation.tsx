@@ -81,8 +81,8 @@ export function CartePresentation({ reglages, lectureSeule = false }: { reglages
             <input name="ville" defaultValue={p.ville ?? ""} placeholder="Repentigny, QC" className={champ} />
           </label>
           <label className="flex items-start gap-2 text-xs text-rof-gris sm:col-span-2">
-            <input type="checkbox" name="ecole_ville_public" defaultChecked={p.ecoleVillePublic === true} className="mt-0.5 h-4 w-4" />
-            <span>Afficher mon école et ma ville sur le site public (décoché : seuls le nom, le numéro, la position, la taille et l&apos;année de graduation apparaissent).</span>
+            <input type="checkbox" name="ecole_ville_public" defaultChecked={p.ecoleVillePublic !== false} className="mt-0.5 h-4 w-4" />
+            <span>Afficher mon école et ma ville sur le site public (décoché : seuls le nom, le numéro, la position, la taille et l&apos;année de graduation apparaissent sur l&apos;alignement).</span>
           </label>
           <label className="flex flex-col gap-1 text-xs text-rof-gris">
             Année de graduation (grad year)

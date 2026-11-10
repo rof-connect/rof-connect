@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { comparerEquipes } from "@/lib/equipes";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
-import { NIVEAU_COMPETITION_PROVISOIRE, ORDRE_PUBLIC, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
+import { NIVEAU_COMPETITION_PROVISOIRE, ORDRE_PUBLIC, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
 export type EquipePublique = {
   id: string;
@@ -52,7 +52,7 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
   if (error) {
     // Migration 0009 pas encore appliquée : toutes les équipes actives de ROF Connect (provisoire).
     const { data: actives } = await admin.from("teams").select("id, name, sport").eq("sport", sport).eq("archived", false);
-    const e = await enrichir((actives ?? []).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null, roster_public: ROSTER_PROVISOIRE.includes(nomPublicParDefaut(t.name)) })), admin);
+    const e = await enrichir((actives ?? []).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null, roster_public: true })), admin);
     return { source: "provisoire", equipes: e.equipes, joueuses: e.joueuses };
   }
 

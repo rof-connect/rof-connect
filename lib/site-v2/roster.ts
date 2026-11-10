@@ -7,7 +7,7 @@ import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
 import { STATUTS, chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { nomAffiche, nomPublicParDefaut } from "./equipes";
-import { NIVEAU_COMPETITION_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, ROSTER_PROVISOIRE, idGameChanger, lienGameChanger, profilFieldLevel, type Sport } from "./donnees";
+import { NIVEAU_COMPETITION_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, idGameChanger, lienGameChanger, profilFieldLevel, type Sport } from "./donnees";
 
 /** Le site est en français : les positions saisies en anglais sont traduites à l'affichage (les données ne sont pas modifiées). */
 const POSITIONS_FR: Record<string, string> = {
@@ -62,9 +62,9 @@ export type RosterEquipe = {
 };
 
 /**
- * Roster public d'une équipe. La Direction décide de l'afficher, équipe par équipe ; par défaut il est masqué.
+ * Roster public d'une équipe. Les alignements sont affichés ; la Direction peut en retirer un par équipe (nouvelle équipe : masqué par défaut).
  * Sont listées les joueuses de l'équipe dont le statut n'est plus Prospect, sans les archivées.
- * Données publiées : nom, positions, lance/frappe. Taille et grad year si saisis. École et ville seulement si la famille a coché
+ * Données publiées : nom, positions, lance/frappe. Taille et grad year si saisis. École et ville sauf si la famille a décoché
  * « Afficher mon école et ma ville sur le site public ». La photo seulement avec l'autorisation de photo de l'inscription. Jamais : date de naissance,
  * coordonnées, courriel, notes médicales.
  */
@@ -103,7 +103,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
   }
   if (!equipe) return null;
 
-  const afficher = provisoire ? ROSTER_PROVISOIRE.includes(nomPublicParDefaut(equipe.name)) : equipe.roster_public === true; // par défaut : masqué (la Direction l'active équipe par équipe)
+  const afficher = provisoire ? true : equipe.roster_public === true; // migration appliquée : la Direction active ou retire l'alignement équipe par équipe
 
   const base = {
     id: equipe.id,
@@ -161,9 +161,9 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           lance: fiche?.throws ?? "",
           frappe: fiche?.bats ?? "",
           taille: fichesPres[id]?.profil?.taille || infos[id]?.taille || "",
-          // École et ville : seulement si la famille a coché « Afficher mon école et ma ville sur le site public ».
-          ecole: fichesPres[id]?.profil?.ecoleVillePublic ? fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "" : "",
-          ville: fichesPres[id]?.profil?.ecoleVillePublic ? fichesPres[id]?.profil?.ville || infos[id]?.ville || "" : "",
+          // École et ville : affichées (autorisation des parents obtenue par la Direction) sauf si la famille a décoché « Afficher mon école et ma ville sur le site public ».
+          ecole: fichesPres[id]?.profil?.ecoleVillePublic !== false ? fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "" : "",
+          ville: fichesPres[id]?.profil?.ecoleVillePublic !== false ? fichesPres[id]?.profil?.ville || infos[id]?.ville || "" : "",
           grad: fichesPres[id]?.profil?.grad || infos[id]?.grad || "",
           fieldlevel: profilFieldLevel(fiche?.fieldlevel_url),
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise

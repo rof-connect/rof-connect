@@ -7,7 +7,7 @@ export type Profil = {
   poids?: string;
   ecole?: string;
   ville?: string;
-  ecoleVillePublic?: boolean; // la famille autorise l'affichage de l'école et de la ville sur le site public (faux par défaut)
+  ecoleVillePublic?: boolean; // la famille autorise l'affichage de l'école et de la ville sur le site public (affiché par défaut : la Direction a l'autorisation des parents ; la famille peut décocher)
   grad?: string; // année de graduation (« grad year »), ex. 2027
   moyenne?: string;
   domaine?: string;
