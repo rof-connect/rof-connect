@@ -768,3 +768,9 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .infolettre-x:hover{background:#EEF2FB}
 .v2 .infolettre-x:focus-visible{outline:2px solid var(--royal);outline-offset:1px}
 @media (max-width:480px){.v2 .infolettre{padding:26px 20px 20px}.v2 .infolettre h2{font-size:38px}}
+
+/* Ordinateur : la photo d'accueil a la même largeur que le reste du contenu (alignée sur les bords des sections) */
+@media (min-width:1001px){
+  .v2 .hero{width:100%;max-width:1280px;margin:20px auto 0;border-radius:10px;min-height:min(78vh,720px)}
+  .v2 .hero .content{padding-left:clamp(28px,3.5vw,56px);padding-right:28px}
+}

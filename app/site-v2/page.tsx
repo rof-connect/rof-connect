@@ -37,7 +37,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
         {/* HERO */}
         <section className="hero">
           <div className="photo">
-            <Image src={HERO[sport].src} alt={HERO[sport].alt} fill priority sizes="100vw" style={{ objectPosition: HERO[sport].position }} />
+            <Image src={HERO[sport].src} alt={HERO[sport].alt} fill priority quality={70} sizes="(min-width: 1001px) 1280px, 100vw" style={{ objectPosition: HERO[sport].position }} />
           </div>
           <svg className="diamond" aria-hidden>
             <use href="#diamondArt" />
