@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Cadre } from "@/components/site-v2/Cadre";
-import { CONTENU } from "@/lib/site-v2/donnees";
+import { CONTENU, LOGOS_VARSITY } from "@/lib/site-v2/donnees";
 
 export const metadata: Metadata = { title: "Royal On Field Varsity/JV — Automne 2027" };
 
@@ -51,6 +52,17 @@ export default function VarsityPage() {
                 </li>
               ))}
             </ol>
+          </div>
+
+          <div className="logos-varsity">
+            <h3>Showcases et tournois visés</h3>
+            <ul className="partners">
+              {LOGOS_VARSITY.map((l) => (
+                <li className="logo" key={l.nom}>
+                  <Image src={l.src} alt={l.nom} fill loading="lazy" sizes="(max-width: 600px) 50vw, 200px" />
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className="avenir-conclusion">

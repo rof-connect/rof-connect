@@ -71,6 +71,11 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
               {j.grad && <span className="team-tag team-niveau">Grad {j.grad}</span>}
             </p>
           </div>
+          {engagement?.photo && (
+            <a className="profil-commit" href="#commitment" aria-label={`Engagement : ${engagement.s}, ${engagement.m}, ${engagement.c}`}>
+              <Image src={engagement.photo} alt={`${j.nom}, engagée avec ${engagement.s}`} fill sizes="(min-width: 800px) 220px, 60vw" priority />
+            </a>
+          )}
         </div>
       </section>
 

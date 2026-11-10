@@ -660,3 +660,15 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .reco-fl{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin-bottom:12px}
 .v2 .reco-fl iframe{display:block;width:100%;height:760px;border:0}
 @media (max-width:700px){.v2 .reco-fl iframe{height:640px}}
+
+/* Page Varsity : logos des événements */
+.v2 .logos-varsity{margin-top:36px}
+.v2 .logos-varsity h3{font-family:var(--display);font-size:clamp(28px,3.4vw,38px);font-weight:400;line-height:1;color:var(--royal-deep);margin-bottom:14px}
+.v2 .logos-varsity .partners{list-style:none;display:flex;flex-wrap:wrap;gap:14px;justify-content:flex-start}
+.v2 .logos-varsity .partners li.logo{position:relative}
+
+/* Profil engagé : la photo « Committed » à droite du nom, face à la photo Royal à gauche */
+.v2 .profil-hero:has(.profil-commit){grid-template-columns:auto 1fr auto}
+.v2 .profil-commit{position:relative;display:block;width:220px;aspect-ratio:4/5;border-radius:8px;overflow:hidden;border:3px solid var(--accent);background:var(--navy);align-self:center}
+.v2 .profil-commit img{object-fit:cover}
+@media (max-width:800px){.v2 .profil-hero:has(.profil-commit){grid-template-columns:1fr}.v2 .profil-commit{width:160px}}

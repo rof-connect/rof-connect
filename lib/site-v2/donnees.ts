@@ -411,3 +411,11 @@ export function profilFieldLevel(v: unknown): string {
   const m = String(v ?? "").trim().match(/^https:\/\/www\.fieldlevel\.com\/app\/profile\/([A-Za-z0-9._-]{2,60})\/(softball|baseball)(\?m=\d)?/i);
   return m ? `https://www.fieldlevel.com/app/profile/${m[1]}/${m[2].toLowerCase()}` : "";
 }
+
+/** Événements et showcases visés par le programme Varsity (logos affichés sur la page Varsity). */
+export const LOGOS_VARSITY: { nom: string; src: string }[] = [
+  { nom: "Triple Crown Fastpitch", src: "/partenaires/n-triple-crown.png" },
+  { nom: "PGF · Premier Girls Fastpitch", src: "/partenaires/n-pgf.png" },
+  { nom: "NSA Softball", src: "/partenaires/n-nsa.png" },
+  { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png" },
+];
