@@ -45,6 +45,17 @@ export function FormInscription({
           <Champ label={i.courrielParent} name="email" type="email" required placeholder="parent@courriel.com" />
           <Champ label={i.motDePasse} name="password" type="password" required minLength={8} />
 
+          <div>
+            <Etiquette texte="Sport" />
+            <select name="sport" required defaultValue="" className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte">
+              <option value="" disabled>
+                —
+              </option>
+              <option value="softball">Softball</option>
+              <option value="baseball">Baseball</option>
+            </select>
+          </div>
+
           <Champ label={i.dateNaissance} name="birth_date" type="date" />
 
           <div>

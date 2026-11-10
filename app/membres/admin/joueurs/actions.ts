@@ -9,6 +9,7 @@ import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif, statutSel
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 import { cheminPhotoProfil } from "@/lib/photo-profil";
 import { definirNumeros } from "@/lib/numeros-chandail";
+import { definirSportJoueuse } from "@/lib/sport-joueuses";
 import { presentationDe, majPresentation } from "@/lib/presentation";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
@@ -357,6 +358,15 @@ export async function changerPhotoJoueuse(formData: FormData) {
 }
 
 /** La Direction saisit le numéro de chandail d'une joueuse (affiché dans le roster du site public). */
+/** Sport de la joueuse (baseball ou softball) : sépare les deux sports dans la gestion, même sans équipe. */
+export async function changerSportJoueuse(formData: FormData) {
+  if (!(await verifierAdmin())) return;
+  const profileId = String(formData.get("profile_id") ?? "");
+  if (!/^[0-9a-f-]{36}$/i.test(profileId)) return;
+  await definirSportJoueuse(profileId, String(formData.get("sport") ?? ""));
+  revalidatePath("/membres/admin", "layout");
+}
+
 export async function changerNumeroJoueuse(formData: FormData) {
   if (!(await verifierAdmin())) return;
   const profileId = String(formData.get("profile_id") ?? "");

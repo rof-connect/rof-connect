@@ -8,6 +8,7 @@ import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
 import { chargerConnexions, ilYa } from "@/lib/dernieres-connexions";
 import { sportAdmin } from "@/lib/sport-admin";
 import { chargerGroupes } from "@/lib/groupes";
+import { chargerSportsJoueuses } from "@/lib/sport-joueuses";
 import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 
 const STATUTS = [
@@ -37,6 +38,7 @@ export default async function DirectionPage() {
 
   const { data: teamsBrut } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
   const sportFiltre = await sportAdmin();
+  const sportsJoueuses = await chargerSportsJoueuses();
   const groupes = await chargerGroupes(); // les groupes ne comptent ni dans les effectifs ni dans le pipeline
   const teams = trierEquipes(teamsBrut).filter((t) => !groupes.has(t.id) && (!sportFiltre || t.sport === sportFiltre));
   const archivees = await chargerArchivees();
@@ -47,13 +49,14 @@ export default async function DirectionPage() {
     .eq("teams.archived", false);
   const sportDeMembre = (m: { teams?: unknown }) => (Array.isArray(m.teams) ? (m.teams[0] as { sport?: string } | undefined) : (m.teams as { sport?: string } | null | undefined))?.sport;
   const membresTousSports = (membresBrut ?? []).filter((m) => !archivees.has(m.profile_id) && !groupes.has(m.team_id));
-  const membres = membresTousSports.filter((m) => !sportFiltre || sportDeMembre(m) === sportFiltre);
+  // Le sport choisi pour la joueuse prime sur celui de ses équipes.
+  const membres = membresTousSports.filter((m) => !sportFiltre || (sportsJoueuses[m.profile_id] ?? sportDeMembre(m)) === sportFiltre);
   const idsAvecEquipe = new Set(membresTousSports.map((m) => m.profile_id));
   const idsDuSport = new Set(membres.map((m) => m.profile_id));
 
   const { data: comptes } = await supabase.from("profiles").select("id, full_name, email, created_at").eq("role", "member");
   // Avec un sport choisi : les joueuses de ce sport, plus celles qui n'ont encore aucune équipe (sport pas encore décidé).
-  const comptesActifs = (comptes ?? []).filter((c) => !archivees.has(c.id) && (!sportFiltre || idsDuSport.has(c.id) || !idsAvecEquipe.has(c.id)));
+  const comptesActifs = (comptes ?? []).filter((c) => !archivees.has(c.id) && (!sportFiltre || sportsJoueuses[c.id] === sportFiltre || (!sportsJoueuses[c.id] && (idsDuSport.has(c.id) || !idsAvecEquipe.has(c.id)))));
   const nbComptes = comptesActifs.length;
 
   // Nouvelles connexions à gérer : Prospect = aucune équipe, ou seulement le statut Prospect.

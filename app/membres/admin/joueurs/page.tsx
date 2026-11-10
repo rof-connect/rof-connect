@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, archiverJoueuse, changerStatutJoueuse } from "./actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
-import { changerNumeroJoueuse, changerInfosRoster } from "@/app/membres/admin/joueurs/actions";
+import { changerNumeroJoueuse, changerInfosRoster, changerSportJoueuse } from "@/app/membres/admin/joueurs/actions";
+import { chargerSportsJoueuses } from "@/lib/sport-joueuses";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
 import { sportAdmin } from "@/lib/sport-admin";
@@ -63,6 +64,7 @@ export default async function JoueursPage({
   if (profile?.role !== "admin") redirect("/membres");
 
   const { data: teamsBrut } = await supabase.from("teams").select("id, name").eq("archived", false);
+  const sportsJoueuses = await chargerSportsJoueuses();
   const groupes = await chargerGroupes(); // les groupes se gèrent dans leur propre page (Équipes) : ils ne comptent pas dans les équipes d'une joueuse
   const teams = trierEquipes(teamsBrut).filter((t) => !groupes.has(t.id));
 
@@ -133,8 +135,9 @@ export default async function JoueursPage({
     if (statut && !sport && (!equipe || equipe === "aucune")) {
       return String(statutEffectif(pid, statutsJoueuses, j.memberships.map((m) => m.status_id))) === statut;
     }
-    if (!sportUrl && sportMemorise && j.memberships.length === 0 && !equipe && !statut) return true; // sans équipe : sport pas encore décidé
+    if (!sportUrl && sportMemorise && j.memberships.length === 0 && !sportsJoueuses[pid] && !equipe && !statut) return true; // sans équipe : sport pas encore décidé
     if (!sport && !equipe && !statut) return true;
+    if (sport && sportsJoueuses[pid]) return sportsJoueuses[pid] === sport && (!equipe || j.memberships.some((m) => m.team_id === equipe)) && (!statut || j.memberships.some((m) => String(m.status_id) === statut));
     return j.memberships.some((m) => {
       const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
       return (
@@ -342,6 +345,25 @@ export default async function JoueursPage({
               </details>
 
               <FormPhotoJoueuse profileId={profileId} />
+              <form action={changerSportJoueuse} className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+                <input type="hidden" name="profile_id" value={profileId} />
+                <label htmlFor={`sport-${profileId}`} className="text-rof-gris">
+                  Sport
+                </label>
+                <select
+                  id={`sport-${profileId}`}
+                  name="sport"
+                  defaultValue={sportsJoueuses[profileId] ?? ""}
+                  className="rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
+                >
+                  <option value="">Selon ses équipes</option>
+                  <option value="softball">Softball</option>
+                  <option value="baseball">Baseball</option>
+                </select>
+                <button type="submit" className="text-rof-poudre underline">
+                  Enregistrer
+                </button>
+              </form>
               <form action={changerNumeroJoueuse} className="mt-2 flex flex-wrap items-center gap-2 text-sm">
                 <input type="hidden" name="profile_id" value={profileId} />
                 <label htmlFor={`numero-${profileId}`} className="text-rof-gris">

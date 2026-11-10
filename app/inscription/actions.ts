@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { envoyerADirection, echapper } from "@/lib/notifier-direction";
+import { definirSportJoueuse } from "@/lib/sport-joueuses";
 
 export async function inscrireAthlete(formData: FormData) {
   const fullName = String(formData.get("full_name") ?? "").trim();
@@ -22,6 +23,7 @@ export async function inscrireAthlete(formData: FormData) {
   const guardianEmail = String(formData.get("guardian_email") ?? "").trim();
   const medicalNotes = String(formData.get("medical_notes") ?? "").trim();
   const photoConsent = formData.get("photo_consent") === "on";
+  const sport = String(formData.get("sport") ?? "") === "baseball" ? "baseball" : String(formData.get("sport") ?? "") === "softball" ? "softball" : "";
 
   if (!fullName || !email || !password) {
     redirect("/inscription?erreur=" + encodeURIComponent("Complète au minimum le nom, le courriel et le mot de passe."));
@@ -62,6 +64,8 @@ export async function inscrireAthlete(formData: FormData) {
     redirect("/inscription?erreur=" + encodeURIComponent("Compte créé, mais la fiche n'a pas pu être complétée. Contacte un entraîneur."));
   }
 
+  if (sport) await definirSportJoueuse(profileId, sport); // sport choisi à l'inscription : la Direction peut le changer
+
   const ligne = (label: string, valeur: string) =>
     valeur ? `<tr><td style="padding:3px 14px 3px 0;color:#666">${label}</td><td style="padding:3px 0"><b>${echapper(valeur)}</b></td></tr>` : "";
   await envoyerADirection(
@@ -71,6 +75,7 @@ export async function inscrireAthlete(formData: FormData) {
       `<div style="font-size:19px;font-weight:bold;margin-top:4px">${echapper(fullName)}</div></div>` +
       `<div style="padding:16px 20px;border:1px solid #ddd;border-top:0"><table style="border-collapse:collapse;font-size:14px">` +
       ligne("Statut", "Prospect — à activer dans Direction") +
+      ligne("Sport", sport === "baseball" ? "Baseball" : sport === "softball" ? "Softball" : "") +
       ligne("Courriel", email) +
       ligne("Naissance", birthDate) +
       ligne("Positions", position) +
