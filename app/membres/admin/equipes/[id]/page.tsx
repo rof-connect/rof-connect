@@ -5,6 +5,7 @@ import { archiverEquipe, desarchiverEquipe, modifierEquipe } from "../actions";
 import { ajouterAEquipe, changerStatut, retirerDeEquipe } from "../../joueurs/actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerGroupes } from "@/lib/groupes";
+import { chargerSportsJoueuses } from "@/lib/sport-joueuses";
 
 const LABEL_OPTION: Record<string, string> = {
   ete: "Été",
@@ -86,8 +87,22 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
   // Joueuses qu'on peut ajouter : membres inscrits pas encore dans cette équipe.
   const dejaDedans = new Set((membres ?? []).map((m) => m.profile_id));
   const { data: tous } = await supabase.from("profiles").select("id, full_name").eq("role", "member");
+  // Seules les joueuses du même sport que l'équipe sont proposées (une joueuse de softball ne peut pas aller en baseball, et inversement).
+  const sportsJoueuses = await chargerSportsJoueuses();
+  const { data: liensSport } = await supabase.from("team_members").select("profile_id, teams(sport, archived)").eq("role_in_team", "athlete");
+  const sportsParEquipes = new Map<string, Set<string>>();
+  (liensSport ?? []).forEach((l) => {
+    const t = Array.isArray(l.teams) ? l.teams[0] : l.teams;
+    if (t && !t.archived) sportsParEquipes.set(l.profile_id, new Set([...(sportsParEquipes.get(l.profile_id) ?? []), t.sport]));
+  });
+  const compatible = (pid: string) => {
+    const choisi = sportsJoueuses[pid];
+    if (choisi) return choisi === equipe.sport;
+    const deLeurs = sportsParEquipes.get(pid);
+    return !deLeurs || deLeurs.size === 0 || deLeurs.has(equipe.sport);
+  };
   const disponibles = (tous ?? [])
-    .filter((p) => !dejaDedans.has(p.id) && !archivees.has(p.id))
+    .filter((p) => !dejaDedans.has(p.id) && !archivees.has(p.id) && compatible(p.id))
     .sort((a, b) => (a.full_name ?? "").localeCompare(b.full_name ?? ""));
 
   return (

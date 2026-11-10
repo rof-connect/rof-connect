@@ -9,7 +9,7 @@ import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif, statutSel
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 import { cheminPhotoProfil } from "@/lib/photo-profil";
 import { definirNumeros } from "@/lib/numeros-chandail";
-import { definirSportJoueuse } from "@/lib/sport-joueuses";
+import { definirSportJoueuse, verifierSportEquipe } from "@/lib/sport-joueuses";
 import { presentationDe, majPresentation } from "@/lib/presentation";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
@@ -82,6 +82,11 @@ export async function importerJoueurs(lignes: Record<string, string>[]) {
       continue;
     }
     const profileId = res.profileId;
+    const conflitSport = await verifierSportEquipe(profileId, teamId);
+    if (conflitSport) {
+      erreurs.push(`${nomAthlete} : ${conflitSport}`);
+      continue;
+    }
 
     const { data: membreExistant } = await admin
       .from("team_members")
@@ -144,6 +149,8 @@ export async function inviterJoueuse(formData: FormData) {
   const res = await trouverOuCreerJoueuse(admin, { nom: fullName, email, envoyerInvitation: true });
   if (!res.ok) return { ok: false, erreur: res.erreur };
   const profileId = res.profileId;
+  const conflitSport = await verifierSportEquipe(profileId, teamId);
+  if (conflitSport) return { ok: false, erreur: conflitSport };
 
   const { data: membreExistant } = await admin
     .from("team_members")
@@ -197,6 +204,7 @@ export async function ajouterAEquipe(formData: FormData) {
   const profileId = String(formData.get("profile_id") ?? "");
   const teamId = String(formData.get("team_id") ?? "");
   if (!profileId || !teamId) return;
+  if (await verifierSportEquipe(profileId, teamId)) return; // sport incompatible : refusé
 
   // Ajouter à une équipe ne change pas le statut : la joueuse garde le sien.
   const admin = createAdminClient();
@@ -225,6 +233,7 @@ export async function deplacerVersEquipe(formData: FormData) {
     .eq("id", teamMemberId)
     .single();
   if (!actuel) return;
+  if (await verifierSportEquipe(actuel.profile_id, nouvelleEquipeId)) return; // sport incompatible : refusé
 
   await supabase.from("team_members").delete().eq("id", teamMemberId);
   await supabase.from("team_members").insert({
@@ -285,6 +294,8 @@ export async function creerProfilJoueuse(formData: FormData) {
   await admin.from("athlete_details").upsert({ profile_id: res.profileId, ...champsFiche(formData) }, { onConflict: "profile_id" });
 
   if (teamId) {
+    const conflitSport = await verifierSportEquipe(res.profileId, teamId);
+    if (conflitSport) return { ok: false, erreur: conflitSport };
     const { data: existant } = await admin
       .from("team_members")
       .select("id")

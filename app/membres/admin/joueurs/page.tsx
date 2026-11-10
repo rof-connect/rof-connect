@@ -6,7 +6,7 @@ import { ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, a
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
 import { changerNumeroJoueuse, changerInfosRoster, changerSportJoueuse } from "@/app/membres/admin/joueurs/actions";
-import { chargerSportsJoueuses } from "@/lib/sport-joueuses";
+import { chargerSportsJoueuses, sportEffectif } from "@/lib/sport-joueuses";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
 import { sportAdmin } from "@/lib/sport-admin";
@@ -63,7 +63,7 @@ export default async function JoueursPage({
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
   if (profile?.role !== "admin") redirect("/membres");
 
-  const { data: teamsBrut } = await supabase.from("teams").select("id, name").eq("archived", false);
+  const { data: teamsBrut } = await supabase.from("teams").select("id, name, sport").eq("archived", false);
   const sportsJoueuses = await chargerSportsJoueuses();
   const groupes = await chargerGroupes(); // les groupes se gèrent dans leur propre page (Équipes) : ils ne comptent pas dans les équipes d'une joueuse
   const teams = trierEquipes(teamsBrut).filter((t) => !groupes.has(t.id));
@@ -232,7 +232,10 @@ export default async function JoueursPage({
       <div className="flex flex-col gap-4">
         {joueurs.map(([profileId, j]) => {
           const equipesActuelles = new Set(j.memberships.map((m) => m.team_id));
-          const equipesDisponibles = (teams ?? []).filter((t) => !equipesActuelles.has(t.id));
+          // Une joueuse de softball n'est jamais proposée pour une équipe de baseball, et inversement.
+          const sportsDeSesEquipes = j.memberships.map((m) => (Array.isArray(m.teams) ? m.teams[0] : m.teams)?.sport ?? "").filter(Boolean);
+          const sportDeLaJoueuse = sportEffectif(profileId, sportsJoueuses, sportsDeSesEquipes);
+          const equipesDisponibles = (teams ?? []).filter((t) => !equipesActuelles.has(t.id) && (!sportDeLaJoueuse || t.sport === sportDeLaJoueuse));
 
           return (
             <div key={profileId} className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">

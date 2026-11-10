@@ -29,3 +29,37 @@ export async function definirSportJoueuse(profileId: string, sport: string) {
     .storage.from("media")
     .upload(FICHIER, new Blob([JSON.stringify(tous)], { type: "application/json" }), { upsert: true, contentType: "application/json" });
 }
+
+/**
+ * Garde-fou : une joueuse de softball ne peut pas être ajoutée à une équipe ou à un groupe de baseball, et inversement.
+ * Retourne un message d'erreur si c'est incompatible, sinon null. Si la joueuse n'avait pas encore de sport, celui de l'équipe devient le sien.
+ */
+export async function verifierSportEquipe(profileId: string, teamId: string): Promise<string | null> {
+  const admin = createAdminClient();
+  const { data: equipe } = await admin.from("teams").select("sport").eq("id", teamId).maybeSingle();
+  const sportEquipe = equipe?.sport as SportJoueuse | undefined;
+  if (sportEquipe !== "baseball" && sportEquipe !== "softball") return null;
+
+  const sports = await chargerSportsJoueuses();
+  let sportJoueuse: string | undefined = sports[profileId];
+  if (!sportJoueuse) {
+    const { data: liens } = await admin.from("team_members").select("teams(sport, archived)").eq("profile_id", profileId).eq("role_in_team", "athlete");
+    const deLeurs = new Set<string>();
+    (liens ?? []).forEach((l) => {
+      const t = Array.isArray(l.teams) ? l.teams[0] : l.teams;
+      if (t && !t.archived) deLeurs.add(t.sport);
+    });
+    if (deLeurs.size > 0 && !deLeurs.has(sportEquipe)) sportJoueuse = [...deLeurs][0];
+  }
+  if (sportJoueuse && sportJoueuse !== sportEquipe) {
+    const nom = (s: string) => (s === "baseball" ? "baseball" : "softball");
+    return `Cette joueuse est en ${nom(sportJoueuse)} : elle ne peut pas être ajoutée à une équipe de ${nom(sportEquipe)}.`;
+  }
+  if (!sports[profileId]) await definirSportJoueuse(profileId, sportEquipe);
+  return null;
+}
+
+/** Sport effectif d'une joueuse (celui choisi, sinon celui de ses équipes) : sert à filtrer les listes d'équipes proposées. */
+export function sportEffectif(profileId: string, sports: Record<string, string>, sportsEquipes: string[]): string | null {
+  return sports[profileId] ?? (sportsEquipes.length ? sportsEquipes[0] : null);
+}
