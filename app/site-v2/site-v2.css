@@ -675,3 +675,20 @@ html:has(.v2){scroll-behavior:smooth}
 
 .v2 .partners .logo.logo-sombre{background:#0d0d12}
 .v2 .partners .logo.logo-sombre img{padding:4px;object-fit:contain}
+
+/* Menu V5 : 5 liens principaux à 14 px sur une ligne dès 1100 px ; en dessous, menu mobile (5 liens, séparation, liens de la barre du haut) */
+.v2 nav.primary{gap:2px;flex-wrap:nowrap}
+.v2 nav.primary a{font-size:14px;letter-spacing:.04em;padding:10px 11px;white-space:nowrap}
+.v2 nav.primary a.cta{margin-left:8px}
+.v2 nav.primary .nav-sep,.v2 nav.primary .nav-util{display:none}
+@media (min-width:1101px){.v2 .burger{display:none}.v2 nav.primary{display:flex}}
+@media (max-width:1100px){
+  .v2 nav.primary{display:none}
+  .v2 nav.primary.open{display:flex;position:absolute;top:76px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:var(--royal-deep);padding:12px 20px 20px;border-bottom:3px solid var(--accent)}
+  .v2 nav.primary.open a.cta{margin:8px 0 0;justify-content:center}
+  .v2 nav.primary.open .nav-sep{display:block;border:0;border-top:1px solid rgba(255,255,255,.22);margin:12px 0 6px}
+  .v2 nav.primary.open .nav-util{display:inline-flex;font-size:13px;font-weight:600;opacity:.9}
+  .v2 .burger{display:inline-flex}
+  .v2 .util .links{display:none}
+}
+@media (max-width:640px){.v2 nav.primary.open{top:64px}}

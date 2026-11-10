@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { liensUtilitaires } from "@/lib/site-v2/menu";
 
 type Props = { sport: "softball" | "baseball"; base?: string };
 
@@ -25,9 +26,11 @@ export function Entete({ sport, base = "" }: Props) {
           <a href={`${base}#calendrier`} onClick={ferme}>Calendrier</a>
           <a href={`${base}#recrutement`} onClick={ferme}>Recrutement</a>
           <a href={`${base}#engagements`} onClick={ferme}>Engagements universitaires</a>
-          <Link href={`/site-v2/centre-entrainement?sport=${sport}`} onClick={ferme}>Centre d&apos;entraînement</Link>
-          <Link href={`/site-v2/organisation?sport=${sport}`} onClick={ferme}>Organisation</Link>
           <Link className="cta" href="/connexion" onClick={ferme}>ROF Connect</Link>
+          <hr className="nav-sep" aria-hidden />
+          {liensUtilitaires(sport).map((l) => (
+            <Link key={l.label} className="nav-util" href={l.href} onClick={ferme}>{l.label}</Link>
+          ))}
         </nav>
         <button
           type="button"

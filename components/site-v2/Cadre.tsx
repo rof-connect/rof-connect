@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Entete } from "./Entete";
 import { AFFILIATIONS, CONTENU, SPORTS, type Sport } from "@/lib/site-v2/donnees";
+import { liensUtilitaires } from "@/lib/site-v2/menu";
 
 /** Cadre commun du site public : barre utilitaire, en-tête, pied de page et symboles SVG. */
 export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; provisoire?: boolean; accueil?: boolean; children: React.ReactNode }) {
@@ -32,9 +33,9 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
       <div className="util">
         <div className="wrap">
           <div className="links">
-            <Link href="/inscription">Inscription</Link>
-            <Link href="/parcours">Questionnaire NCAA</Link>
-            <a href={`${base}#partenaires`}>Partenaires</a>
+            {liensUtilitaires(sport).map((l) => (
+              <Link key={l.label} href={l.href}>{l.label}</Link>
+            ))}
           </div>
           <div className="sport-switch" role="group" aria-label="Choisir le sport">
             {SPORTS.map((s) => (

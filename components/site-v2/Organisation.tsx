@@ -65,7 +65,7 @@ export function Organisation({ sport, entraineurs }: { sport: Sport; entraineurs
           </div>
         )}
 
-        <div className="org-contact">
+        <div className="org-contact" id="contact">
           <div>
             <h3>Nous joindre</h3>
             <p>Une question sur le programme, l&apos;inscription ou le parcours vers le collège américain?</p>
