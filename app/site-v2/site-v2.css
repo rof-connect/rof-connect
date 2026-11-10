@@ -456,3 +456,43 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 nav.primary a{white-space:nowrap;padding:10px 9px;font-size:12px;letter-spacing:.05em}
 .v2 nav.primary a.cta{margin-left:6px}
 .v2 header.main .wrap{gap:16px}
+
+/* ===== Bannières de championnat ===== */
+.v2 .bannieres{display:flex;flex-wrap:wrap;gap:22px 26px;justify-content:center;margin:4px 0 36px;padding:36px 20px 28px;border-radius:8px;background:radial-gradient(900px 300px at 50% 0%,#2a3347 0%,#0B0B0F 70%)}
+.v2 .banniere{position:relative;width:170px;margin:0;display:flex;flex-direction:column;align-items:center}
+.v2 .banniere .tringle{display:block;width:196px;height:8px;border-radius:4px;background:linear-gradient(#cfd6e4,#7b8597);margin-bottom:-2px;z-index:2;box-shadow:0 3px 6px rgba(0,0,0,.5)}
+.v2 .banniere .toile{position:relative;width:100%;min-height:300px;padding:22px 12px 56px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;
+  clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - 34px),0 100%);filter:drop-shadow(0 8px 12px rgba(0,0,0,.55))}
+.v2 .banniere .b-titre{font-family:var(--display);font-size:30px;line-height:.92;letter-spacing:.03em}
+.v2 .banniere .b-sous{font-size:9px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;opacity:.85}
+.v2 .banniere .b-logo{margin:10px 0 4px;width:54px;height:54px;object-fit:contain}
+.v2 .banniere .b-annee{font-family:var(--display);font-size:30px;line-height:1}
+.v2 .banniere .b-mention{font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.v2 .banniere .b-cat{font-family:var(--display);font-size:24px;line-height:1;letter-spacing:.04em}
+
+/* Style Can-Am : tissu noir, texte or, liseré orange */
+.v2 .banniere-canam .toile{background:linear-gradient(170deg,#1b1b20 0%,#08080b 100%);box-shadow:inset 0 0 0 4px #E8851A;color:#E6C65C}
+.v2 .banniere-canam .b-annee{color:#8EB4F5}
+.v2 .banniere-canam .b-cat{color:#fff}
+/* Style Canada : toile blanche, liseré orange, bleu marine */
+.v2 .banniere-canada .toile{background:linear-gradient(170deg,#fff 0%,#e9eef7 100%);box-shadow:inset 0 0 0 4px #E8851A;color:#1c2f63}
+.v2 .banniere-canada .b-mention{color:#E8851A}
+.v2 .banniere-canada .b-annee{color:#E8851A}
+/* Style provincial : bleu royal, or */
+.v2 .banniere-provincial .toile{background:linear-gradient(170deg,#1B47C2 0%,#0A1F5C 100%);box-shadow:inset 0 0 0 4px #E6C65C;color:#fff}
+.v2 .banniere-provincial .b-annee{color:#E6C65C}
+.v2 .banniere-provincial .b-mention{color:#E6C65C}
+@media (max-width:600px){.v2 .bannieres{gap:18px;padding:28px 10px 22px}.v2 .banniere{width:44%;min-width:140px}.v2 .banniere .tringle{width:100%}}
+
+/* Bannières dans les volets du palmarès */
+.v2 .annee .bannieres{margin:0;border-radius:0 0 6px 6px;justify-content:flex-start;padding:30px 18px 24px}
+.v2 .banniere-tournoi .toile{background:linear-gradient(170deg,#12294F 0%,#060F2E 100%);box-shadow:inset 0 0 0 4px #A9C8EC;color:#fff}
+.v2 .banniere-tournoi .b-annee{color:#A9C8EC}
+.v2 .banniere-tournoi .b-mention{color:#A9C8EC}
+.v2 .banniere-tournoi .b-titre{font-size:26px}
+.v2 .banniere .b-titre{overflow-wrap:anywhere}
+
+/* Titres longs : plus petits, jamais coupés au milieu d'un mot */
+.v2 .banniere .b-titre{overflow-wrap:normal;hyphens:manual}
+.v2 .banniere .b-titre.long{font-size:21px;line-height:.95}
+.v2 .banniere{width:176px}

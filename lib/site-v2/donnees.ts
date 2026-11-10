@@ -9,6 +9,14 @@ export function sportDe(valeur: string | undefined): Sport {
 
 export type Evenement = { m: string; y: string; t: string; p: string; tag: string; hl?: boolean };
 export type Palmares = { y: string; l: string[] };
+export type Banniere = {
+  style: "canam" | "canada" | "provincial" | "tournoi";
+  titre: string; // ex. « Can-Am United »
+  sous?: string; // ex. « Baseball League »
+  annee: string;
+  mention: string; // ex. « Champions »
+  categorie: string; // ex. « 12U »
+};
 export type Engagee = { who: string; s: string; m: string; c: string; photo?: string };
 
 type Contenu = {
@@ -26,6 +34,7 @@ type Contenu = {
   stats: [string, string][]; // chiffres fixes (les chiffres tirés de ROF Connect s'ajoutent)
   calendrier: Evenement[];
   palmares: Palmares[];
+  bannieres: Banniere[]; // bannières de championnat affichées au-dessus du palmarès
   engagees: Engagee[];
   videCalendrier: string;
   videPalmares: string;
@@ -80,6 +89,23 @@ export const CONTENU: Record<Sport, Contenu> = {
       { m: "JUIN", y: "2027", t: "Binghamton", p: "Binghamton, New York", tag: "Tournoi" },
       { m: "JUIL", y: "2027", t: "PGF New Jersey", p: "New Jersey, États-Unis", tag: "Showcase" },
       { m: "JUIL", y: "2027", t: "Championnat Canadien LL", p: "Little League Canada", tag: "Championnat", hl: true },
+    ],
+    bannieres: [
+      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2026", mention: "Championnes", categorie: "12U · 14U · 16U" },
+      { style: "canada", titre: "World Series", sous: "Softball", annee: "2026", mention: "Participation", categorie: "12U · 14U · 16U" },
+      { style: "canada", titre: "Eastern Canadian Championship", sous: "Softball Canada", annee: "2026", mention: "Champions", categorie: "Est du Canada" },
+      { style: "tournoi", titre: "Fastpitch Nation", sous: "Firecracker on the 4th", annee: "2026", mention: "Championnes", categorie: "16U · 8-2" },
+      { style: "tournoi", titre: "Fastpitch Nation", sous: "The Thin Blue Line", annee: "2026", mention: "Championnes", categorie: "14U · 5-2" },
+      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2025", mention: "Championnes", categorie: "12U · 14U · 16U" },
+      { style: "canada", titre: "World Series", sous: "Softball", annee: "2025", mention: "Participation", categorie: "12U · 14U · 16U" },
+      { style: "canada", titre: "Finale canadienne", sous: "100 % On Field", annee: "2025", mention: "Finalistes", categorie: "Junior" },
+      { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2024", mention: "Championnes", categorie: "12U · 14U" },
+      { style: "canada", titre: "World Series", sous: "Softball", annee: "2024", mention: "Participation", categorie: "12U · 14U" },
+      { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2024", mention: "Championnes", categorie: "Majeur · Junior" },
+      { style: "canada", titre: "Finalistes canadiennes", sous: "Softball", annee: "2024", mention: "Finalistes", categorie: "Senior" },
+      { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2023", mention: "Championnes", categorie: "Majeur · Junior" },
+      { style: "canada", titre: "Finalistes canadiennes", sous: "Little League", annee: "2023", mention: "Finalistes", categorie: "Majeur" },
+      { style: "canada", titre: "Championnat canadien", sous: "Little League · Victoria", annee: "2022", mention: "Demi-finale", categorie: "U12" },
     ],
     palmares: [
       {
@@ -171,6 +197,17 @@ export const CONTENU: Record<Sport, Contenu> = {
       ["1", "Titre ECTBL"],
     ],
     calendrier: [],
+    bannieres: [
+      { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2026", mention: "Champions invaincus", categorie: "Mineur" },
+      { style: "tournoi", titre: "ECTBL", sous: "Séries Minor", annee: "2026", mention: "Champions", categorie: "10U · 11-1" },
+      { style: "tournoi", titre: "ECTBL", sous: "Séries Minor", annee: "2026", mention: "Finalistes", categorie: "8/9U" },
+      { style: "tournoi", titre: "Ontario Rookie Invitational", sous: "Kingston", annee: "2026", mention: "Champions", categorie: "8U" },
+      { style: "tournoi", titre: "Thanksgiving Wood Bat Classic", sous: "Le Sandlot", annee: "2026", mention: "Champions", categorie: "PSES" },
+      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2025", mention: "Playoff Champions", categorie: "12U" },
+      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2024", mention: "Playoff Champions", categorie: "12U" },
+      { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2023", mention: "Playoff Champions", categorie: "12U" },
+      { style: "tournoi", titre: "Cornwall Invitational", sous: "All-Star Tournament", annee: "2023", mention: "Champions", categorie: "8U" },
+    ],
     palmares: [
       {
         y: "2026",

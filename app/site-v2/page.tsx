@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
+import { Bannieres } from "@/components/site-v2/Bannieres";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
 import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, PARTENAIRES_PAR_SPORT, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
@@ -230,22 +231,23 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             </div>
             {c.palmares.length > 0 ? (
               <div className="palmares">
-                {c.palmares.map((h, i) => (
-                  <details className="annee" key={h.y} open={i === 0}>
-                    <summary>
-                      <span className="yr">{h.y}</span>
-                      <span className="nb-titres">{h.l.length} résultat{h.l.length > 1 ? "s" : ""}</span>
-                      <svg className="chev" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
-                    </summary>
-                    <ul>
-                      {h.l.map((x) => (
-                        <li key={x}>{x}</li>
-                      ))}
-                    </ul>
-                  </details>
-                ))}
+                {c.palmares.map((h, i) => {
+                  const duAn = c.bannieres.filter((b) => b.annee === h.y);
+                  return (
+                    <details className="annee" key={h.y} open={i === 0}>
+                      <summary>
+                        <span className="yr">{h.y}</span>
+                        <span className="nb-titres">
+                          {duAn.length} bannière{duAn.length > 1 ? "s" : ""}
+                        </span>
+                        <svg className="chev" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </summary>
+                      <Bannieres items={duAn} titre={`Bannières ${h.y}`} />
+                    </details>
+                  );
+                })}
               </div>
             ) : (
               <div className="honor" style={{ textAlign: "center", borderTopColor: "var(--accent)" }}>
