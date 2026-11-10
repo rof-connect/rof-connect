@@ -24,7 +24,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
         </defs>
       </svg>
 
-      {provisoire && (
+      {provisoire && process.env.NODE_ENV !== "production" && (
         <div className="apercu" role="note">
           Aperçu : toutes les équipes actives de ROF Connect sont affichées. Après la migration 0009 (Supabase), seules les équipes cochées « Visible sur le site » le seront.
         </div>

@@ -136,7 +136,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
               Visible sur le site public
             </label>
             <label className="flex items-center gap-2 text-sm text-rof-texte">
-              <input type="checkbox" name="roster_public" defaultChecked={equipe.roster_public !== false} className="h-4 w-4" />
+              <input type="checkbox" name="roster_public" defaultChecked={equipe.roster_public === true} className="h-4 w-4" />
               Afficher le roster (liste des joueuses) sur la page de l&apos;équipe
             </label>
             <div className="grid grid-cols-2 gap-3">

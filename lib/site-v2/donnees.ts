@@ -384,7 +384,7 @@ export const GALERIES: Record<Sport, { src: string; alt: string }[]> = {
  * Équipes dont le roster (liste des joueuses) est affiché sur le site. Sert seulement tant que la migration 0009 n'est pas
  * appliquée ; ensuite, la case « Afficher le roster » de la gestion des équipes décide.
  */
-export const ROSTER_PROVISOIRE = ["18U Di Peco"];
+export const ROSTER_PROVISOIRE: string[] = []; // aucun roster public par défaut (vie privée) : la Direction active équipe par équipe
 
 /** Étiquettes de niveau de compétition par équipe (softball : NATIONAL = Varsity, SCOUT TEAM = JV ; aucune étiquette sinon). Sert seulement tant que la migration 0009 n'est pas appliquée. */
 export const NIVEAU_COMPETITION_PROVISOIRE: Record<string, string> = {

@@ -7,6 +7,7 @@ export type Profil = {
   poids?: string;
   ecole?: string;
   ville?: string;
+  ecoleVillePublic?: boolean; // la famille autorise l'affichage de l'école et de la ville sur le site public (faux par défaut)
   grad?: string; // année de graduation (« grad year »), ex. 2027
   moyenne?: string;
   domaine?: string;
@@ -74,6 +75,7 @@ export function profilDuFormulaire(formData: FormData): Profil {
     poids: nettoyer(formData.get("poids"), 20),
     ecole: nettoyer(formData.get("ecole"), 80),
     ville: nettoyer(formData.get("ville"), 60),
+    ecoleVillePublic: formData.get("ecole_ville_public") === "on",
     grad: /^20\d{2}$/.test(nettoyer(formData.get("grad"), 4)) ? nettoyer(formData.get("grad"), 4) : "",
     moyenne: nettoyer(formData.get("moyenne"), 20),
     domaine: nettoyer(formData.get("domaine"), 80),

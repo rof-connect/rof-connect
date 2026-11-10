@@ -62,10 +62,10 @@ export type RosterEquipe = {
 };
 
 /**
- * Roster public d'une équipe. C'est l'organisation (la Direction) qui décide de l'afficher, équipe par équipe ; par défaut il l'est.
+ * Roster public d'une équipe. La Direction décide de l'afficher, équipe par équipe ; par défaut il est masqué.
  * Sont listées les joueuses de l'équipe dont le statut n'est plus Prospect, sans les archivées.
- * Données publiées : nom, positions, lance/frappe. Taille, école et ville seulement si la joueuse les a saisies dans sa page
- * de présentation activée. La photo seulement avec l'autorisation de photo de l'inscription. Jamais : date de naissance,
+ * Données publiées : nom, positions, lance/frappe. Taille et grad year si saisis. École et ville seulement si la famille a coché
+ * « Afficher mon école et ma ville sur le site public ». La photo seulement avec l'autorisation de photo de l'inscription. Jamais : date de naissance,
  * coordonnées, courriel, notes médicales.
  */
 export async function chargerRoster(teamId: string, apercu = false): Promise<RosterEquipe | null> {
@@ -103,7 +103,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
   }
   if (!equipe) return null;
 
-  const afficher = provisoire ? ROSTER_PROVISOIRE.includes(nomPublicParDefaut(equipe.name)) : equipe.roster_public !== false; // par défaut : affiché
+  const afficher = provisoire ? ROSTER_PROVISOIRE.includes(nomPublicParDefaut(equipe.name)) : equipe.roster_public === true; // par défaut : masqué (la Direction l'active équipe par équipe)
 
   const base = {
     id: equipe.id,
@@ -161,8 +161,9 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           lance: fiche?.throws ?? "",
           frappe: fiche?.bats ?? "",
           taille: fichesPres[id]?.profil?.taille || infos[id]?.taille || "",
-          ecole: fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "",
-          ville: fichesPres[id]?.profil?.ville || infos[id]?.ville || "",
+          // École et ville : seulement si la famille a coché « Afficher mon école et ma ville sur le site public ».
+          ecole: fichesPres[id]?.profil?.ecoleVillePublic ? fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "" : "",
+          ville: fichesPres[id]?.profil?.ecoleVillePublic ? fichesPres[id]?.profil?.ville || infos[id]?.ville || "" : "",
           grad: fichesPres[id]?.profil?.grad || infos[id]?.grad || "",
           fieldlevel: profilFieldLevel(fiche?.fieldlevel_url),
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise

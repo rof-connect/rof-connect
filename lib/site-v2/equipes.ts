@@ -112,7 +112,7 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
       description: (t.description_publique ?? "").trim(),
       nb: compte.get(t.id) ?? 0,
       vedette: /varsity/i.test(nom),
-      roster: t.roster_public !== false,
+      roster: t.roster_public === true,
       categorie: ((t.niveau_competition ?? "").trim() || NIVEAU_COMPETITION_PROVISOIRE[nomPublicParDefaut(t.name)] || "").slice(0, 30),
       gamechanger: idGameChanger(t.gamechanger_widget_id) || idGameChanger(GAMECHANGER_PROVISOIRE[nomPublicParDefaut(t.name)]),
       gamechangerLien: lienGameChanger(t.gamechanger_url) || lienGameChanger(GAMECHANGER_LIEN_PROVISOIRE[nomPublicParDefaut(t.name)]),
