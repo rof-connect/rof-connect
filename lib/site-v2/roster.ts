@@ -22,7 +22,7 @@ export type JoueuseRoster = {
   statut: string; // âge de la saison (statut), ex. « 15U »
   grad: string; // année de graduation (« grad year »), vide si non saisie
   photo: string | null;
-  lien: string; // sa fiche de recrutement si elle a activé sa page publique, sinon sa page de profil du site
+  lien: string; // sa page sur le site (fiche de recrutement incluse si elle l'a activée)
 };
 
 export type RosterEquipe = {
@@ -143,7 +143,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           ville: infos[id]?.ville || profil.ville || "",
           grad: infos[id]?.grad ?? "",
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise
-          lien: reglages ? `/joueuse/${reglages.token}` : `/site-v2/joueuses/${id}`,
+          lien: `/site-v2/joueuses/${id}`,
         };
       }),
     );
@@ -183,13 +183,13 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
 /**
  * Profil public d'une joueuse : seulement si elle figure dans le roster affiché d'une équipe visible (mêmes règles que le roster).
  */
-export async function chargerJoueusePublique(profileId: string): Promise<{ joueuse: JoueuseRoster; equipe: RosterEquipe; fiche: boolean } | null> {
+export async function chargerJoueusePublique(profileId: string): Promise<{ joueuse: JoueuseRoster; equipe: RosterEquipe } | null> {
   if (!/^[0-9a-f-]{36}$/i.test(profileId)) return null;
   const { data } = await createAdminClient().from("team_members").select("team_id").eq("profile_id", profileId).eq("role_in_team", "athlete");
   for (const m of data ?? []) {
     const equipe = await chargerRoster(m.team_id);
     const joueuse = equipe?.joueuses.find((j) => j.id === profileId);
-    if (equipe && joueuse) return { joueuse, equipe, fiche: joueuse.lien.startsWith("/joueuse/") };
+    if (equipe && joueuse) return { joueuse, equipe };
   }
   return null;
 }

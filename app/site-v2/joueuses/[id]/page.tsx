@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Cadre } from "@/components/site-v2/Cadre";
 import { CONTENU, engagementDe } from "@/lib/site-v2/donnees";
 import { chargerJoueusePublique } from "@/lib/site-v2/roster";
+import { chargerFiche } from "@/lib/site-v2/fiche";
 
 export const dynamic = "force-dynamic";
 
@@ -18,11 +19,13 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
   const r = await chargerJoueusePublique(id);
   if (!r) notFound();
   const { joueuse: j, equipe: e } = r;
+  const fiche = await chargerFiche(id);
+  const dateFr = (d: string) => new Date(d + "T12:00:00").toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" });
   const c = CONTENU[e.sport];
   const lf = (v: string) => (v ? v : "—");
   const engagement = engagementDe(j.nom);
 
-  const fiche: [string, string][] = [
+  const infos: [string, string][] = [
     ["Numéro", j.numero],
     ["Position", j.positions.join(" · ")],
     ["Lance", j.lance],
@@ -82,7 +85,7 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
             <Link className="more" href={`/site-v2/equipes/${e.id}`}>Voir tout le roster →</Link>
           </div>
           <dl className="fiche-joueuse">
-            {fiche.map(([k, v]) => (
+            {infos.map(([k, v]) => (
               <div key={k}>
                 <dt>{k}</dt>
                 <dd>{lf(v)}</dd>
@@ -93,7 +96,117 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
               <dd>{e.nom}</dd>
             </div>
           </dl>
-          <p className="roster-note">La fiche de recrutement détaillée (mesures, vidéo, calendrier) est publiée par la joueuse dans ROF Connect.</p>
+          {!fiche && <p className="roster-note">La fiche de recrutement détaillée (mesures, vidéo, calendrier) sera ajoutée ici lorsque la joueuse l&apos;aura complétée dans ROF Connect.</p>}
+
+          {fiche && (
+            <div className="fiche-reco">
+              {fiche.faits.length > 0 && (
+                <dl className="fiche-joueuse fiche-faits">
+                  {fiche.faits.map(([k, v]) => (
+                    <div key={k}>
+                      <dt>{k}</dt>
+                      <dd>{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {fiche.apropos && (
+                <section className="bloc-reco">
+                  <h3>À propos</h3>
+                  <p className="texte-libre">{fiche.apropos}</p>
+                </section>
+              )}
+              {fiche.video && (
+                <section className="bloc-reco">
+                  <h3>Vidéo de présentation</h3>
+                  <div className="reco-video">
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${fiche.video}`}
+                      title={`Vidéo de présentation : ${j.nom}`}
+                      loading="lazy"
+                      allow="encrypted-media; picture-in-picture"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowFullScreen
+                    />
+                  </div>
+                </section>
+              )}
+              {fiche.mesures.length > 0 && (
+                <section className="bloc-reco">
+                  <h3>Mesures athlétiques</h3>
+                  <dl className="fiche-joueuse">
+                    {fiche.mesures.map((m) => (
+                      <div key={m.label}>
+                        <dt>{m.label}</dt>
+                        <dd>{m.valeur}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              )}
+              {fiche.realisations.length > 0 && (
+                <section className="bloc-reco">
+                  <h3>Réalisations et honneurs</h3>
+                  <ul className="reco-liste">
+                    {fiche.realisations.map((x) => (
+                      <li key={x}>{x}</li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              {fiche.etudes.length > 0 && (
+                <section className="bloc-reco">
+                  <h3>Études</h3>
+                  <dl className="fiche-joueuse">
+                    {fiche.etudes.map(([k, v]) => (
+                      <div key={k}>
+                        <dt>{k}</dt>
+                        <dd>{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
+              )}
+              {fiche.evenements.length > 0 && (
+                <section className="bloc-reco">
+                  <h3>Calendrier des matchs et compétitions</h3>
+                  <ul className="reco-cal">
+                    {fiche.evenements.map((ev) => (
+                      <li key={ev.date + ev.nom} className={ev.passe ? "passe" : ""}>
+                        <b>{ev.nom}</b>
+                        <span>
+                          {dateFr(ev.date)}
+                          {ev.lieu ? ` · ${ev.lieu}` : ""}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              {fiche.liens.length > 0 && (
+                <section className="bloc-reco">
+                  <h3>Liens</h3>
+                  <div className="reco-liens">
+                    {fiche.liens.map(([k, u]) => (
+                      <a key={k} className="btn ghost-clair" href={u} target="_blank" rel="noopener noreferrer nofollow">
+                        {k} ↗
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              )}
+              {fiche.reference && (
+                <section className="bloc-reco">
+                  <h3>Référence</h3>
+                  <p className="texte-libre">
+                    <b>{fiche.reference.nom}</b>
+                    {fiche.reference.role ? ` — ${fiche.reference.role}` : ""}
+                    {fiche.reference.contact ? ` · ${fiche.reference.contact}` : ""}
+                  </p>
+                </section>
+              )}
+            </div>
+          )}
         </div>
       </section>
       {engagement && (
