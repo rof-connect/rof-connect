@@ -496,3 +496,6 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .banniere .b-titre{overflow-wrap:normal;hyphens:manual}
 .v2 .banniere .b-titre.long{font-size:21px;line-height:.95}
 .v2 .banniere{width:176px}
+
+/* Mur de bannières : toutes ensemble, en une seule zone */
+.v2 #palmares .bannieres{justify-content:center;margin:0;padding:36px 20px 30px}

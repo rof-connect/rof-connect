@@ -229,26 +229,9 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                 Le palmarès <em>parle.</em>
               </h2>
             </div>
-            {c.palmares.length > 0 ? (
-              <div className="palmares">
-                {c.palmares.map((h, i) => {
-                  const duAn = c.bannieres.filter((b) => b.annee === h.y);
-                  return (
-                    <details className="annee" key={h.y} open={i === 0}>
-                      <summary>
-                        <span className="yr">{h.y}</span>
-                        <span className="nb-titres">
-                          {duAn.length} bannière{duAn.length > 1 ? "s" : ""}
-                        </span>
-                        <svg className="chev" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                          <path d="m6 9 6 6 6-6" />
-                        </svg>
-                      </summary>
-                      <Bannieres items={duAn} titre={`Bannières ${h.y}`} />
-                    </details>
-                  );
-                })}
-              </div>
+            {c.bannieres.length > 0 ? (
+              // Toutes les bannières ensemble, de l'année la plus récente à la plus ancienne.
+              <Bannieres items={[...c.bannieres].sort((x, y) => Number(y.annee) - Number(x.annee))} titre="Bannières de championnat" />
             ) : (
               <div className="honor" style={{ textAlign: "center", borderTopColor: "var(--accent)" }}>
                 <div className="yr" style={{ fontSize: 44 }}>Le prochain chapitre s&apos;écrit.</div>
