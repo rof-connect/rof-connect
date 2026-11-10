@@ -499,3 +499,25 @@ html:has(.v2){scroll-behavior:smooth}
 
 /* Mur de bannières : toutes ensemble, en une seule zone */
 .v2 #palmares .bannieres{justify-content:center;margin:0;padding:36px 20px 30px}
+
+/* ===== Bande défilante de bannières (petites, une seule rangée) ===== */
+.v2 .bande-bann{position:relative;border-radius:8px;background:radial-gradient(900px 260px at 50% 0%,#2a3347 0%,#0B0B0F 70%)}
+.v2 .bande-bann .piste{overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding:6px 56px}
+.v2 .bande-bann .piste::-webkit-scrollbar{display:none}
+.v2 .bande-bann .piste:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.v2 .bannieres.bannieres-bande{flex-wrap:nowrap;justify-content:flex-start;gap:14px;margin:0;padding:22px 0 16px;background:none;width:max-content}
+.v2 .bannieres-bande .banniere{width:116px;flex:0 0 116px;scroll-snap-align:start}
+.v2 .bannieres-bande .banniere .tringle{width:128px;height:6px}
+.v2 .bannieres-bande .banniere .toile{min-height:206px;padding:14px 8px 40px;gap:2px;clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - 22px),0 100%)}
+.v2 .bannieres-bande .b-titre{font-size:19px}
+.v2 .bannieres-bande .b-titre.long{font-size:14px}
+.v2 .bannieres-bande .b-sous{font-size:6.5px;letter-spacing:.14em}
+.v2 .bannieres-bande .b-logo{width:30px;height:30px;margin:6px 0 2px}
+.v2 .bannieres-bande .b-annee{font-size:20px}
+.v2 .bannieres-bande .b-mention{font-size:6.5px;letter-spacing:.1em}
+.v2 .bannieres-bande .b-cat{font-size:15px}
+.v2 .bande-bann .fleche{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px);transition:.15s}
+.v2 .bande-bann .fleche:hover{background:var(--accent);color:var(--navy)}
+.v2 .bande-bann .fleche-g{left:6px}
+.v2 .bande-bann .fleche-d{right:6px}
+@media (max-width:600px){.v2 .bande-bann .piste{padding:6px 12px}.v2 .bande-bann .fleche{display:none}}

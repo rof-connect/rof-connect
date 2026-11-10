@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { BandeBannieres } from "./BandeBannieres";
 import type { Banniere } from "@/lib/site-v2/donnees";
 
 /**
@@ -6,10 +7,10 @@ import type { Banniere } from "@/lib/site-v2/donnees";
  * Trois styles : « canam » (noir et or, liseré orange), « canada » (blanc, liseré orange, bleu marine) et « provincial » (bleu royal).
  * Dessin propre au site : l'emblème est le logo Royal On Field, pas celui des ligues.
  */
-export function Bannieres({ items, titre }: { items: Banniere[]; titre: string }) {
+export function Bannieres({ items, titre, bande = false }: { items: Banniere[]; titre: string; bande?: boolean }) {
   if (!items.length) return null;
-  return (
-    <div className="bannieres" role="list" aria-label={titre}>
+  const liste = (
+    <div className={bande ? "bannieres bannieres-bande" : "bannieres"} role="list" aria-label={titre}>
       {items.map((b) => (
         <figure className={`banniere banniere-${b.style}`} role="listitem" key={`${b.titre}-${b.annee}-${b.categorie}`}>
           <span className="tringle" aria-hidden />
@@ -28,4 +29,5 @@ export function Bannieres({ items, titre }: { items: Banniere[]; titre: string }
       ))}
     </div>
   );
+  return bande ? <BandeBannieres label={titre}>{liste}</BandeBannieres> : liste;
 }

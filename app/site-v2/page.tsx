@@ -231,7 +231,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             </div>
             {c.bannieres.length > 0 ? (
               // Toutes les bannières ensemble, de l'année la plus récente à la plus ancienne.
-              <Bannieres items={[...c.bannieres].sort((x, y) => Number(y.annee) - Number(x.annee))} titre="Bannières de championnat" />
+              <Bannieres bande items={[...c.bannieres].sort((x, y) => Number(y.annee) - Number(x.annee))} titre="Bannières de championnat" />
             ) : (
               <div className="honor" style={{ textAlign: "center", borderTopColor: "var(--accent)" }}>
                 <div className="yr" style={{ fontSize: 44 }}>Le prochain chapitre s&apos;écrit.</div>
