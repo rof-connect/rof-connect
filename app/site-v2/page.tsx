@@ -4,7 +4,7 @@ import { Cadre } from "@/components/site-v2/Cadre";
 import { Bannieres } from "@/components/site-v2/Bannieres";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, PARTENAIRES_LOGOS, affiliationsDe, colonnesLogos, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, FAQ_PARENTS, PARTENAIRES_LOGOS, affiliationsDe, colonnesLogos, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -429,6 +429,46 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
         </section>
 
       <ReseauxSociaux sport={sport} />
+
+      {sport === "softball" && (
+        <section className="block faq" id="faq" aria-labelledby="faq-titre">
+          <div className="wrap">
+            <div className="head">
+              <h2 id="faq-titre">
+                Questions <em>des parents</em>
+              </h2>
+            </div>
+            <div className="faq-liste">
+              {FAQ_PARENTS.map((f, i) => (
+                <details key={f.q} open={i === 0}>
+                  <summary>{f.q}</summary>
+                  <div className="faq-rep">
+                    {f.r && <p>{f.r}</p>}
+                    {f.liste && (
+                      <ul>
+                        {f.liste.map((l) => (
+                          <li key={l.t}>
+                            <b>{l.t}</b> : {l.d}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {f.boutons && (
+                      <div className="faq-boutons">
+                        {f.boutons.map((b) => (
+                          <Link key={b.label} className={`btn ${b.plein ? "solid" : "ghost"}`} href={b.href}>
+                            {b.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </Cadre>
   );
 }

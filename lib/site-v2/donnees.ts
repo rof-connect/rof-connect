@@ -52,18 +52,18 @@ export const CONTENU: Record<Sport, Contenu> = {
     saison: "Saison 2027",
     noteCalendrier: "",
     engagementsSous: "Elles ont signé.",
-    lead: "De l'école primaire au collège américain : un chemin clair, un accompagnement personnalisé vers la NCAA, la NAIA et la NJCAA.",
+    lead: "De l'école primaire au collège américain : un chemin clair, une préparation sérieuse vers la NCAA, la NAIA et la NJCAA.",
     etapes: [
       { n: "01", t: "Royal Junior", d: "10U à 11U — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
       { n: "02", t: "Royal Relève", d: "12U à 13U — compétition provinciale et canadienne, avec le rêve des World Series Softball." },
       { n: "03", t: "Royal Prospect", d: "14U à 15U — développement élite : un calibre de jeu et une préparation qui visent le niveau supérieur." },
-      { n: "04", t: "Royal Élite", d: "16U à 18U — le niveau vitrine : tournois aux États-Unis, exposition aux recruteurs et accompagnement vers la NCAA, la NAIA et la NJCAA." },
+      { n: "04", t: "Royal Élite", d: "16U à 18U — le niveau vitrine : tournois aux États-Unis et exposition aux recruteurs." },
     ],
     academique: [
-      { t: "PSES", d: "Programme sport-études au primaire (5e et 6e année), pour les joueuses de Lanaudière." },
-      { t: "Collège L'Assomption", d: "Concilier études secondaires et softball de haut niveau. Ouvert à toutes les joueuses, sans restriction de région." },
-      { t: "École en ligne", d: "12e année : école en ligne pour concilier études et softball de haut niveau." },
-      { t: "Collège américain", d: "Accompagnement vers la NCAA, la NAIA et la NJCAA (parcours 12e année ou cégep)." },
+      { t: "PSES", d: "Sport-études au primaire (5e-6e), pour les joueuses de Lanaudière." },
+      { t: "Collège L'Assomption", d: "Études secondaires et softball de haut niveau. Ouvert à toutes." },
+      { t: "École en ligne", d: "12e année en ligne pour concilier études et softball." },
+      { t: "Collège américain", d: "Préparation vers la NCAA, la NAIA et la NJCAA." },
     ],
     aVenir: {
       etiquette: "À VENIR",
@@ -446,4 +446,30 @@ export const LOGOS_VARSITY: { nom: string; src: string; sombre?: boolean }[] = [
   { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png" },
   { nom: "East Coast Softball", src: "/partenaires/n-east-coast.png" },
   { nom: "Scenic City Showcase · Chattanooga, TN", src: "/partenaires/n-scenic-city.png" },
+];
+
+/** FAQ « Questions des parents » (accueil softball). Modifier ici : les boutons pointent vers /inscription, /parcours et la section Contact. */
+export const FAQ_PARENTS: { q: string; r?: string; liste?: { t: string; d: string }[]; boutons?: { label: string; href: string; plein?: boolean }[] }[] = [
+  {
+    q: "Comment se passent les évaluations ?",
+    r: "Les évaluations ont lieu avant le début de chaque saison. Chaque joueuse est évaluée par les entraîneurs sur ses habiletés techniques (frappe, défensive, lancer), ses qualités athlétiques et son attitude sur le terrain. On place ensuite chaque athlète dans l'équipe qui correspond à son niveau de développement, pas seulement à son âge. Pour être avisée des dates d'évaluation, crée un profil Prospect dans ROF Connect : tu recevras l'invitation en premier.",
+    boutons: [{ label: "Créer mon profil Prospect", href: "/inscription", plein: true }],
+  },
+  {
+    q: "Quelle est la différence entre Royal Junior, Relève, Prospect et Élite ?",
+    liste: [
+      { t: "Royal Junior (10U–11U)", d: "les fondations. Technique, plaisir du jeu et habitudes d'athlète." },
+      { t: "Royal Relève (12U–13U)", d: "la compétition provinciale et canadienne, avec le rêve des World Series." },
+      { t: "Royal Prospect (14U–15U)", d: "le développement élite, un calibre de jeu et une préparation qui visent le niveau supérieur." },
+      { t: "Royal Élite (16U–18U)", d: "le niveau vitrine, avec tournois aux États-Unis et exposition aux recruteurs." },
+    ],
+  },
+  {
+    q: "Est-ce que Royal On Field accompagne les joueuses vers le collège américain ?",
+    r: "Royal On Field prépare ses joueuses au niveau collégial : développement sur le terrain, tournois et showcases aux États-Unis devant les recruteurs, et un profil FieldLevel du programme. On aide aussi les familles à s'orienter grâce au questionnaire de parcours (12e année, école en ligne ou cégep). Notre accompagnement dans le processus de recrutement lui-même reste toutefois limité. Pour un suivi complet (dossier, vidéos, communications avec les entraîneurs, négociation des bourses), nous recommandons de faire appel à une agence spécialisée en recrutement universitaire. La Direction peut vous orienter vers des agences reconnues. Trois athlètes de Royal On Field ont déjà signé en NJCAA Division 1.",
+    boutons: [
+      { label: "Questionnaire de parcours", href: "/parcours", plein: true },
+      { label: "Nous joindre", href: "/site-v2/organisation?sport=softball#contact" },
+    ],
+  },
 ];

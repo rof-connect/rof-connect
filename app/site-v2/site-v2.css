@@ -719,3 +719,22 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 footer .footer-affil li{background:#fff;border-radius:4px;padding:3px 6px;display:flex;align-items:center}
 .v2 footer .footer-affil img{height:26px;width:auto;max-width:64px;object-fit:contain;filter:grayscale(1);opacity:.9}
 @media (max-width:600px){.v2 footer .footer-affil{justify-content:flex-start}}
+
+/* V5 : parcours académique sur une ligne (4 colonnes égales), 2 x 2 en tablette, 1 colonne en téléphone */
+.v2 .acad{grid-template-columns:repeat(4,1fr);align-items:stretch}
+.v2 .acad li{grid-template-columns:1fr;gap:6px;align-content:start;height:100%}
+.v2 .acad .n{font-size:44px}
+@media (max-width:1000px){.v2 .acad{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.v2 .acad{grid-template-columns:1fr}}
+
+/* V5 : FAQ parents (accordéon natif <details>, accessible au clavier) */
+.v2 .faq-liste{max-width:860px;margin:0 auto;display:grid;gap:10px}
+.v2 .faq details{border:1px solid var(--line);border-left:4px solid var(--royal);border-radius:6px;background:#fff}
+.v2 .faq summary{cursor:pointer;list-style:none;padding:16px 52px 16px 20px;font-weight:800;font-size:17px;line-height:1.3;color:var(--royal-deep);position:relative;min-height:44px}
+.v2 .faq summary::-webkit-details-marker{display:none}
+.v2 .faq summary::after{content:"+";position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:26px;font-weight:400;color:var(--royal)}
+.v2 .faq details[open] summary::after{content:"2"}
+.v2 .faq summary:focus-visible{outline:2px solid var(--royal);outline-offset:2px}
+.v2 .faq-rep{padding:0 20px 20px;color:#3B4660;font-size:16px;line-height:1.6}
+.v2 .faq-rep ul{margin:0;padding-left:20px;display:grid;gap:8px}
+.v2 .faq-boutons{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
