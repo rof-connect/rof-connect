@@ -7,6 +7,7 @@ export type Profil = {
   poids?: string;
   ecole?: string;
   ville?: string;
+  grad?: string; // année de graduation (« grad year »), ex. 2027
   moyenne?: string;
   domaine?: string;
   anglais?: string;
@@ -73,6 +74,7 @@ export function profilDuFormulaire(formData: FormData): Profil {
     poids: nettoyer(formData.get("poids"), 20),
     ecole: nettoyer(formData.get("ecole"), 80),
     ville: nettoyer(formData.get("ville"), 60),
+    grad: /^20\d{2}$/.test(nettoyer(formData.get("grad"), 4)) ? nettoyer(formData.get("grad"), 4) : "",
     moyenne: nettoyer(formData.get("moyenne"), 20),
     domaine: nettoyer(formData.get("domaine"), 80),
     anglais: nettoyer(formData.get("anglais"), 30),

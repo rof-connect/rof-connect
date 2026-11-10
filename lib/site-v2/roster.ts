@@ -1,7 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
-import { presentationsActives } from "@/lib/presentation";
+import { presentationsActives, toutesPresentations } from "@/lib/presentation";
 import { urlPhotoProfil } from "@/lib/photo-profil";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
@@ -119,13 +119,14 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
   };
   if (!afficher) return { ...base, total: 0, joueuses: [] };
 
-  const [{ data: membres }, archivees, statuts, actives, numeros, infos] = await Promise.all([
+  const [{ data: membres }, archivees, statuts, actives, numeros, infos, fichesPres] = await Promise.all([
     admin.from("team_members").select("profile_id, status_id").eq("team_id", teamId).eq("role_in_team", "athlete"),
     chargerArchivees(),
     chargerStatutsJoueuses(),
     presentationsActives(),
     chargerNumeros(),
     chargerInfosRoster(),
+    toutesPresentations(),
   ]);
   const statutsParJoueuse = new Map<string, number[]>();
   (membres ?? []).forEach((m) => statutsParJoueuse.set(m.profile_id, [...(statutsParJoueuse.get(m.profile_id) ?? []), m.status_id]));
@@ -159,10 +160,10 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           positions: (fiche?.position ?? "").split(",").map((x: string) => positionFr(x.trim())).filter(Boolean),
           lance: fiche?.throws ?? "",
           frappe: fiche?.bats ?? "",
-          taille: infos[id]?.taille || profil.taille || "",
-          ecole: infos[id]?.ecole || profil.ecole || "",
-          ville: infos[id]?.ville || profil.ville || "",
-          grad: infos[id]?.grad ?? "",
+          taille: fichesPres[id]?.profil?.taille || infos[id]?.taille || "",
+          ecole: fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "",
+          ville: fichesPres[id]?.profil?.ville || infos[id]?.ville || "",
+          grad: fichesPres[id]?.profil?.grad || infos[id]?.grad || "",
           fieldlevel: profilFieldLevel(fiche?.fieldlevel_url),
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise
           lien: `/site-v2/joueuses/${id}`,

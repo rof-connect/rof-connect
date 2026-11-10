@@ -9,7 +9,7 @@ import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif, statutSel
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 import { cheminPhotoProfil } from "@/lib/photo-profil";
 import { definirNumeros } from "@/lib/numeros-chandail";
-import { definirInfosRoster } from "@/lib/infos-roster";
+import { presentationDe, majPresentation } from "@/lib/presentation";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
   prospect: 1,
@@ -366,19 +366,27 @@ export async function changerNumeroJoueuse(formData: FormData) {
   revalidatePath("/site-v2");
 }
 
-/** La Direction saisit la ville et l'année de graduation d'une joueuse (affichées dans le roster du site public). */
+/**
+ * La Direction saisit ville, grad year, taille et école. Ces valeurs sont écrites dans la fiche de la joueuse :
+ * son formulaire « Moi » les affiche, elle ou sa famille peut les modifier, et le site public les reprend telles quelles.
+ */
 export async function changerInfosRoster(formData: FormData) {
   if (!(await verifierAdmin())) return;
   const profileId = String(formData.get("profile_id") ?? "");
   if (!/^[0-9a-f-]{36}$/i.test(profileId)) return;
-  await definirInfosRoster({
-    [profileId]: {
-      ville: String(formData.get("ville") ?? ""),
-      grad: String(formData.get("grad") ?? ""),
-      taille: String(formData.get("taille") ?? ""),
-      ecole: String(formData.get("ecole") ?? ""),
+  const net = (v: FormDataEntryValue | null, max: number) => String(v ?? "").replace(/[\u0000-\u001f]/g, " ").trim().slice(0, max);
+  const grad = net(formData.get("grad"), 4);
+  const existant = await presentationDe(profileId);
+  await majPresentation(profileId, {
+    profil: {
+      ...(existant?.profil ?? {}),
+      ville: net(formData.get("ville"), 60),
+      grad: /^20\d{2}$/.test(grad) ? grad : "",
+      taille: net(formData.get("taille"), 20),
+      ecole: net(formData.get("ecole"), 80),
     },
   });
   revalidatePath("/membres/admin/joueurs");
+  revalidatePath("/membres/moi");
   revalidatePath("/site-v2");
 }

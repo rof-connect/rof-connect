@@ -81,6 +81,10 @@ export function CartePresentation({ reglages, lectureSeule = false }: { reglages
             <input name="ville" defaultValue={p.ville ?? ""} placeholder="Repentigny, QC" className={champ} />
           </label>
           <label className="flex flex-col gap-1 text-xs text-rof-gris">
+            Année de graduation (grad year)
+            <input name="grad" inputMode="numeric" maxLength={4} defaultValue={p.grad ?? ""} placeholder="Ex. : 2027" className={champ} />
+          </label>
+          <label className="flex flex-col gap-1 text-xs text-rof-gris">
             Moyenne scolaire
             <input name="moyenne" defaultValue={p.moyenne ?? ""} placeholder="Ex. : 85 %" className={champ} />
           </label>

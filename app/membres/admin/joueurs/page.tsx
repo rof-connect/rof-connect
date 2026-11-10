@@ -8,6 +8,7 @@ import { chargerTousLiens } from "@/lib/liens-sociaux";
 import { changerNumeroJoueuse, changerInfosRoster } from "@/app/membres/admin/joueurs/actions";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
+import { toutesPresentations } from "@/lib/presentation";
 import { FormPhotoJoueuse } from "@/components/membres/FormPhotoJoueuse";
 import { chargerStatutsJoueuses, premierSeptembre, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
@@ -107,6 +108,9 @@ export default async function JoueursPage({
   const statutsJoueuses = await chargerStatutsJoueuses();
   const numeros = await chargerNumeros();
   const infosRoster = await chargerInfosRoster();
+  const fichesJoueuses = await toutesPresentations();
+  // Valeur affichée : la fiche de la joueuse d'abord (ce que la famille a pu modifier), sinon l'ancienne saisie de la Direction.
+  const infoDe = (id: string, k: "ville" | "grad" | "taille" | "ecole") => fichesJoueuses[id]?.profil?.[k] || infosRoster[id]?.[k] || "";
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
   const nbArchivees = tousLesJoueurs.filter(([pid]) => archivees.has(pid)).length;
 
@@ -352,7 +356,7 @@ export default async function JoueursPage({
                   id={`ville-${profileId}`}
                   name="ville"
                   maxLength={60}
-                  defaultValue={infosRoster[profileId]?.ville ?? ""}
+                  defaultValue={infoDe(profileId, "ville")}
                   className="w-44 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
                 />
                 <label htmlFor={`grad-${profileId}`} className="text-rof-gris">
@@ -364,7 +368,7 @@ export default async function JoueursPage({
                   inputMode="numeric"
                   maxLength={4}
                   placeholder="2027"
-                  defaultValue={infosRoster[profileId]?.grad ?? ""}
+                  defaultValue={infoDe(profileId, "grad")}
                   className="w-20 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
                 />
                 <label htmlFor={`taille-${profileId}`} className="text-rof-gris">
@@ -375,7 +379,7 @@ export default async function JoueursPage({
                   name="taille"
                   maxLength={12}
                   placeholder={"5'6\""}
-                  defaultValue={infosRoster[profileId]?.taille ?? ""}
+                  defaultValue={infoDe(profileId, "taille")}
                   className="w-20 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
                 />
                 <label htmlFor={`ecole-${profileId}`} className="text-rof-gris">
@@ -385,7 +389,7 @@ export default async function JoueursPage({
                   id={`ecole-${profileId}`}
                   name="ecole"
                   maxLength={80}
-                  defaultValue={infosRoster[profileId]?.ecole ?? ""}
+                  defaultValue={infoDe(profileId, "ecole")}
                   className="w-44 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
                 />
                 <button type="submit" className="text-rof-poudre underline">

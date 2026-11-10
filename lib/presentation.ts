@@ -67,3 +67,8 @@ export async function presentationsActives(): Promise<Record<string, Presentatio
   const tous = await lire();
   return Object.fromEntries(Object.entries(tous).filter(([, p]) => p.actif));
 }
+
+/** Toutes les fiches (actives ou non) : sert aux infos de base du roster (taille, école, ville, grad), modifiables par la joueuse ou la Direction. */
+export async function toutesPresentations(): Promise<Record<string, Presentation>> {
+  return lire();
+}
