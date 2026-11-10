@@ -7,7 +7,7 @@ export function sportDe(valeur: string | undefined): Sport {
   return valeur === "baseball" ? "baseball" : "softball";
 }
 
-export type Evenement = { m: string; y: string; t: string; p: string; tag: string; hl?: boolean };
+export type Evenement = { m: string; y: string; t: string; p: string; tag: string; hl?: boolean; important?: boolean };
 export type Palmares = { y: string; l: string[] };
 export type Banniere = {
   style: "canam" | "canada" | "provincial" | "tournoi";
@@ -31,7 +31,7 @@ type Contenu = {
   etapes: { n: string; t: string; d: string }[];
   academique: { t: string; d: string; lien?: string }[]; // parcours académique (propre au sport)
   volet?: { titre: string; groupes: { nom: string; sous?: string; equipes: { niveau: string; nom: string }[] }[] }; // volet scolaire (sous les équipes)
-  aVenir?: { etiquette: string; niveau: string; nom: string; titre: string; sous: string; details: string[]; intro: string; places: string; envies: string[]; conclusion: string; signature: string }; // programme annoncé (carte dans Équipes) // parcours Royal
+  aVenir?: { etiquette: string; niveau: string; nom: string; titre: string; sous: string; details: string[]; intro: string; places: string; periode: string; programme: string[]; envies: string[]; conclusion: string; signature: string }; // programme annoncé (carte dans Équipes) // parcours Royal
   stats: [string, string][]; // chiffres fixes (les chiffres tirés de ROF Connect s'ajoutent)
   calendrier: Evenement[];
   palmares: Palmares[];
@@ -74,6 +74,8 @@ export const CONTENU: Record<Sport, Contenu> = {
       details: ["12 mois par année", "École en ligne", "18U · 16U"],
       intro: "Un nouveau programme Varsity/JV, à l'année, qui combine softball de haut niveau et école en ligne.",
       places: "Places limitées",
+      periode: "Programme de septembre 2027 à août 2028",
+      programme: ["Showcase National Automne", "Tournée Collège", "Voyage Floride", "Voyage Texas", "Voyage Tennessee"],
       envies: ["Voyager, compétitionner face aux meilleurs programmes", "Améliorer tes chances de recrutement", "Poursuivre tes études en ligne"],
       conclusion: "C'est ici que ça commence !",
       signature: "Programme unique au Canada",
@@ -84,12 +86,12 @@ export const CONTENU: Record<Sport, Contenu> = {
       ["3", "Athlètes signées"],
     ],
     calendrier: [
-      { m: "MAI", y: "2027", t: "Tournoi Maryland", p: "Maryland, États-Unis", tag: "JV / Varsity" },
-      { m: "MAI", y: "2027", t: "Fastpitch Nation", p: "", tag: "Tournoi" },
-      { m: "JUIN", y: "2027", t: "Alliance Softball Qualifier", p: "Syracuse, New York", tag: "Qualification", hl: true },
+      { m: "MAI", y: "2027", t: "Tournoi Maryland", p: "Maryland, États-Unis", tag: "Tournoi" },
+      { m: "MAI", y: "2027", t: "Fastpitch Nation", p: "Lieu à confirmer", tag: "Tournoi", important: true },
+      { m: "JUIN", y: "2027", t: "Alliance Softball Qualifier", p: "Syracuse, New York", tag: "Qualification", hl: true, important: true },
       { m: "JUIN", y: "2027", t: "Binghamton", p: "Binghamton, New York", tag: "Tournoi" },
       { m: "JUIL", y: "2027", t: "PGF New Jersey", p: "New Jersey, États-Unis", tag: "Showcase" },
-      { m: "JUIL", y: "2027", t: "Championnat Canadien LL", p: "Little League Canada", tag: "Championnat", hl: true },
+      { m: "JUIL", y: "2027", t: "Championnat Canadien LL", p: "Lieu à confirmer", tag: "Championnat", hl: true, important: true },
     ],
     bannieres: [
       { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2026", mention: "Championnes", categorie: "12U · 14U · 16U", embleme: "canada" },

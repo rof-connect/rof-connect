@@ -41,6 +41,18 @@ export default function VarsityPage() {
             ))}
           </ul>
 
+          <div className="programme-annee">
+            <h3>{v.periode}</h3>
+            <ol>
+              {v.programme.map((e, i) => (
+                <li key={e}>
+                  <span className="n">{String(i + 1).padStart(2, "0")}</span>
+                  <span>{e}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
           <div className="avenir-conclusion">
             <p className="c1">{v.conclusion}</p>
             <p className="c2">{v.signature}</p>

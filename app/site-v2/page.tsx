@@ -195,11 +195,12 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                 Calendrier <em>{c.saison}</em>
               </h2>
               {c.noteCalendrier && <span className="pill">{c.noteCalendrier}</span>}
-              <Link className="more" href={`/site-v2/calendrier?sport=${sport}`} style={{ color: "#fff" }}>Horaire de chaque équipe →</Link>
+              <Link className="btn solid btn-horaire" href={`/site-v2/calendrier?sport=${sport}`}>Horaire de chaque équipe →</Link>
             </div>
+            {c.calendrier.length > 0 && <p className="cal-note">Dates et lieux à confirmer — mis à jour au fur et à mesure.</p>}
             <div className="sched">
               {c.calendrier.length > 0 ? (
-                c.calendrier.map((e) => (
+                c.calendrier.filter((e) => e.important).map((e) => (
                   <div className="ev" key={e.t}>
                     <div className="date">
                       <b>{e.m}</b>
@@ -207,7 +208,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                     </div>
                     <div>
                       <h3>{e.t}</h3>
-                      {e.p && <p>{e.p}</p>}
+                      <p>{e.p || "Lieu à confirmer"}</p>
                     </div>
                     <span className={`pill${e.hl ? " hl" : ""}`}>{e.tag}</span>
                   </div>

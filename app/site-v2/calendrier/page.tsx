@@ -33,6 +33,25 @@ export default async function CalendrierPage({ searchParams }: { searchParams: P
 
       <section className="block" style={{ paddingTop: 40 }}>
         <div className="wrap">
+          {c.calendrier.length > 0 && (
+            <div className="cal-tournois">
+              <h2>Tournois et événements</h2>
+              <p className="cal-note-clair">Dates et lieux à confirmer — mis à jour au fur et à mesure.</p>
+              <ul>
+                {c.calendrier.map((e) => (
+                  <li key={e.t}>
+                    <span className="d">
+                      <b>{e.m}</b> {e.y}
+                    </span>
+                    <span className="t">{e.t}</span>
+                    <span className="l">{e.p || "Lieu à confirmer"}</span>
+                    <span className="g">{e.tag}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {equipes.length === 0 ? (
             <div className="empty-clair">
               <h3>Les calendriers seront publiés bientôt.</h3>
