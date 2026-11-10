@@ -16,7 +16,7 @@ export type Banniere = {
   annee: string;
   mention: string; // ex. « Champions »
   categorie: string; // ex. « 12U »
-  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
+  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa" | "pbr" | "otw"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
 };
 export type Engagee = { who: string; s: string; m: string; c: string; photo?: string };
 
@@ -196,8 +196,8 @@ export const CONTENU: Record<Sport, Contenu> = {
     bannieres: [
       { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2026", mention: "Champions invaincus", categorie: "Mineur" },
       { style: "tournoi", titre: "ECTBL", sous: "Séries Minor", annee: "2026", mention: "Champions", categorie: "10U · 11-1" },
-      { style: "tournoi", titre: "PBR Baseball", sous: "Cortland, NY", annee: "2026", mention: "Champions", categorie: "8U" },
-      { style: "tournoi", titre: "Ottawa West", sous: "Tournoi", annee: "2026", mention: "Champions", categorie: "10U" },
+      { style: "tournoi", titre: "PBR Baseball", sous: "Cortland, NY", annee: "2026", mention: "Champions", categorie: "8U", embleme: "pbr" },
+      { style: "tournoi", titre: "Peter Loyen Classic", sous: "PBR Baseball · Ottawa West", annee: "2026", mention: "Champions", categorie: "10U", embleme: "otw" },
       { style: "tournoi", titre: "Ontario Rookie Invitational", sous: "Kingston", annee: "2026", mention: "Champions", categorie: "8U" },
       { style: "tournoi", titre: "Thanksgiving Wood Bat Classic", sous: "Le Sandlot", annee: "2026", mention: "Champions", categorie: "PSES" },
       { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2025", mention: "Playoff Champions", categorie: "12U" },
@@ -212,7 +212,7 @@ export const CONTENU: Record<Sport, Contenu> = {
           "Champions provinciaux Petite Ligue Québec — Mineur, parcours invaincu",
           "Champions ECTBL (séries éliminatoires Minor) — 10U, victoire de 11-1 en finale",
           "Champions PBR Baseball (Cortland, NY) — 8U",
-          "Champions Ottawa West — 10U",
+          "Champions Peter Loyen Classic (PBR Baseball Ottawa West) — 10U",
           "Champions Ontario Rookie Invitational (Kingston) — 8U",
           "Champions Thanksgiving Wood Bat Classic — Programme scolaire PSES",
         ],
@@ -394,10 +394,10 @@ export function lienFieldLevel(v: string): string {
   return m ? `https://www.fieldlevel.com/app/organization/${m[1]}/${m[2].toLowerCase()}/overview` : "";
 }
 
-/** Partenaires par sport (le baseball n'affiche ni USA Softball ni Fastpitch Nation ; ajoute PBR Baseball, logo à fournir). */
+/** Partenaires par sport (le baseball n'affiche ni USA Softball ni Fastpitch Nation ; ajoute PBR Baseball). */
 export const PARTENAIRES_PAR_SPORT: Record<Sport, { nom: string; src?: string }[]> = {
   softball: PARTENAIRES.filter((p) => !p.sports || p.sports.includes("softball")),
-  baseball: [...PARTENAIRES.filter((p) => !p.sports || p.sports.includes("baseball")), { nom: "PBR Baseball" }], // PBR : logo à fournir
+  baseball: [...PARTENAIRES.filter((p) => !p.sports || p.sports.includes("baseball")), { nom: "PBR Baseball", src: "/partenaires/n-pbr.png" }],
 };
 
 /** Page « Centre d'entraînement ». Textes à compléter par la Direction. */
