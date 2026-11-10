@@ -218,7 +218,7 @@ export default async function DirectionPage() {
         </div>
         <div className="grid gap-2">
           {aGerer.slice(0, 10).map((c) => {
-            const suggere = statutSelonNaissance(naissanceDe.get(c.id));
+            const suggere = statutSelonNaissance(naissanceDe.get(c.id), sportsJoueuses[c.id]);
             return (
               <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-2.5">
                 <Link href={`/membres/admin/joueurs?id=${c.id}`} className="min-w-0 flex-1 hover:text-rof-or">
@@ -232,7 +232,7 @@ export default async function DirectionPage() {
                     <button
                       type="submit"
                       className="rounded-full bg-rof-or px-4 py-1.5 font-condensed text-xs font-bold uppercase tracking-wide text-black"
-                      title={`${suggere.age} ans au 1er septembre`}
+                      title={`${suggere.age} ans au ${suggere.ref.toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" })}${sportsJoueuses[c.id] === "baseball" ? " (charte Little League)" : ""}`}
                     >
                       Accepter → {suggere.nom}
                     </button>

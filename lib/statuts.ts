@@ -54,17 +54,34 @@ export function premierSeptembre(now = new Date()) {
   return new Date(annee, 8, 1);
 }
 
-/** Statut selon l'âge au 1er septembre de la saison en cours (14 ans = 14U). Entre 9U et 18U. null si la date est invalide. */
-export function statutSelonNaissance(naissance: string | null | undefined, now = new Date()): { id: number; nom: string; age: number } | null {
+/**
+ * Date à laquelle l'âge est calculé, selon le sport.
+ * - Baseball : charte d'âge Little League — âge au 31 août de l'année du printemps
+ *   (saisons Automne 2026 et Printemps 2027 → 31 août 2027).
+ * - Softball (et sport non défini) : âge au 1er septembre du début de la saison en cours.
+ */
+export function dateReferenceAge(sport?: string | null, now = new Date()) {
+  const debut = premierSeptembre(now);
+  return sport === "baseball" ? new Date(debut.getFullYear() + 1, 7, 31) : debut;
+}
+
+/** Statut selon l'âge à la date de référence du sport (12 ans = 12U). Entre 9U et 18U. null si la date est invalide. */
+export function statutSelonNaissance(
+  naissance: string | null | undefined,
+  sport?: string | null,
+  now = new Date(),
+): { id: number; nom: string; age: number; ref: Date } | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(naissance ?? "");
   if (!m) return null;
-  const ref = premierSeptembre(now);
+  const ref = dateReferenceAge(sport, now);
+  const moisRef = ref.getMonth() + 1;
+  const jourRef = ref.getDate();
   let age = ref.getFullYear() - Number(m[1]);
-  if (Number(m[2]) > 9 || (Number(m[2]) === 9 && Number(m[3]) > 1)) age--;
+  if (Number(m[2]) > moisRef || (Number(m[2]) === moisRef && Number(m[3]) > jourRef)) age--;
   if (age < 0 || age > 60) return null;
   const borne = Math.min(18, Math.max(9, age));
   const statut = STATUTS.find((s) => s.nom === `${borne}U`);
-  return statut ? { id: statut.id, nom: statut.nom, age } : null;
+  return statut ? { id: statut.id, nom: statut.nom, age, ref } : null;
 }
 
 /** Le parcours NCAA n'est offert qu'aux joueuses dont le statut n'est plus Prospect. */
