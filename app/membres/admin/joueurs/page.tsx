@@ -8,6 +8,8 @@ import { chargerTousLiens } from "@/lib/liens-sociaux";
 import { changerNumeroJoueuse, changerInfosRoster } from "@/app/membres/admin/joueurs/actions";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
+import { sportAdmin } from "@/lib/sport-admin";
+import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 import { toutesPresentations } from "@/lib/presentation";
 import { FormPhotoJoueuse } from "@/components/membres/FormPhotoJoueuse";
 import { chargerStatutsJoueuses, premierSeptembre, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
@@ -47,7 +49,10 @@ export default async function JoueursPage({
 }: {
   searchParams: Promise<{ q?: string; sport?: string; equipe?: string; statut?: string; id?: string }>;
 }) {
-  const { q = "", sport = "", equipe = "", statut = "", id = "" } = await searchParams;
+  const { q = "", sport: sportUrl = "", equipe = "", statut = "", id = "" } = await searchParams;
+  // Sport de gestion mémorisé (Tous / Softball / Baseball) quand aucun filtre de sport n'est demandé dans l'adresse.
+  const sportMemorise = await sportAdmin();
+  const sport = sportUrl || sportMemorise;
   const supabase = await createClient();
   const {
     data: { user },
@@ -124,6 +129,7 @@ export default async function JoueursPage({
     if (statut && !sport && (!equipe || equipe === "aucune")) {
       return String(statutEffectif(pid, statutsJoueuses, j.memberships.map((m) => m.status_id))) === statut;
     }
+    if (!sportUrl && sportMemorise && j.memberships.length === 0 && !equipe && !statut) return true; // sans équipe : sport pas encore décidé
     if (!sport && !equipe && !statut) return true;
     return j.memberships.some((m) => {
       const t = Array.isArray(m.teams) ? m.teams[0] : m.teams;
@@ -141,6 +147,9 @@ export default async function JoueursPage({
       <div>
         <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Direction</p>
         <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">Gestion des joueurs</h1>
+        <div className="mt-3">
+          <SelecteurSportAdmin actif={sportMemorise} retour="/membres/admin/joueurs" />
+        </div>
         <p className="mt-2 text-sm text-rof-gris">
           Change le statut d&apos;un joueur, déplace-le vers une autre équipe, ou ajoute-le à une équipe supplémentaire.
         </p>

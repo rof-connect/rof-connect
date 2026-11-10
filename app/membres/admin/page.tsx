@@ -6,6 +6,8 @@ import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerStatutsJoueuses, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
 import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
 import { chargerConnexions, ilYa } from "@/lib/dernieres-connexions";
+import { sportAdmin } from "@/lib/sport-admin";
+import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
@@ -33,17 +35,23 @@ export default async function DirectionPage() {
   const connexions = (await chargerConnexions()).filter((c) => c.vue).slice(0, 8);
 
   const { data: teamsBrut } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
-  const teams = trierEquipes(teamsBrut);
+  const sportFiltre = await sportAdmin();
+  const teams = trierEquipes(teamsBrut).filter((t) => !sportFiltre || t.sport === sportFiltre);
   const archivees = await chargerArchivees();
   const { data: membresBrut } = await supabase
     .from("team_members")
     .select("team_id, profile_id, status_id, profiles (full_name, created_at), teams!inner (id, sport)")
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
-  const membres = (membresBrut ?? []).filter((m) => !archivees.has(m.profile_id));
+  const sportDeMembre = (m: { teams?: unknown }) => (Array.isArray(m.teams) ? (m.teams[0] as { sport?: string } | undefined) : (m.teams as { sport?: string } | null | undefined))?.sport;
+  const membresTousSports = (membresBrut ?? []).filter((m) => !archivees.has(m.profile_id));
+  const membres = membresTousSports.filter((m) => !sportFiltre || sportDeMembre(m) === sportFiltre);
+  const idsAvecEquipe = new Set(membresTousSports.map((m) => m.profile_id));
+  const idsDuSport = new Set(membres.map((m) => m.profile_id));
 
   const { data: comptes } = await supabase.from("profiles").select("id, full_name, email, created_at").eq("role", "member");
-  const comptesActifs = (comptes ?? []).filter((c) => !archivees.has(c.id));
+  // Avec un sport choisi : les joueuses de ce sport, plus celles qui n'ont encore aucune équipe (sport pas encore décidé).
+  const comptesActifs = (comptes ?? []).filter((c) => !archivees.has(c.id) && (!sportFiltre || idsDuSport.has(c.id) || !idsAvecEquipe.has(c.id)));
   const nbComptes = comptesActifs.length;
 
   // Nouvelles connexions à gérer : Prospect = aucune équipe, ou seulement le statut Prospect.
@@ -118,6 +126,9 @@ export default async function DirectionPage() {
         <div>
           <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Direction</p>
           <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">Vue d&apos;organisation</h1>
+          <div className="mt-3">
+            <SelecteurSportAdmin actif={sportFiltre} retour="/membres/admin" />
+          </div>
         </div>
         <div className="flex flex-col items-end gap-2">
           <a

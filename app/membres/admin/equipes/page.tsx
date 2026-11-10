@@ -3,6 +3,8 @@ import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { creerEquipe, archiverEquipe, desarchiverEquipe } from "./actions";
+import { sportAdmin } from "@/lib/sport-admin";
+import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 
 const LABEL_OPTION: Record<string, string> = {
   ete: "Été",
@@ -51,12 +53,19 @@ export default async function GestionEquipesPage({
     joueusesParEquipe.set(j.team_id, liste);
   });
 
-  const equipesParSport = { baseball: (teams ?? []).filter((t) => t.sport === "baseball"), softball: (teams ?? []).filter((t) => t.sport === "softball") };
+  const sportFiltre = await sportAdmin();
+  const equipesParSport = {
+    baseball: sportFiltre === "softball" ? [] : (teams ?? []).filter((t) => t.sport === "baseball"),
+    softball: sportFiltre === "baseball" ? [] : (teams ?? []).filter((t) => t.sport === "softball"),
+  };
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-5 py-10">
       <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Direction</p>
       <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">Gestion des équipes</h1>
+      <div className="mt-3">
+        <SelecteurSportAdmin actif={sportFiltre} retour="/membres/admin/equipes" />
+      </div>
 
       {!voirArchives && (
         <form action={creerEquipe} className="mt-6 flex flex-col gap-3 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
