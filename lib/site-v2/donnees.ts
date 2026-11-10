@@ -196,6 +196,8 @@ export const CONTENU: Record<Sport, Contenu> = {
     bannieres: [
       { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2026", mention: "Champions invaincus", categorie: "Mineur" },
       { style: "tournoi", titre: "ECTBL", sous: "Séries Minor", annee: "2026", mention: "Champions", categorie: "10U · 11-1" },
+      { style: "tournoi", titre: "PBR Baseball", sous: "Cortland, NY", annee: "2026", mention: "Champions", categorie: "8U" },
+      { style: "tournoi", titre: "Ottawa West", sous: "Tournoi", annee: "2026", mention: "Champions", categorie: "10U" },
       { style: "tournoi", titre: "Ontario Rookie Invitational", sous: "Kingston", annee: "2026", mention: "Champions", categorie: "8U" },
       { style: "tournoi", titre: "Thanksgiving Wood Bat Classic", sous: "Le Sandlot", annee: "2026", mention: "Champions", categorie: "PSES" },
       { style: "canam", titre: "Can-Am United", sous: "Baseball League", annee: "2025", mention: "Playoff Champions", categorie: "12U" },
@@ -209,6 +211,8 @@ export const CONTENU: Record<Sport, Contenu> = {
         l: [
           "Champions provinciaux Petite Ligue Québec — Mineur, parcours invaincu",
           "Champions ECTBL (séries éliminatoires Minor) — 10U, victoire de 11-1 en finale",
+          "Champions PBR Baseball (Cortland, NY) — 8U",
+          "Champions Ottawa West — 10U",
           "Champions Ontario Rookie Invitational (Kingston) — 8U",
           "Champions Thanksgiving Wood Bat Classic — Programme scolaire PSES",
         ],
@@ -419,5 +423,5 @@ export const LOGOS_VARSITY: { nom: string; src: string; sombre?: boolean }[] = [
   { nom: "NSA Softball", src: "/partenaires/n-nsa.png" },
   { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png" },
   { nom: "East Coast Softball", src: "/partenaires/n-east-coast.png" },
-  { nom: "Scenic City Showcase · Chattanooga, TN", src: "/partenaires/scenic-city.png", sombre: true },
+  { nom: "Scenic City Showcase · Chattanooga, TN", src: "/partenaires/n-scenic-city.png" },
 ];
