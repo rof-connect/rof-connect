@@ -33,11 +33,11 @@ where archived = false and name = 'Softball 16U - Dostaler';
 update teams set roster_public = false
 where sport = 'softball' and archived = false and name <> 'Softball 18U - Di Peco';
 
-comment on column teams.niveau_competition is 'Niveau de compétition affiché sur le site public (softball : NATIONAL = Varsity, RÉGIONAL = JV, ÉLITE). Baseball : vide pour l''instant.';
+comment on column teams.niveau_competition is 'Niveau de compétition affiché sur le site public (softball : NATIONAL = Varsity, SCOUT TEAM = JV, PROSPECT TEAM). Baseball : vide pour l''instant.';
 update teams set niveau_competition = 'NATIONAL'
 where archived = false and name = 'Softball 18U - Di Peco';
-update teams set niveau_competition = 'RÉGIONAL' where archived = false and name = 'Softball 16U - Bertrand';
-update teams set niveau_competition = 'ÉLITE' where archived = false and name = 'Softball 16U - Dostaler';
+update teams set niveau_competition = 'SCOUT TEAM' where archived = false and name = 'Softball 16U - Bertrand';
+update teams set niveau_competition = 'PROSPECT TEAM' where archived = false and name = 'Softball 16U - Dostaler';
 
 -- Au départ, toutes les équipes actives sont visibles sur le site (la Direction décoche celles à masquer).
 update teams set visible_public = true where archived = false and sport in ('softball', 'baseball');

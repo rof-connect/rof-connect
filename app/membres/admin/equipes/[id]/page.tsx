@@ -158,7 +158,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
               <input name="gamechanger_url" defaultValue={equipe.gamechanger_url ?? ""} placeholder="https://web.gc.com/teams/…" className={champ} />
             </div>
             <div>
-              <p className={etiquette}>Niveau de compétition (softball : NATIONAL, RÉGIONAL, ÉLITE ; facultatif)</p>
+              <p className={etiquette}>Niveau de compétition (softball : NATIONAL, SCOUT TEAM, PROSPECT TEAM ; facultatif)</p>
               <input name="niveau_competition" maxLength={30} defaultValue={equipe.niveau_competition ?? ""} className={champ} />
             </div>
             <div>
