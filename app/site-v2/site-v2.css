@@ -672,3 +672,6 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .profil-commit{position:relative;display:block;width:220px;aspect-ratio:4/5;border-radius:8px;overflow:hidden;border:3px solid var(--accent);background:var(--navy);align-self:center}
 .v2 .profil-commit img{object-fit:cover}
 @media (max-width:800px){.v2 .profil-hero:has(.profil-commit){grid-template-columns:1fr}.v2 .profil-commit{width:160px}}
+
+.v2 .partners .logo.logo-sombre{background:#0d0d12}
+.v2 .partners .logo.logo-sombre img{padding:4px;object-fit:contain}

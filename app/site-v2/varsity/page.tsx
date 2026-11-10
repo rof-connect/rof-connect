@@ -58,7 +58,7 @@ export default function VarsityPage() {
             <h3>Showcases et tournois visés</h3>
             <ul className="partners">
               {LOGOS_VARSITY.map((l) => (
-                <li className="logo" key={l.nom}>
+                <li className={`logo${l.sombre ? " logo-sombre" : ""}`} key={l.nom}>
                   <Image src={l.src} alt={l.nom} fill loading="lazy" sizes="(max-width: 600px) 50vw, 200px" />
                 </li>
               ))}

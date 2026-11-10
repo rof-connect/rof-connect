@@ -413,9 +413,11 @@ export function profilFieldLevel(v: unknown): string {
 }
 
 /** Événements et showcases visés par le programme Varsity (logos affichés sur la page Varsity). */
-export const LOGOS_VARSITY: { nom: string; src: string }[] = [
+export const LOGOS_VARSITY: { nom: string; src: string; sombre?: boolean }[] = [
   { nom: "Triple Crown Fastpitch", src: "/partenaires/n-triple-crown.png" },
   { nom: "PGF · Premier Girls Fastpitch", src: "/partenaires/n-pgf.png" },
   { nom: "NSA Softball", src: "/partenaires/n-nsa.png" },
   { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png" },
+  { nom: "East Coast Softball", src: "/partenaires/n-east-coast.png" },
+  { nom: "Scenic City Showcase · Chattanooga, TN", src: "/partenaires/scenic-city.png", sombre: true },
 ];
