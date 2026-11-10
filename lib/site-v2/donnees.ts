@@ -16,7 +16,7 @@ export type Banniere = {
   annee: string;
   mention: string; // ex. « Champions »
   categorie: string; // ex. « 12U »
-  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa" | "pbr" | "otw" | "canam" | "sandlot"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
+  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa" | "pbr" | "otw" | "canam" | "sandlot" | "sc"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
 };
 export type Engagee = { who: string; s: string; m: string; c: string; photo?: string };
 
@@ -96,7 +96,7 @@ export const CONTENU: Record<Sport, Contenu> = {
     bannieres: [
       { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2026", mention: "Championnes", categorie: "12U · 14U · 16U", embleme: "canada" },
       { style: "canada", titre: "World Series", sous: "Softball", annee: "2026", mention: "Participation", categorie: "12U · 14U · 16U", embleme: "ll" },
-      { style: "canada", titre: "Eastern Canadian Championship", sous: "Softball Canada", annee: "2026", mention: "Champions", categorie: "Est du Canada", embleme: "canada" },
+      { style: "canada", titre: "Eastern Canadian Championship", sous: "Softball Canada", annee: "2026", mention: "Champions", categorie: "Est du Canada", embleme: "sc" },
       { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2026", mention: "Championnes", categorie: "17U" },
       { style: "tournoi", titre: "Fastpitch Nation", sous: "Firecracker on the 4th", annee: "2026", mention: "Championnes", categorie: "16U · 8-2", embleme: "fpn" },
       { style: "tournoi", titre: "Fastpitch Nation", sous: "The Thin Blue Line", annee: "2026", mention: "Championnes", categorie: "14U · 5-2", embleme: "fpn" },
@@ -236,24 +236,52 @@ export const GALERIE: { src: string; alt: string }[] = [
   { src: "/photos/galerie-01.jpg", alt: "Une jeune lanceuse tend une balle de softball vers la caméra" },
 ];
 
-export const PARTENAIRES: { nom: string; src?: string; sports?: Sport[] }[] = [
+/** Bloc « Nos partenaires » (commanditaires et fournisseurs), les mêmes pour les deux sports. Logos plus grands, en couleur. */
+export const PARTENAIRES_LOGOS: { nom: string; src: string }[] = [
+  { nom: "L'Entrepôt du Baseball", src: "/partenaires/n-entrepot-du-baseball.png" },
+  { nom: "Gym L'Armure", src: "/partenaires/n-gym-armure.png" },
+  { nom: "Remorques Dionne", src: "/partenaires/n-remorques-dionne.png" },
+  { nom: "Sébastien Gervais Photo", src: "/partenaires/n-sebastien-gervais-photo.png" },
+  { nom: "Benny & Co.", src: "/partenaires/n-benny.png" },
+];
+
+/** Bloc « Affiliations et circuits » : fédérations, ligues et circuits de tournois. Logos plus petits, en niveaux de gris. */
+export const AFFILIATIONS_LOGOS: { nom: string; src: string; sports?: Sport[] }[] = [
   { nom: "Little League Canada", src: "/partenaires/n-little-league.png" },
+  { nom: "Softball Canada", src: "/partenaires/n-softball-canada.png", sports: ["softball"] },
   { nom: "USA Softball", src: "/partenaires/n-usa-softball.png", sports: ["softball"] },
-  { nom: "Fastpitch Nation", src: "/partenaires/n-fastpitch-nation.png", sports: ["softball"] },
-  { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png", sports: ["softball"] },
   { nom: "Babe Ruth Softball", src: "/partenaires/n-babe-ruth-softball.png", sports: ["softball"] },
+  { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png", sports: ["softball"] },
   { nom: "PGF · Premier Girls Fastpitch", src: "/partenaires/n-pgf.png", sports: ["softball"] },
   { nom: "Triple Crown Fastpitch", src: "/partenaires/n-triple-crown.png", sports: ["softball"] },
-  { nom: "Homerun Softball & Baseball", src: "/partenaires/n-homerun.png", sports: ["softball"] },
   { nom: "NSA Softball", src: "/partenaires/n-nsa.png", sports: ["softball"] },
+  { nom: "Fastpitch Nation", src: "/partenaires/n-fastpitch-nation.png", sports: ["softball"] },
+  { nom: "Homerun Softball & Baseball", src: "/partenaires/n-homerun.png", sports: ["softball"] },
   { nom: "Salt City Sports", src: "/partenaires/n-salt-city.png", sports: ["softball"] },
   { nom: "Accelerate Sports", src: "/partenaires/n-accelerate.png", sports: ["softball"] },
   { nom: "Ligue Fastpitch Junior Majeur du Québec (LFJMQ)", src: "/partenaires/n-lfjmq.png", sports: ["softball"] },
-  { nom: "L'Entrepôt du Baseball", src: "/partenaires/n-entrepot-du-baseball.png" },
-  { nom: "Sébastien Gervais Photo", src: "/partenaires/n-sebastien-gervais-photo.png" },
-  { nom: "Gym L'Armure", src: "/partenaires/n-gym-armure.png" },
-  { nom: "Remorques Dionne", src: "/partenaires/n-remorques-dionne.png" },
+  { nom: "PBR Baseball", src: "/partenaires/n-pbr.png", sports: ["baseball"] },
+  { nom: "Can-Am United", src: "/partenaires/n-canam.png", sports: ["baseball"] },
 ];
+
+/** Affiliations affichées pour un sport. */
+export function affiliationsDe(sport: Sport) {
+  return AFFILIATIONS_LOGOS.filter((l) => !l.sports || l.sports.includes(sport));
+}
+
+/**
+ * Nombre de colonnes d'une grille de logos selon le nombre de logos, pour qu'aucune rangée ne se retrouve avec un logo seul.
+ * Retourne les colonnes pour ordinateur, tablette et téléphone.
+ */
+export function colonnesLogos(n: number, max: { d: number; t: number; m: number }) {
+  const choix = (candidats: number[]) => {
+    for (const k of candidats) if (k <= Math.max(n, 1) && n % k !== 1) return k;
+    return Math.min(n, candidats[candidats.length - 1]) || 1;
+  };
+  const liste = (m: number) => Array.from({ length: m }, (_, i) => m - i);
+  const ord = (m: number, pref: number[]) => [...pref.filter((k) => k <= m), ...liste(m).filter((k) => !pref.includes(k))];
+  return { d: choix(ord(max.d, [6, 7, 5, 4, 3])), t: choix(ord(max.t, [4, 5, 3, 2])), m: choix(ord(max.m, [3, 2])) };
+}
 
 const sansAccent = (n: string) => n.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
 
@@ -392,12 +420,6 @@ export function lienFieldLevel(v: string): string {
   const m = v.trim().match(/^https:\/\/www\.fieldlevel\.com\/app\/organization\/([a-z0-9]{6,12})\/(softball|baseball)\/overview/i);
   return m ? `https://www.fieldlevel.com/app/organization/${m[1]}/${m[2].toLowerCase()}/overview` : "";
 }
-
-/** Partenaires par sport (le baseball n'affiche ni USA Softball ni Fastpitch Nation ; ajoute PBR Baseball). */
-export const PARTENAIRES_PAR_SPORT: Record<Sport, { nom: string; src?: string }[]> = {
-  softball: PARTENAIRES.filter((p) => !p.sports || p.sports.includes("softball")),
-  baseball: [...PARTENAIRES.filter((p) => !p.sports || p.sports.includes("baseball")), { nom: "PBR Baseball", src: "/partenaires/n-pbr.png" }],
-};
 
 /** Page « Centre d'entraînement ». Textes à compléter par la Direction. */
 export const CENTRE = {

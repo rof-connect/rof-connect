@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Entete } from "./Entete";
-import { AFFILIATIONS, CONTENU, SPORTS, type Sport } from "@/lib/site-v2/donnees";
+import { affiliationsDe, CONTENU, SPORTS, type Sport } from "@/lib/site-v2/donnees";
 import { liensUtilitaires } from "@/lib/site-v2/menu";
 
 /** Cadre commun du site public : barre utilitaire, en-tête, pied de page et symboles SVG. */
@@ -89,7 +89,13 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
           </div>
           <div className="bottom">
             <span>© 2026 Royal On Field</span>
-            <span>Affiliations : {AFFILIATIONS[sport].join(" · ")}</span>
+            <ul className="footer-affil" aria-label="Affiliations">
+              {affiliationsDe(sport).map((l) => (
+                <li key={l.nom}>
+                  <Image src={l.src} alt={l.nom} width={72} height={36} loading="lazy" />
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </footer>

@@ -4,7 +4,7 @@ import { Cadre } from "@/components/site-v2/Cadre";
 import { Bannieres } from "@/components/site-v2/Bannieres";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
-import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, PARTENAIRES_PAR_SPORT, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
+import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, PARTENAIRES_LOGOS, affiliationsDe, colonnesLogos, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
 
@@ -404,7 +404,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           </div>
         </section>
 
-        {/* PARTENAIRES */}
+        {/* PARTENAIRES ET AFFILIATIONS */}
         <section className="block" id="partenaires" style={{ paddingTop: 0 }}>
           <div className="wrap">
             <div className="head">
@@ -412,21 +412,37 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                 Nos <em>partenaires</em>
               </h2>
             </div>
-            <div className="partners">
-              {PARTENAIRES_PAR_SPORT[sport].map((p) =>
-                p.src ? (
-                  <div className="logo" key={p.nom}>
-                    <Image src={p.src} alt={p.nom} fill loading="lazy" sizes="(max-width: 600px) 50vw, 200px" />
-                  </div>
-                ) : (
-                  <div key={p.nom}>{p.nom}</div>
-                ),
-              )}
-            </div>
+            <GrilleLogos
+              classe="logos-partenaires"
+              logos={PARTENAIRES_LOGOS}
+              cols={colonnesLogos(PARTENAIRES_LOGOS.length, { d: 5, t: 3, m: 3 })}
+            />
+            <h3 className="logos-sous-titre">
+              Affiliations <em>et circuits</em>
+            </h3>
+            <GrilleLogos
+              classe="logos-affiliations"
+              logos={affiliationsDe(sport)}
+              cols={colonnesLogos(affiliationsDe(sport).length, { d: 7, t: 5, m: 3 })}
+            />
           </div>
         </section>
 
       <ReseauxSociaux sport={sport} />
     </Cadre>
+  );
+}
+
+/** Grille de logos centrée : le nombre de colonnes est choisi pour qu'aucun logo ne reste seul sur sa ligne. */
+function GrilleLogos({ classe, logos, cols }: { classe: string; logos: { nom: string; src: string }[]; cols: { d: number; t: number; m: number } }) {
+  const style = { "--cd": cols.d, "--ct": cols.t, "--cm": cols.m } as React.CSSProperties;
+  return (
+    <ul className={`logos-grille ${classe}`} style={style} data-reste-m={logos.length % cols.m}>
+      {logos.map((l) => (
+        <li key={l.nom}>
+          <Image src={l.src} alt={l.nom} fill loading="lazy" sizes="(max-width: 600px) 33vw, 220px" />
+        </li>
+      ))}
+    </ul>
   );
 }
