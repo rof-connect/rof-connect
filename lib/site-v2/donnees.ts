@@ -357,11 +357,10 @@ export const GALERIES: Record<Sport, { src: string; alt: string }[]> = {
  */
 export const ROSTER_PROVISOIRE = ["18U Di Peco"];
 
-/** Étiquettes de niveau de compétition par équipe (softball : NATIONAL = Varsity, SCOUT TEAM = JV, PROSPECT TEAM). Sert seulement tant que la migration 0009 n'est pas appliquée. */
+/** Étiquettes de niveau de compétition par équipe (softball : NATIONAL = Varsity, SCOUT TEAM = JV ; aucune étiquette sinon). Sert seulement tant que la migration 0009 n'est pas appliquée. */
 export const NIVEAU_COMPETITION_PROVISOIRE: Record<string, string> = {
   "18U Di Peco": "NATIONAL",
   "16U Bertrand": "SCOUT TEAM",
-  "16U Dostaler": "PROSPECT TEAM",
 };
 
 /** Ordre d'affichage par défaut des équipes (quand la Direction n'a pas saisi d'ordre). */

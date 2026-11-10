@@ -11,7 +11,7 @@ export type EquipePublique = {
   description: string;
   nb: number | null; // nombre de joueuses/joueurs, calculé depuis ROF Connect
   vedette: boolean;
-  categorie: string; // niveau de compétition (softball : NATIONAL, SCOUT TEAM, PROSPECT TEAM), vide si aucun
+  categorie: string; // niveau de compétition (softball : NATIONAL, SCOUT TEAM), vide si aucun
   matchs: boolean; // calendrier GameChanger disponible (widget ou lien)
   gamechanger: string; // identifiant du widget calendrier GameChanger (vide = aucun)
   gamechangerLien: string; // lien de la page de l'équipe sur GameChanger (vide = aucun)
