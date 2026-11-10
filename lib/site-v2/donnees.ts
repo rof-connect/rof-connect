@@ -16,7 +16,7 @@ export type Banniere = {
   annee: string;
   mention: string; // ex. « Champions »
   categorie: string; // ex. « 12U »
-  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa" | "pbr" | "otw" | "canam" | "sandlot" | "sc"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
+  embleme?: "canada" | "ll" | "tc" | "fpn" | "homerun" | "nsa" | "pbr" | "otw" | "canam" | "sandlot" | "sc" | "sq"; // drapeau du Canada (titre canadien) ou logo Little League (World Series)
 };
 export type Engagee = { who: string; s: string; m: string; c: string; photo?: string };
 
@@ -97,18 +97,18 @@ export const CONTENU: Record<Sport, Contenu> = {
       { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2026", mention: "Championnes", categorie: "12U · 14U · 16U", embleme: "canada" },
       { style: "canada", titre: "World Series", sous: "Softball", annee: "2026", mention: "Participation", categorie: "12U · 14U · 16U", embleme: "ll" },
       { style: "canada", titre: "Eastern Canadian Championship", sous: "Softball Canada", annee: "2026", mention: "Champions", categorie: "Est du Canada", embleme: "sc" },
-      { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2026", mention: "Championnes", categorie: "17U" },
+      { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2026", mention: "Championnes", categorie: "17U", embleme: "sq" },
       { style: "tournoi", titre: "Fastpitch Nation", sous: "Firecracker on the 4th", annee: "2026", mention: "Championnes", categorie: "16U · 8-2", embleme: "fpn" },
       { style: "tournoi", titre: "Fastpitch Nation", sous: "The Thin Blue Line", annee: "2026", mention: "Championnes", categorie: "14U · 5-2", embleme: "fpn" },
       { style: "tournoi", titre: "Homerun Softball", sous: "Binghamton", annee: "2026", mention: "Championnes", categorie: "14U · 16U", embleme: "homerun" },
       { style: "tournoi", titre: "NSA", sous: "Lakeland, Floride", annee: "2026", mention: "Championnes", categorie: "14U · 16U", embleme: "nsa" },
       { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2025", mention: "Championnes", categorie: "12U · 14U · 16U", embleme: "canada" },
       { style: "canada", titre: "World Series", sous: "Softball", annee: "2025", mention: "Participation", categorie: "12U · 14U · 16U", embleme: "ll" },
-      { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2025", mention: "Championnes", categorie: "15U" },
+      { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2025", mention: "Championnes", categorie: "15U", embleme: "sq" },
       { style: "tournoi", titre: "Triple Crown", sous: "Binghamton", annee: "2025", mention: "Championnes", categorie: "Binghamton", embleme: "tc" },
       { style: "canada", titre: "Champion canadien", sous: "Softball", annee: "2024", mention: "Championnes", categorie: "12U · 14U", embleme: "canada" },
       { style: "canada", titre: "World Series", sous: "Softball", annee: "2024", mention: "Participation", categorie: "12U · 14U", embleme: "ll" },
-      { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2024", mention: "Championnes", categorie: "15U" },
+      { style: "provincial", titre: "Champion provincial", sous: "Softball Québec", annee: "2024", mention: "Championnes", categorie: "15U", embleme: "sq" },
     ],
     palmares: [
       {
@@ -249,6 +249,7 @@ export const PARTENAIRES_LOGOS: { nom: string; src: string }[] = [
 export const AFFILIATIONS_LOGOS: { nom: string; src: string; sports?: Sport[] }[] = [
   { nom: "Little League Canada", src: "/partenaires/n-little-league.png" },
   { nom: "Softball Canada", src: "/partenaires/n-softball-canada.png", sports: ["softball"] },
+  { nom: "Softball Québec", src: "/partenaires/n-softball-quebec.png", sports: ["softball"] },
   { nom: "USA Softball", src: "/partenaires/n-usa-softball.png", sports: ["softball"] },
   { nom: "Babe Ruth Softball", src: "/partenaires/n-babe-ruth-softball.png", sports: ["softball"] },
   { nom: "Alliance Fastpitch", src: "/partenaires/n-alliance-fastpitch.png", sports: ["softball"] },
@@ -276,10 +277,10 @@ export function affiliationsDe(sport: Sport) {
 export function colonnesLogos(n: number, max: { d: number; t: number; m: number }) {
   const choix = (candidats: number[]) => {
     for (const k of candidats) if (k <= Math.max(n, 1) && n % k !== 1) return k;
-    return Math.min(n, candidats[candidats.length - 1]) || 1;
+    return candidats[0] ?? 1; // aucune division sans reste de 1 : le CSS répartit alors les 4 derniers logos en 2 rangées
   };
   const liste = (m: number) => Array.from({ length: m }, (_, i) => m - i);
-  const ord = (m: number, pref: number[]) => [...pref.filter((k) => k <= m), ...liste(m).filter((k) => !pref.includes(k))];
+  const ord = (m: number, pref: number[]) => [...pref.filter((k) => k <= m), ...liste(m).filter((k) => k > 1 && !pref.includes(k))];
   return { d: choix(ord(max.d, [6, 7, 5, 4, 3])), t: choix(ord(max.t, [4, 5, 3, 2])), m: choix(ord(max.m, [3, 2])) };
 }
 
