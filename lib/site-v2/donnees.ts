@@ -156,7 +156,7 @@ export const CONTENU: Record<Sport, Contenu> = {
       "Le programme élite de baseball de Lanaudière. Du 8U au Prep School, bâti sur le même standard Royal : travail, caractère, excellence.",
     saison: "Saison 2027",
     noteCalendrier: "Calendrier en préparation",
-    engagementsSous: "Les prochains noms.",
+    engagementsSous: "Ils ont signé.",
     lead: "Le même parcours Royal, adapté au baseball : développement, exposition et accompagnement vers les programmes collégiaux américains.",
     etapes: [
       { n: "01", t: "PSES", d: "5e et 6e année — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
@@ -221,7 +221,10 @@ export const CONTENU: Record<Sport, Contenu> = {
       { y: "2024", l: ["Champion 2024 Can-Am United League 12U"] },
       { y: "2023", l: ["Champion 2023 Can-Am United League 12U", "Champions Cornwall Invitational All-Star Tournament — 8U"] },
     ],
-    engagees: [],
+    engagees: [
+      { who: "Xavier Bellande", s: "Cégep de Drummondville", m: "Voltigeurs · Baseball", c: "2024", photo: "/photos/committed-xavier-bellande.jpg" },
+      { who: "Guillaume Doucet", s: "Cégep de Drummondville", m: "Voltigeurs · Baseball", c: "2024", photo: "/photos/committed-guillaume-doucet.jpg" },
+    ],
     videCalendrier: "Les tournois et showcases du programme baseball seront publiés ici dès qu'ils seront confirmés.",
     videPalmares: "Le palmarès du programme baseball sera ajouté ici.",
     videEngagements: "Les premiers engagements universitaires du programme baseball seront célébrés ici.",

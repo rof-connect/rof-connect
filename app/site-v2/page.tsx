@@ -30,7 +30,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
   // Pas de nombre de joueuses dans la bande ; le baseball ajoute seulement le nombre d'équipes.
   if (sport === "baseball" && equipes.length > 0) stats.unshift([String(equipes.length), "Équipes"]);
   const qEquipes = equipes.length ? `${equipes.length} équipe${equipes.length > 1 ? "s" : ""} · ${NIVEAUX[sport]}` : NIVEAUX[sport];
-  const qEngagees = c.engagees.length ? `${c.engagees.length} athlètes signées` : "Les premiers à venir";
+  const qEngagees = c.engagees.length ? `${c.engagees.length} athlètes ${sport === "baseball" ? "engagés" : "signées"}` : "Les premiers à venir";
 
   return (
     <Cadre sport={sport} accueil provisoire={source === "provisoire"}>
@@ -327,7 +327,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                   <figure className="commit-photo" key={e.who}>
                     <div className="commit-visuel">
                       {e.photo ? (
-                        <Image src={e.photo} alt={`${e.who}, engagée avec ${e.s}`} fill loading="lazy" sizes="(min-width: 1000px) 400px, 90vw" />
+                        <Image src={e.photo} alt={`${e.who}, engagement avec ${e.s}`} fill loading="lazy" sizes="(min-width: 1000px) 400px, 90vw" />
                       ) : (
                         <svg aria-hidden>
                           <use href="#diamondArt" />
