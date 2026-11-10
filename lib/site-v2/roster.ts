@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
+import { chargerGroupes } from "@/lib/groupes";
 import { presentationsActives, toutesPresentations } from "@/lib/presentation";
 import { urlPhotoProfil } from "@/lib/photo-profil";
 import { chargerNumeros } from "@/lib/numeros-chandail";
@@ -70,6 +71,7 @@ export type RosterEquipe = {
  */
 export async function chargerRoster(teamId: string, apercu = false): Promise<RosterEquipe | null> {
   if (!/^[0-9a-f-]{36}$/i.test(teamId)) return null;
+  if ((await chargerGroupes()).has(teamId)) return null; // un groupe interne n'a pas de page publique
   const admin = createAdminClient();
 
   type Ligne = {

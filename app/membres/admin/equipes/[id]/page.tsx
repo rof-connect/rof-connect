@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { archiverEquipe, desarchiverEquipe, modifierEquipe } from "../actions";
 import { ajouterAEquipe, changerStatut, retirerDeEquipe } from "../../joueurs/actions";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
+import { chargerGroupes } from "@/lib/groupes";
 
 const LABEL_OPTION: Record<string, string> = {
   ete: "Été",
@@ -67,6 +68,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
     ? (complet.data as EquipeFiche | null)
     : ((await supabase.from("teams").select("id, name, sport, season_year, option, archived").eq("id", id).maybeSingle()).data as EquipeFiche | null);
   if (!equipe) notFound();
+  const estGroupe = (await chargerGroupes()).has(id);
 
   const { data: membres } = await supabase
     .from("team_members")
@@ -94,7 +96,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
         <Link href="/membres/admin" className="text-sm text-rof-poudre underline">
           ← Direction
         </Link>
-        <p className="mt-3 font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Équipe</p>
+        <p className="mt-3 font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">{estGroupe ? "Groupe" : "Équipe"}</p>
         <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">{equipe.name}</h1>
         <p className="text-sm text-rof-gris">
           {equipe.sport} · saison {equipe.season_year}
@@ -127,7 +129,11 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
             </select>
           </div>
         </div>
-        {migre ? (
+        {estGroupe ? (
+          <p className="rounded-lg border border-dashed border-rof-ligne p-3 text-xs text-rof-gris">
+            Groupe interne : jamais affiché sur le site public ni dans les effectifs. Ajoute les membres plus bas ; ils reçoivent l&apos;agenda, les messages et les documents du groupe.
+          </p>
+        ) : migre ? (
           <fieldset className="flex flex-col gap-3 rounded-lg border border-rof-ligne p-3">
             <legend className="px-1 font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">Site public</legend>
             <input type="hidden" name="champs_publics" value="1" />

@@ -2,6 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { comparerEquipes } from "@/lib/equipes";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
+import { chargerGroupes } from "@/lib/groupes";
 import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { NIVEAU_COMPETITION_PROVISOIRE, ORDRE_PUBLIC, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
@@ -42,6 +43,7 @@ export function nomAffiche(t: { name: string; nom_public?: string | null }) {
 /** Équipes visibles sur le site public, décidées par la Direction dans ROF Connect. */
 export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEquipes> {
   const admin = createAdminClient();
+  const groupes = await chargerGroupes(); // les groupes internes ne sont jamais publics
   const { data, error } = await admin
     .from("teams")
     .select("id, name, sport, nom_public, description_publique, ordre_affichage, roster_public, gamechanger_widget_id, gamechanger_url, niveau_competition")
@@ -52,11 +54,11 @@ export async function chargerEquipesPubliques(sport: Sport): Promise<ResultatEqu
   if (error) {
     // Migration 0009 pas encore appliquée : toutes les équipes actives de ROF Connect (provisoire).
     const { data: actives } = await admin.from("teams").select("id, name, sport").eq("sport", sport).eq("archived", false);
-    const e = await enrichir((actives ?? []).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null, roster_public: true })), admin);
+    const e = await enrichir((actives ?? []).filter((t) => !groupes.has(t.id)).map((t) => ({ ...t, nom_public: null, description_publique: null, ordre_affichage: null, roster_public: true })), admin);
     return { source: "provisoire", equipes: e.equipes, joueuses: e.joueuses };
   }
 
-  const e = await enrichir(data ?? [], admin);
+  const e = await enrichir((data ?? []).filter((t) => !groupes.has(t.id)), admin);
   return { source: "bd", equipes: e.equipes, joueuses: e.joueuses };
 }
 

@@ -7,6 +7,7 @@ import { chargerStatutsJoueuses, statutEffectif, statutSelonNaissance } from "@/
 import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
 import { chargerConnexions, ilYa } from "@/lib/dernieres-connexions";
 import { sportAdmin } from "@/lib/sport-admin";
+import { chargerGroupes } from "@/lib/groupes";
 import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 
 const STATUTS = [
@@ -36,7 +37,8 @@ export default async function DirectionPage() {
 
   const { data: teamsBrut } = await supabase.from("teams").select("id, name, sport, archived").eq("archived", false);
   const sportFiltre = await sportAdmin();
-  const teams = trierEquipes(teamsBrut).filter((t) => !sportFiltre || t.sport === sportFiltre);
+  const groupes = await chargerGroupes(); // les groupes ne comptent ni dans les effectifs ni dans le pipeline
+  const teams = trierEquipes(teamsBrut).filter((t) => !groupes.has(t.id) && (!sportFiltre || t.sport === sportFiltre));
   const archivees = await chargerArchivees();
   const { data: membresBrut } = await supabase
     .from("team_members")
@@ -44,7 +46,7 @@ export default async function DirectionPage() {
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
   const sportDeMembre = (m: { teams?: unknown }) => (Array.isArray(m.teams) ? (m.teams[0] as { sport?: string } | undefined) : (m.teams as { sport?: string } | null | undefined))?.sport;
-  const membresTousSports = (membresBrut ?? []).filter((m) => !archivees.has(m.profile_id));
+  const membresTousSports = (membresBrut ?? []).filter((m) => !archivees.has(m.profile_id) && !groupes.has(m.team_id));
   const membres = membresTousSports.filter((m) => !sportFiltre || sportDeMembre(m) === sportFiltre);
   const idsAvecEquipe = new Set(membresTousSports.map((m) => m.profile_id));
   const idsDuSport = new Set(membres.map((m) => m.profile_id));

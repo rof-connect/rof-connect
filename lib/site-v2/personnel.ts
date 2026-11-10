@@ -1,5 +1,6 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { chargerGroupes } from "@/lib/groupes";
 import type { Sport } from "./donnees";
 
 export type Entraineur = { nom: string; equipes: string[] };
@@ -35,19 +36,20 @@ export async function chargerEntraineurs(sport: Sport): Promise<Entraineur[]> {
   const admin = createAdminClient();
   const { data: profils } = await admin.from("profiles").select("id, full_name").eq("role", "coach");
   const ids = (profils ?? []).map((p) => p.id);
+  const groupes = await chargerGroupes();
   const resultat: Entraineur[] = [];
 
   if (ids.length) {
     const { data: liens } = await admin
       .from("team_members")
-      .select("profile_id, teams (name, sport, archived)")
+      .select("profile_id, team_id, teams (name, sport, archived)")
       .eq("role_in_team", "coach")
       .in("profile_id", ids);
 
     const parPersonne = new Map<string, { sport: string; nom: string }[]>();
     (liens ?? []).forEach((l) => {
       const t = Array.isArray(l.teams) ? l.teams[0] : l.teams;
-      if (!t || t.archived) return;
+      if (!t || t.archived || groupes.has((l as { team_id: string }).team_id)) return;
       parPersonne.set(l.profile_id, [...(parPersonne.get(l.profile_id) ?? []), { sport: t.sport, nom: t.name }]);
     });
 

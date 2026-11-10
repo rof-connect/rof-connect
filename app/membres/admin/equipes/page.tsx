@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { creerEquipe, archiverEquipe, desarchiverEquipe } from "./actions";
+import { creerEquipe, creerGroupe, archiverEquipe, desarchiverEquipe } from "./actions";
+import { chargerGroupes } from "@/lib/groupes";
 import { sportAdmin } from "@/lib/sport-admin";
 import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 
@@ -36,9 +37,12 @@ export default async function GestionEquipesPage({
     .from("teams")
     .select("id, name, sport, season_year, option, archived")
     .eq("archived", voirArchives);
-  const teams = trierEquipes(teamsBrut);
+  const groupes = await chargerGroupes();
+  const tousLesTeams = trierEquipes(teamsBrut);
+  const teams = tousLesTeams.filter((t) => !groupes.has(t.id));
+  const groupesListe = tousLesTeams.filter((t) => groupes.has(t.id));
 
-  const teamIds = (teams ?? []).map((t) => t.id);
+  const teamIds = tousLesTeams.map((t) => t.id);
   const { data: joueuses } = await supabase
     .from("team_members")
     .select("team_id, profiles (full_name)")
@@ -58,6 +62,7 @@ export default async function GestionEquipesPage({
     baseball: sportFiltre === "softball" ? [] : (teams ?? []).filter((t) => t.sport === "baseball"),
     softball: sportFiltre === "baseball" ? [] : (teams ?? []).filter((t) => t.sport === "softball"),
   };
+  const groupesVisibles = groupesListe.filter((g) => !sportFiltre || g.sport === sportFiltre);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-5 py-10">
@@ -113,6 +118,30 @@ export default async function GestionEquipesPage({
             Créer l&apos;équipe
           </button>
         </form>
+      )}
+
+      {!voirArchives && (
+        <details className="mt-4 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
+          <summary className="cursor-pointer font-condensed text-sm font-bold uppercase tracking-wide text-rof-poudre">Créer un groupe (non affiché comme équipe)</summary>
+          <p className="mt-2 text-xs text-rof-gris">
+            Un groupe sert aux entraînements, à la communication ou aux événements spéciaux : il a ses membres, son agenda, ses messages et ses documents, mais il n&apos;apparaît jamais sur le site public ni dans les effectifs.
+          </p>
+          <form action={creerGroupe} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
+            <input type="hidden" name="org_id" value={org?.id ?? ""} />
+            <div>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Nom du groupe</p>
+              <input name="name" required maxLength={80} placeholder="Ex. : Lanceuses softball, Camp de printemps" className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte" />
+            </div>
+            <div>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris">Sport</p>
+              <select name="sport" required defaultValue={sportFiltre || "softball"} className="w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-rof-texte">
+                <option value="baseball">Baseball</option>
+                <option value="softball">Softball</option>
+              </select>
+            </div>
+            <button type="submit" className="rounded-lg bg-rof-or px-4 py-2 text-sm font-bold uppercase tracking-wide text-white">Créer le groupe</button>
+          </form>
+        </details>
       )}
 
       <div className="mt-6 flex items-center justify-between">
@@ -183,7 +212,42 @@ export default async function GestionEquipesPage({
             </div>
           ) : null,
         )}
-        {(teams ?? []).length === 0 && (
+        {groupesVisibles.length > 0 && (
+          <div>
+            <h3 className="mb-2 font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-poudre">Groupes (non affichés comme équipes)</h3>
+            <div className="flex flex-col gap-2">
+              {groupesVisibles.map((t) => {
+                const liste = joueusesParEquipe.get(t.id) ?? [];
+                return (
+                  <div key={t.id} className="rounded-xl border border-dashed border-rof-ligne bg-rof-blanc p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Link href={`/membres/admin/equipes/${t.id}`} className="font-condensed text-lg font-semibold uppercase text-rof-texte underline decoration-rof-or">
+                          {t.name}
+                        </Link>
+                        <p className="text-sm text-rof-gris">
+                          groupe · {t.sport === "baseball" ? "baseball" : "softball"} · {liste.length} joueuse{liste.length > 1 ? "s" : ""}
+                        </p>
+                      </div>
+                      {voirArchives ? (
+                        <form action={desarchiverEquipe}>
+                          <input type="hidden" name="team_id" value={t.id} />
+                          <button type="submit" className="text-sm text-rof-poudre underline">Désarchiver</button>
+                        </form>
+                      ) : (
+                        <form action={archiverEquipe}>
+                          <input type="hidden" name="team_id" value={t.id} />
+                          <button type="submit" className="text-sm text-rof-gris underline">Archiver</button>
+                        </form>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        {(teams ?? []).length === 0 && groupesVisibles.length === 0 && (
           <p className="text-sm text-rof-gris">
             {voirArchives ? "Aucune équipe archivée." : "Aucune équipe active."}
           </p>

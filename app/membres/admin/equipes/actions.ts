@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { idGameChanger, lienGameChanger } from "@/lib/site-v2/donnees";
+import { definirGroupe } from "@/lib/groupes";
 
 export async function creerEquipe(formData: FormData) {
   const orgId = String(formData.get("org_id") ?? "");
@@ -21,6 +22,36 @@ export async function creerEquipe(formData: FormData) {
     .single();
 
   if (equipe) {
+    const { data: direction } = await supabase.from("profiles").select("id").eq("role", "admin");
+    if (direction && direction.length > 0) {
+      await supabase.from("team_members").insert(
+        direction.map((d) => ({ team_id: equipe.id, profile_id: d.id, role_in_team: "coach" as const, status_id: 8 })),
+      );
+    }
+  }
+
+  revalidatePath("/membres/admin/equipes");
+}
+
+/**
+ * Crée un groupe : une équipe interne (entraînement, communication, événement spécial…) qui n'apparaît jamais sur le site public
+ * ni dans les effectifs. Elle a ses membres, son agenda, ses messages et ses documents comme une équipe.
+ */
+export async function creerGroupe(formData: FormData) {
+  const orgId = String(formData.get("org_id") ?? "");
+  const name = String(formData.get("name") ?? "").trim().slice(0, 80);
+  const sport = String(formData.get("sport") ?? "");
+  if (!orgId || !name || (sport !== "baseball" && sport !== "softball")) return;
+
+  const supabase = await createClient();
+  const { data: equipe } = await supabase
+    .from("teams")
+    .insert({ org_id: orgId, name, sport, season_year: new Date().getFullYear() })
+    .select("id")
+    .single();
+
+  if (equipe) {
+    await definirGroupe(equipe.id, true);
     const { data: direction } = await supabase.from("profiles").select("id").eq("role", "admin");
     if (direction && direction.length > 0) {
       await supabase.from("team_members").insert(

@@ -9,6 +9,7 @@ import { changerNumeroJoueuse, changerInfosRoster } from "@/app/membres/admin/jo
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
 import { sportAdmin } from "@/lib/sport-admin";
+import { chargerGroupes } from "@/lib/groupes";
 import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 import { toutesPresentations } from "@/lib/presentation";
 import { FormPhotoJoueuse } from "@/components/membres/FormPhotoJoueuse";
@@ -62,13 +63,16 @@ export default async function JoueursPage({
   if (profile?.role !== "admin") redirect("/membres");
 
   const { data: teamsBrut } = await supabase.from("teams").select("id, name").eq("archived", false);
-  const teams = trierEquipes(teamsBrut);
+  const groupes = await chargerGroupes(); // les groupes se gèrent dans leur propre page (Équipes) : ils ne comptent pas dans les équipes d'une joueuse
+  const teams = trierEquipes(teamsBrut).filter((t) => !groupes.has(t.id));
 
-  const { data: memberships } = await supabase
+  const { data: membershipsBrut } = await supabase
     .from("team_members")
     .select("id, team_id, profile_id, status_id, profiles (full_name, email), teams!inner (name, sport)")
     .eq("role_in_team", "athlete")
     .eq("teams.archived", false);
+
+  const memberships = (membershipsBrut ?? []).filter((m) => !groupes.has(m.team_id));
 
   // Toutes les joueuses inscrites à la plateforme, avec ou sans équipe.
   const { data: tousProfils } = await supabase.from("profiles").select("id, full_name, email").eq("role", "member");
