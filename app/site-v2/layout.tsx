@@ -8,7 +8,6 @@ const bebas = Bebas_Neue({ variable: "--font-bebas", subsets: ["latin"], weight:
 export const metadata: Metadata = {
   title: { absolute: "Royal On Field — Athletics" },
   description: "Programme élite de baseball et softball de Lanaudière. Équipes, calendrier, recrutement et engagements universitaires.",
-  robots: { index: false, follow: false }, // aperçu : à retirer lors de la mise en ligne
 };
 
 export default function SiteV2Layout({ children }: { children: React.ReactNode }) {
