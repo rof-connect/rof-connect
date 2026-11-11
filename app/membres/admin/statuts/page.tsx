@@ -32,7 +32,7 @@ export default async function RecalculStatutsPage() {
         <h1 className="mt-2 font-condensed text-3xl font-bold uppercase text-rof-texte">Recalculer les statuts</h1>
         <p className="mt-1 text-sm text-rof-gris">
           Baseball : charte Little League, âge au <strong className="text-rof-texte">{refBaseball}</strong>. Softball : charte USA Softball, âge au{" "}
-          <strong className="text-rof-texte">{refSoftball}</strong>, statut = division (15 ou 16 ans = 16U). Les prospects ne sont pas touchés : ils restent
+          <strong className="text-rof-texte">{refSoftball}</strong>, statut = son âge (15 ans = 15U). Les prospects ne sont pas touchés : ils restent
           à accepter un par un.
         </p>
       </div>

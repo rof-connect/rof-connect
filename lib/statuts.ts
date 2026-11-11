@@ -77,7 +77,7 @@ export type SportAge = "softball" | "baseball";
 /**
  * Date à laquelle l'âge est calculé, selon la charte d'âge du sport (saison 2027) :
  * - baseball : charte Little League 2027, âge au 31 août 2027 (année du printemps) ;
- * - softball : charte USA Softball 2027, âge au 31 août 2026 (veille du début de la saison, le 1er septembre 2026).
+ * - softball : charte USA Softball 2027, âge au 31 août 2026 (veille du début de la saison, le 1er septembre 2026), selon la colonne « Age » du tableau.
  * Chaque année, la date se déplace d'un an d'elle-même (le 1er septembre).
  */
 export function dateReferenceAge(now = new Date(), sport: SportAge = "baseball") {
@@ -88,7 +88,7 @@ export function dateReferenceAge(now = new Date(), sport: SportAge = "baseball")
 /**
  * Statut selon la charte d'âge du sport.
  * - Baseball (Little League) : le statut est l'âge (12 ans = 12U), entre 9U et 18U.
- * - Softball (USA Softball) : le statut est la division, c'est-à-dire l'âge arrondi au nombre pair (15 ou 16 ans = 16U), entre 9U et 18U.
+ * - Softball (USA Softball) : le statut est aussi l'âge selon le tableau (colonne « Age » : 15 ans = 15U), entre 9U et 18U. Ce n'est pas la division paire, pour mieux former les cohortes.
  * null si la date de naissance est invalide.
  */
 export function statutSelonNaissance(
@@ -104,8 +104,7 @@ export function statutSelonNaissance(
   let age = ref.getFullYear() - Number(m[1]);
   if (Number(m[2]) > moisRef || (Number(m[2]) === moisRef && Number(m[3]) > jourRef)) age--;
   if (age < 5 || age > 60) return null; // en dessous de 5 ans : date de naissance probablement erronée
-  const division = sport === "softball" ? Math.ceil(age / 2) * 2 : age;
-  const borne = Math.min(18, Math.max(9, division));
+  const borne = Math.min(18, Math.max(9, age));
   const statut = STATUTS.find((s) => s.nom === `${borne}U`);
   return statut ? { id: statut.id, nom: statut.nom, age, ref, charte: sport === "softball" ? "USA Softball" : "Little League" } : null;
 }
