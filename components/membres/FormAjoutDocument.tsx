@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { ajouterDocument, ajouterDocumentGeneral } from "@/app/membres/documents/actions";
+import { bouton } from "@/components/ui/boutons";
 
 const TAILLE_MAX_PDF = 20 * 1024 * 1024;
 
@@ -50,7 +51,7 @@ export function FormAjoutDocument({
     return (
       <button
         onClick={() => setOuvert(true)}
-        className="w-fit rounded-lg border border-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-or"
+        className={bouton("secondaire", "md")}
       >
         + Ajouter un document
       </button>
@@ -154,14 +155,14 @@ export function FormAjoutDocument({
         <button
           type="submit"
           disabled={enCours}
-          className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white disabled:opacity-50"
+          className={bouton("primaire", "md")}
         >
           {enCours ? "Envoi…" : "Publier"}
         </button>
         <button
           type="button"
           onClick={() => setOuvert(false)}
-          className="rounded-lg border border-rof-ligne px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-gris"
+          className={bouton("neutre", "md")}
         >
           Annuler
         </button>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ajouterEvenement } from "@/app/membres/agenda/actions";
+import { bouton } from "@/components/ui/boutons";
 
 export function FormAjoutEvenement({ teamId }: { teamId: string }) {
   const [ouvert, setOuvert] = useState(false);
@@ -10,7 +11,7 @@ export function FormAjoutEvenement({ teamId }: { teamId: string }) {
     return (
       <button
         onClick={() => setOuvert(true)}
-        className="w-fit rounded-lg border border-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-or"
+        className={bouton("secondaire", "md")}
       >
         + Ajouter un événement
       </button>
@@ -66,13 +67,13 @@ export function FormAjoutEvenement({ teamId }: { teamId: string }) {
       </div>
 
       <div className="mt-1 flex gap-2">
-        <button type="submit" className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
+        <button type="submit" className={bouton("primaire", "md")}>
           Publier
         </button>
         <button
           type="button"
           onClick={() => setOuvert(false)}
-          className="rounded-lg border border-rof-ligne px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-gris"
+          className={bouton("neutre", "md")}
         >
           Annuler
         </button>

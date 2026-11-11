@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { ajouterJoueuse } from "@/app/membres/famille/actions";
+import { bouton } from "@/components/ui/boutons";
 
 const initial = { ok: false, erreur: null as string | null };
 
@@ -29,7 +30,7 @@ export function FormAjouterJoueuse({ libelles }: { libelles: { titre: string; no
         <button
           type="submit"
           disabled={enCours}
-          className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white disabled:opacity-50"
+          className={bouton("primaire", "md")}
         >
           {libelles.bouton}
         </button>

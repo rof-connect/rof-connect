@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { majImageSondage } from "@/app/membres/admin/sondages/actions";
 import { compresserImage } from "@/lib/compress-image";
+import { bouton } from "@/components/ui/boutons";
 
 export function FormImageSondage({ pollId, imageUrl }: { pollId: string; imageUrl: string | null }) {
   const [enCours, startTransition] = useTransition();
@@ -43,7 +44,7 @@ export function FormImageSondage({ pollId, imageUrl }: { pollId: string; imageUr
         className="text-xs text-rof-gris file:mr-3 file:rounded-lg file:border-0 file:bg-rof-blanc file:px-3 file:py-1 file:text-rof-texte"
       />
       <div className="flex items-center gap-3">
-        <button type="submit" disabled={enCours} className="text-sm text-rof-poudre underline disabled:opacity-50">
+        <button type="submit" disabled={enCours} className={bouton("secondaire")}>
           {enCours ? "Envoi…" : "Enregistrer l'image"}
         </button>
         {message && <span className="text-xs text-rof-gazon">{message}</span>}

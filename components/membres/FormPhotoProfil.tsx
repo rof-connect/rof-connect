@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { changerMaPhoto, retirerMaPhoto } from "@/app/membres/moi/actions";
 import { compresserImage } from "@/lib/compress-image";
+import { bouton } from "@/components/ui/boutons";
 
 export function FormPhotoProfil({
   aPhoto,
@@ -34,11 +35,11 @@ export function FormPhotoProfil({
   return (
     <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
       <input ref={champ} type="file" accept="image/*" onChange={onChoisi} className="hidden" />
-      <button type="button" disabled={enCours} onClick={() => champ.current?.click()} className="text-rof-poudre underline disabled:opacity-50">
+      <button type="button" disabled={enCours} onClick={() => champ.current?.click()} className={bouton("secondaire")}>
         {aPhoto ? libelles.changer : libelles.ajouter}
       </button>
       {aPhoto && (
-        <button type="button" disabled={enCours} onClick={() => startTransition(() => retirerMaPhoto())} className="text-rof-rouge underline disabled:opacity-50">
+        <button type="button" disabled={enCours} onClick={() => startTransition(() => retirerMaPhoto())} className={bouton("danger")}>
           {libelles.retirer}
         </button>
       )}

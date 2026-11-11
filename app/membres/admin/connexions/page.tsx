@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { chargerConnexions, ilYa } from "@/lib/dernieres-connexions";
+import { bouton } from "@/components/ui/boutons";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,7 @@ export default async function ConnexionsPage({ searchParams }: { searchParams: P
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-5 py-10">
       <div>
-        <Link href="/membres/admin" className="text-sm text-rof-poudre underline">
+        <Link href="/membres/admin" className={bouton("secondaire")}>
           ← Direction
         </Link>
         <h1 className="mt-3 font-condensed text-3xl font-bold uppercase text-rof-texte">Dernières connexions</h1>

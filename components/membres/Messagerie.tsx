@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { envoyerMessage } from "@/app/membres/messages/actions";
+import { bouton } from "@/components/ui/boutons";
 
 type Message = {
   id: string;
@@ -191,7 +192,7 @@ export function Messagerie({
         <button
           onClick={envoyer}
           disabled={envoi || !texte.trim() || (canal === "private" && estStaff && !cible)}
-          className="rounded-xl bg-rof-or px-5 py-3 font-condensed text-base font-bold uppercase tracking-wide text-rof-noir disabled:opacity-40"
+          className={bouton("primaire", "lg")}
         >
           Envoyer
         </button>

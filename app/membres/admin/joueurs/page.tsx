@@ -18,6 +18,7 @@ import { chargerStatutsJoueuses, statutEffectif, statutSelonNaissance } from "@/
 import { FormCreerJoueuse } from "@/components/membres/FormCreerJoueuse";
 import { ImportJoueurs } from "@/components/membres/ImportJoueurs";
 import { FormInviterJoueuse } from "@/components/membres/FormInviterJoueuse";
+import { bouton } from "@/components/ui/boutons";
 
 const STATUTS = [
   { id: 1, nom: "Prospect" },
@@ -214,12 +215,12 @@ export default async function JoueursPage({
         <div className="flex items-center gap-3">
           <button
             type="submit"
-            className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+            className={bouton("primaire", "md")}
           >
             Filtrer
           </button>
           {filtreActif && (
-            <Link href="/membres/admin/joueurs" className="text-sm text-rof-poudre underline">
+            <Link href="/membres/admin/joueurs" className={bouton("secondaire")}>
               Réinitialiser
             </Link>
           )}
@@ -247,13 +248,13 @@ export default async function JoueursPage({
                   )}
                 </p>
                 <div className="flex shrink-0 items-center gap-3">
-                <Link href={`/membres/admin/joueurs/${profileId}`} className="text-xs font-semibold text-rof-or underline">
+                <Link href={`/membres/admin/joueurs/${profileId}`} className={bouton("primaire")}>
                   Voir son profil
                 </Link>
                 <form action={archiverJoueuse}>
                   <input type="hidden" name="profile_id" value={profileId} />
                   <input type="hidden" name="archiver" value={archivees.has(profileId) ? "0" : "1"} />
-                  <button type="submit" className="text-xs text-rof-poudre underline">
+                  <button type="submit" className={bouton("secondaire")}>
                     {archivees.has(profileId) ? "Désarchiver" : "Archiver"}
                   </button>
                 </form>
@@ -338,7 +339,7 @@ export default async function JoueursPage({
                       </label>
                       <button
                         type="submit"
-                        className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+                        className={bouton("primaire", "md")}
                       >
                         Enregistrer
                       </button>
@@ -363,7 +364,7 @@ export default async function JoueursPage({
                   <option value="softball">Softball</option>
                   <option value="baseball">Baseball</option>
                 </select>
-                <button type="submit" className="text-rof-poudre underline">
+                <button type="submit" className={bouton("secondaire")}>
                   Enregistrer
                 </button>
               </form>
@@ -380,7 +381,7 @@ export default async function JoueursPage({
                   defaultValue={numeros[profileId] ?? ""}
                   className="w-16 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
                 />
-                <button type="submit" className="text-rof-poudre underline">
+                <button type="submit" className={bouton("secondaire")}>
                   Enregistrer
                 </button>
               </form>
@@ -430,7 +431,7 @@ export default async function JoueursPage({
                   defaultValue={infoDe(profileId, "ecole")}
                   className="w-44 rounded-lg border border-rof-ligne bg-rof-craie px-2 py-1 text-rof-texte"
                 />
-                <button type="submit" className="text-rof-poudre underline">
+                <button type="submit" className={bouton("secondaire")}>
                   Enregistrer
                 </button>
               </form>
@@ -451,7 +452,7 @@ export default async function JoueursPage({
                       </option>
                     ))}
                   </select>
-                  <button type="submit" className="rounded-lg bg-rof-or px-3 py-1.5 font-condensed text-xs font-bold uppercase tracking-wide text-white">
+                  <button type="submit" className={bouton("primaire", "sm")}>
                     Enregistrer le statut
                   </button>
                 </form>
@@ -468,7 +469,7 @@ export default async function JoueursPage({
                         <form action={changerStatutJoueuse}>
                           <input type="hidden" name="profile_id" value={profileId} />
                           <input type="hidden" name="status_id" value={suggere.id} />
-                          <button type="submit" className="text-rof-poudre underline">
+                          <button type="submit" className={bouton("secondaire")}>
                             {actuel === 1 ? "Accepter la joueuse" : "Appliquer"} → {suggere.nom}
                           </button>
                         </form>
@@ -493,7 +494,7 @@ export default async function JoueursPage({
                           <span className="font-condensed text-sm font-bold uppercase text-rof-poudre">{team?.name ?? "—"}</span>
                           <form action={retirerDeEquipe}>
                             <input type="hidden" name="team_member_id" value={m.id} />
-                            <button type="submit" className="text-xs text-rof-rouge underline">
+                            <button type="submit" className={bouton("danger")}>
                               Retirer
                             </button>
                           </form>
@@ -512,7 +513,7 @@ export default async function JoueursPage({
                                 </option>
                               ))}
                             </select>
-                            <button type="submit" className="text-xs text-rof-poudre underline">
+                            <button type="submit" className={bouton("secondaire")}>
                               Déplacer vers
                             </button>
                           </form>
@@ -535,7 +536,7 @@ export default async function JoueursPage({
                         </option>
                       ))}
                     </select>
-                    <button type="submit" className="text-xs text-rof-gazon underline">
+                    <button type="submit" className={bouton("succes")}>
                       + Ajouter à une équipe
                     </button>
                   </form>

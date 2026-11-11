@@ -3,6 +3,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { chargerAbonnes, retirerAbonne } from "@/lib/infolettre";
+import { bouton } from "@/components/ui/boutons";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ export default async function InfolettrePage() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-5 py-10">
       <div>
-        <Link href="/membres/admin" className="text-sm text-rof-poudre underline">
+        <Link href="/membres/admin" className={bouton("secondaire")}>
           ← Direction
         </Link>
         <h1 className="mt-3 font-condensed text-3xl font-bold uppercase text-rof-texte">Infolettre</h1>
@@ -43,7 +44,7 @@ export default async function InfolettrePage() {
       </div>
 
       {abonnes.length > 0 && (
-        <a href="/api/export/infolettre" className="self-start rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-noir">
+        <a href="/api/export/infolettre" className={`${bouton("primaire", "md")} self-start`}>
           Télécharger la liste (CSV)
         </a>
       )}
@@ -59,7 +60,7 @@ export default async function InfolettrePage() {
             </div>
             <form action={retirer}>
               <input type="hidden" name="courriel" value={a.courriel} />
-              <button type="submit" className="text-xs text-rof-gris underline">
+              <button type="submit" className={bouton("neutre")}>
                 Retirer (désabonnement)
               </button>
             </form>

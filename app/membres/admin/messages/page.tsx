@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { chargerMessagesTous } from "@/lib/messages-tous";
 import { majMessagesTous } from "./actions";
+import { bouton } from "@/components/ui/boutons";
 
 const champ = "w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-sm text-rof-texte";
 
@@ -63,7 +64,7 @@ export default async function MessagesTousPage() {
         ))}
         <button
           type="submit"
-          className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+          className={bouton("primaire", "md")}
         >
           Enregistrer
         </button>

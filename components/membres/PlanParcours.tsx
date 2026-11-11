@@ -1,5 +1,6 @@
 import { basculerEtape, changerChoixParcours } from "@/app/membres/parcours/actions";
 import { ARC } from "@/lib/parcours/calcul";
+import { bouton } from "@/components/ui/boutons";
 
 type Etape = { id: string; titre: string; detail: string; quand: string; info: boolean; fait: boolean; retard: boolean };
 
@@ -48,7 +49,7 @@ export function PlanParcours({
               </option>
             ))}
           </select>
-          <button type="submit" className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
+          <button type="submit" className={bouton("primaire", "md")}>
             {choix ? "Changer mon choix" : "Choisir"}
           </button>
         </div>
@@ -86,7 +87,7 @@ export function PlanParcours({
 
       {faites.length > 0 && (
         <details className="mt-3">
-          <summary className="cursor-pointer text-sm text-rof-poudre underline">Étapes complétées ({faites.length})</summary>
+          <summary className={`${bouton("secondaire")} cursor-pointer list-none w-fit [&::-webkit-details-marker]:hidden`}>Étapes complétées ({faites.length})</summary>
           <ul className="mt-2 flex flex-col gap-2">
             {faites.map((e) => (
               <li key={e.id} className="flex items-center justify-between gap-3 rounded-lg border border-rof-ligne p-3">
@@ -95,7 +96,7 @@ export function PlanParcours({
                   <form action={basculerEtape}>
                     <input type="hidden" name="id" value={e.id} />
                     <input type="hidden" name="faite" value="0" />
-                    <button type="submit" className="text-xs text-rof-poudre underline">
+                    <button type="submit" className={bouton("secondaire")}>
                       Remettre à faire
                     </button>
                   </form>

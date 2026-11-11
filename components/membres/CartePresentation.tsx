@@ -2,6 +2,7 @@ import { majMaPresentation, regenererMonLien } from "@/app/membres/presentation/
 import type { Presentation } from "@/lib/presentation";
 import { LienPartage } from "@/components/membres/LienPartage";
 import { evenementsEnTexte, mesuresEnTexte } from "@/lib/presentation-format";
+import { bouton } from "@/components/ui/boutons";
 
 const champ = "w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-sm text-rof-texte";
 
@@ -21,7 +22,7 @@ export function CartePresentation({ reglages, lectureSeule = false }: { reglages
       {actif && reglages && (
         <div className="mt-3">
           {lectureSeule ? (
-            <a href={`/joueuse/${reglages.token}`} target="_blank" rel="noopener noreferrer" className="text-sm text-rof-poudre underline">
+            <a href={`/joueuse/${reglages.token}`} target="_blank" rel="noopener noreferrer" className={bouton("secondaire")}>
               Voir sa page de présentation ↗
             </a>
           ) : (
@@ -157,7 +158,7 @@ export function CartePresentation({ reglages, lectureSeule = false }: { reglages
           La page montre ton nom, tes positions, ton équipe, tes liens (FieldLevel, Instagram, YouTube, X) et ce que tu coches ci-dessus. Elle ne
           montre jamais ta date de naissance, tes notes médicales ni tes courriels, sauf le contact si tu le coches.
         </p>
-        <button type="submit" className="self-start rounded-full bg-rof-royal px-5 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
+        <button type="submit" className={`${bouton("accent", "md")} self-start`}>
           Enregistrer
         </button>
       </form>
@@ -165,7 +166,7 @@ export function CartePresentation({ reglages, lectureSeule = false }: { reglages
 
       {reglages && !lectureSeule && (
         <form action={regenererMonLien} className="mt-3">
-          <button type="submit" className="text-xs text-rof-rouge underline">
+          <button type="submit" className={bouton("danger")}>
             Créer un nouveau lien (l&apos;ancien cessera de fonctionner)
           </button>
         </form>

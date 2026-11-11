@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { repondre, supprimerEvenement } from "@/app/membres/agenda/actions";
+import { bouton } from "@/components/ui/boutons";
 
 const TYPES_EVENEMENT: Record<string, string> = {
   Pratique: "bg-emerald-100 text-emerald-800",
@@ -124,7 +125,7 @@ export function CarteEvenement({
           )}
           <form action={supprimerEvenement} className="mt-2 text-right">
             <input type="hidden" name="content_id" value={id} />
-            <button type="submit" className="text-sm text-rof-rouge underline">
+            <button type="submit" className={bouton("danger")}>
               Supprimer
             </button>
           </form>

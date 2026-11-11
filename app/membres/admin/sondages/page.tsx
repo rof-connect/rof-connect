@@ -7,6 +7,7 @@ import { TableauSondages } from "@/components/membres/TableauSondages";
 import { FormImageSondage } from "@/components/membres/FormImageSondage";
 import { FormOptionSondage } from "@/components/membres/FormOptionSondage";
 import { creerSondage, ajouterOptionSondage, basculerSondage, supprimerSondage, majSportSondage } from "./actions";
+import { bouton } from "@/components/ui/boutons";
 
 const champ = "w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-sm text-rof-texte placeholder:text-rof-gris/60";
 const etiquette = "mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris";
@@ -91,7 +92,7 @@ export default async function SondagesAdminPage() {
           </div>
           <button
             type="submit"
-            className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+            className={bouton("primaire", "md")}
           >
             Créer le sondage
           </button>
@@ -122,7 +123,7 @@ export default async function SondagesAdminPage() {
                 <form action={ajouterOptionSondage} className="flex items-center gap-2">
                   <input type="hidden" name="poll_id" value={s.id} />
                   <input name="label" required placeholder="Ajouter un choix…" className={champ} />
-                  <button type="submit" className="shrink-0 text-sm text-rof-poudre underline">
+                  <button type="submit" className={`${bouton("secondaire")} shrink-0`}>
                     Ajouter
                   </button>
                 </form>
@@ -136,7 +137,7 @@ export default async function SondagesAdminPage() {
                 <option value="softball">Softball seulement</option>
                 <option value="baseball">Baseball seulement</option>
               </select>
-              <button type="submit" className="text-xs text-rof-poudre underline">
+              <button type="submit" className={bouton("secondaire")}>
                 Réserver à ce sport
               </button>
             </form>
@@ -145,13 +146,13 @@ export default async function SondagesAdminPage() {
               <form action={basculerSondage}>
                 <input type="hidden" name="poll_id" value={s.id} />
                 <input type="hidden" name="fermer" value={s.closed ? "0" : "1"} />
-                <button type="submit" className="text-sm text-rof-poudre underline">
+                <button type="submit" className={bouton("secondaire")}>
                   {s.closed ? "Rouvrir" : "Fermer le sondage"}
                 </button>
               </form>
               <form action={supprimerSondage}>
                 <input type="hidden" name="poll_id" value={s.id} />
-                <button type="submit" className="text-sm text-rof-rouge underline">
+                <button type="submit" className={bouton("danger")}>
                   Supprimer
                 </button>
               </form>

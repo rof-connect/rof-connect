@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { inviterEntraineur } from "@/app/membres/admin/comptes/actions";
+import { bouton } from "@/components/ui/boutons";
 
 type Equipe = { id: string; name: string };
 
@@ -57,7 +58,7 @@ export function FormInviterEntraineur({ equipes }: { equipes: Equipe[] }) {
       <button
         type="submit"
         disabled={enCours}
-        className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white disabled:opacity-50"
+        className={bouton("primaire", "md")}
       >
         {enCours ? "Envoi…" : "Envoyer l'invitation"}
       </button>

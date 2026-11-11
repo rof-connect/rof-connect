@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { changerPhotoJoueuse } from "@/app/membres/admin/joueurs/actions";
 import { compresserImage } from "@/lib/compress-image";
+import { bouton } from "@/components/ui/boutons";
 
 /** Direction : ajouter ou remplacer la photo d'une joueuse. */
 export function FormPhotoJoueuse({ profileId }: { profileId: string }) {
@@ -31,7 +32,7 @@ export function FormPhotoJoueuse({ profileId }: { profileId: string }) {
   return (
     <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
       <input ref={champ} type="file" accept="image/*" onChange={onChoisi} className="hidden" />
-      <button type="button" disabled={enCours} onClick={() => champ.current?.click()} className="text-rof-poudre underline disabled:opacity-50">
+      <button type="button" disabled={enCours} onClick={() => champ.current?.click()} className={bouton("secondaire")}>
         {enCours ? "Envoi…" : "Ajouter / changer la photo de la joueuse"}
       </button>
       {message && <span className="text-rof-gris">{message}</span>}

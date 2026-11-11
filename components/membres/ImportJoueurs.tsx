@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { importerJoueurs } from "@/app/membres/admin/joueurs/actions";
+import { bouton } from "@/components/ui/boutons";
 
 const COLONNES = ["nom_athlete", "courriel_parent", "equipe", "statut", "date_naissance", "nom_parent", "telephone_parent"];
 
@@ -87,7 +88,7 @@ export function ImportJoueurs() {
       <div className="flex flex-col gap-1">
         <button
           onClick={() => setOuvert(true)}
-          className="w-fit rounded-lg border border-rof-poudre px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-poudre"
+          className={bouton("secondaire", "md")}
         >
           Importer depuis Excel
         </button>
@@ -137,14 +138,14 @@ export function ImportJoueurs() {
         <button
           onClick={importer}
           disabled={!lignes || enCours}
-          className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white disabled:opacity-50"
+          className={bouton("primaire", "md")}
         >
           {enCours ? "Importation…" : "Importer"}
         </button>
         <button
           type="button"
           onClick={() => setOuvert(false)}
-          className="rounded-lg border border-rof-ligne px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-gris"
+          className={bouton("neutre", "md")}
         >
           Fermer
         </button>

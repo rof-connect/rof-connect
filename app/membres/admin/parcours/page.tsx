@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { calculer, resumeTexte } from "@/lib/parcours/calcul";
 import { majDemandeParcours } from "./actions";
+import { bouton } from "@/components/ui/boutons";
 
 const STATUTS = [
   ["nouveau", "Nouveau"],
@@ -105,7 +106,7 @@ export default async function ParcoursAdminPage({ searchParams }: { searchParams
                       </option>
                     ))}
                   </select>
-                  <button type="submit" className="text-sm text-rof-poudre underline">
+                  <button type="submit" className={bouton("secondaire")}>
                     Enregistrer
                   </button>
                 </div>

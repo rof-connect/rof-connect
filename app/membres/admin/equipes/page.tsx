@@ -6,6 +6,7 @@ import { creerEquipe, creerGroupe, archiverEquipe, desarchiverEquipe } from "./a
 import { chargerGroupes } from "@/lib/groupes";
 import { sportAdmin } from "@/lib/sport-admin";
 import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
+import { bouton } from "@/components/ui/boutons";
 
 const LABEL_OPTION: Record<string, string> = {
   ete: "Été",
@@ -113,7 +114,7 @@ export default async function GestionEquipesPage({
           </div>
           <button
             type="submit"
-            className="mt-1 w-fit rounded-lg bg-rof-or px-4 py-2 text-sm font-bold uppercase tracking-wide text-white"
+            className={`${bouton("primaire", "md")} mt-1`}
           >
             Créer l&apos;équipe
           </button>
@@ -139,7 +140,7 @@ export default async function GestionEquipesPage({
                 <option value="softball">Softball</option>
               </select>
             </div>
-            <button type="submit" className="rounded-lg bg-rof-or px-4 py-2 text-sm font-bold uppercase tracking-wide text-white">Créer le groupe</button>
+            <button type="submit" className={bouton("primaire", "md")}>Créer le groupe</button>
           </form>
         </details>
       )}
@@ -148,7 +149,7 @@ export default async function GestionEquipesPage({
         <h2 className="font-condensed text-lg font-bold uppercase tracking-wide text-rof-poudre">
           {voirArchives ? "Équipes archivées" : "Équipes actives"}
         </h2>
-        <Link href={voirArchives ? "/membres/admin/equipes" : "/membres/admin/equipes?archives=1"} className="text-sm text-rof-poudre underline">
+        <Link href={voirArchives ? "/membres/admin/equipes" : "/membres/admin/equipes?archives=1"} className={bouton("secondaire")}>
           {voirArchives ? "← Retour aux équipes actives" : "Voir les archives →"}
         </Link>
       </div>
@@ -168,7 +169,7 @@ export default async function GestionEquipesPage({
                     <div key={t.id} className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <Link href={`/membres/admin/equipes/${t.id}`} className="font-condensed text-lg font-semibold uppercase text-rof-texte underline decoration-rof-or">
+                          <Link href={`/membres/admin/equipes/${t.id}`} className="font-condensed text-lg font-semibold uppercase text-rof-texte hover:text-rof-or">
                             {t.name}
                           </Link>
                           <p className="text-sm text-rof-gris">
@@ -180,14 +181,14 @@ export default async function GestionEquipesPage({
                         {voirArchives ? (
                           <form action={desarchiverEquipe}>
                             <input type="hidden" name="team_id" value={t.id} />
-                            <button type="submit" className="text-sm text-rof-poudre underline">
+                            <button type="submit" className={bouton("secondaire")}>
                               Désarchiver
                             </button>
                           </form>
                         ) : (
                           <form action={archiverEquipe}>
                             <input type="hidden" name="team_id" value={t.id} />
-                            <button type="submit" className="text-sm text-rof-gris underline">
+                            <button type="submit" className={bouton("neutre")}>
                               Archiver
                             </button>
                           </form>
@@ -222,7 +223,7 @@ export default async function GestionEquipesPage({
                   <div key={t.id} className="rounded-xl border border-dashed border-rof-ligne bg-rof-blanc p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <Link href={`/membres/admin/equipes/${t.id}`} className="font-condensed text-lg font-semibold uppercase text-rof-texte underline decoration-rof-or">
+                        <Link href={`/membres/admin/equipes/${t.id}`} className="font-condensed text-lg font-semibold uppercase text-rof-texte hover:text-rof-or">
                           {t.name}
                         </Link>
                         <p className="text-sm text-rof-gris">
@@ -232,12 +233,12 @@ export default async function GestionEquipesPage({
                       {voirArchives ? (
                         <form action={desarchiverEquipe}>
                           <input type="hidden" name="team_id" value={t.id} />
-                          <button type="submit" className="text-sm text-rof-poudre underline">Désarchiver</button>
+                          <button type="submit" className={bouton("secondaire")}>Désarchiver</button>
                         </form>
                       ) : (
                         <form action={archiverEquipe}>
                           <input type="hidden" name="team_id" value={t.id} />
-                          <button type="submit" className="text-sm text-rof-gris underline">Archiver</button>
+                          <button type="submit" className={bouton("neutre")}>Archiver</button>
                         </form>
                       )}
                     </div>

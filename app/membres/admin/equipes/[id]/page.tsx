@@ -6,6 +6,7 @@ import { ajouterAEquipe, changerStatut, retirerDeEquipe } from "../../joueurs/ac
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerGroupes } from "@/lib/groupes";
 import { chargerSportsJoueuses } from "@/lib/sport-joueuses";
+import { bouton } from "@/components/ui/boutons";
 
 const LABEL_OPTION: Record<string, string> = {
   ete: "Été",
@@ -108,7 +109,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-5 py-10">
       <div>
-        <Link href="/membres/admin" className="text-sm text-rof-poudre underline">
+        <Link href="/membres/admin" className={bouton("secondaire")}>
           ← Direction
         </Link>
         <p className="mt-3 font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">{estGroupe ? "Groupe" : "Équipe"}</p>
@@ -197,7 +198,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
           </p>
         )}
         <div className="flex items-center gap-4">
-          <button type="submit" className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
+          <button type="submit" className={bouton("primaire", "md")}>
             Enregistrer
           </button>
         </div>
@@ -207,7 +208,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
         <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-texte">Joueuses ({joueuses.length})</h2>
         {joueuses.map((m) => (
           <div key={m.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-3">
-            <Link href={`/membres/admin/joueurs?id=${m.profile_id}`} className="font-semibold text-rof-texte underline decoration-rof-or">
+            <Link href={`/membres/admin/joueurs?id=${m.profile_id}`} className="font-semibold text-rof-texte hover:text-rof-or">
               {nomDe(m)}
             </Link>
             <div className="flex flex-wrap items-center gap-3">
@@ -220,13 +221,13 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
                     </option>
                   ))}
                 </select>
-                <button type="submit" className="text-xs text-rof-poudre underline">
+                <button type="submit" className={bouton("secondaire")}>
                   Statut
                 </button>
               </form>
               <form action={retirerDeEquipe}>
                 <input type="hidden" name="team_member_id" value={m.id} />
-                <button type="submit" className="text-xs text-rof-rouge underline">
+                <button type="submit" className={bouton("danger")}>
                   Retirer
                 </button>
               </form>
@@ -245,7 +246,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
                 </option>
               ))}
             </select>
-            <button type="submit" className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
+            <button type="submit" className={bouton("primaire", "md")}>
               + Ajouter
             </button>
           </form>
@@ -267,7 +268,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
 
       <form action={equipe.archived ? desarchiverEquipe : archiverEquipe}>
         <input type="hidden" name="team_id" value={equipe.id} />
-        <button type="submit" className="text-sm text-rof-gris underline">
+        <button type="submit" className={bouton("neutre")}>
           {equipe.archived ? "Désarchiver l'équipe" : "Archiver l'équipe"}
         </button>
       </form>

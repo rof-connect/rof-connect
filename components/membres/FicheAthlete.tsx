@@ -10,6 +10,7 @@ import { parcoursOuvert } from "@/lib/statuts";
 import { presentationDe } from "@/lib/presentation";
 import { CartePresentation } from "@/components/membres/CartePresentation";
 import { FormPhotoProfil } from "@/components/membres/FormPhotoProfil";
+import { bouton } from "@/components/ui/boutons";
 
 type Resultat = {
   repere?: number;
@@ -226,7 +227,7 @@ export async function FicheAthlete({
               </p>
             )}
             {vue && (
-              <Link href="/membres/parcours" className="mt-3 inline-block text-sm text-rof-poudre underline">
+              <Link href="/membres/parcours" className={`${bouton("secondaire")} mt-3`}>
                 {f.refaire}
               </Link>
             )}
@@ -242,7 +243,7 @@ export async function FicheAthlete({
             <p className="mt-1 text-sm text-rof-gris">{f.aucunParcours}</p>
             <Link
               href="/membres/parcours"
-              className="mt-3 inline-block rounded-full bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-black"
+              className={`${bouton("primaire", "md")} mt-3`}
             >
               {f.faireParcours}
             </Link>
@@ -278,7 +279,7 @@ export async function FicheAthlete({
       <section className={carte}>
         <p className={`${titreSection} text-rof-gris`}>{f.recrutement}</p>
         {fiche?.fieldlevel_url ? (
-          <a href={fiche.fieldlevel_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm text-rof-poudre underline">
+          <a href={fiche.fieldlevel_url} target="_blank" rel="noopener noreferrer" className={`${bouton("secondaire")} mt-2`}>
             {f.voirFieldLevel} ↗
           </a>
         ) : (
@@ -287,17 +288,17 @@ export async function FicheAthlete({
         {(liens.instagram || liens.youtube || liens.x) && (
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
             {liens.instagram && (
-              <a href={liens.instagram} target="_blank" rel="noopener noreferrer nofollow" className="text-rof-poudre underline">
+              <a href={liens.instagram} target="_blank" rel="noopener noreferrer nofollow" className={bouton("secondaire")}>
                 Instagram ↗
               </a>
             )}
             {liens.youtube && (
-              <a href={liens.youtube} target="_blank" rel="noopener noreferrer nofollow" className="text-rof-poudre underline">
+              <a href={liens.youtube} target="_blank" rel="noopener noreferrer nofollow" className={bouton("secondaire")}>
                 YouTube ↗
               </a>
             )}
             {liens.x && (
-              <a href={liens.x} target="_blank" rel="noopener noreferrer nofollow" className="text-rof-poudre underline">
+              <a href={liens.x} target="_blank" rel="noopener noreferrer nofollow" className={bouton("secondaire")}>
                 X ↗
               </a>
             )}
@@ -315,7 +316,7 @@ export async function FicheAthlete({
         </p>
         {notes && (
           <details className="mt-2">
-            <summary className="cursor-pointer text-sm text-rof-poudre underline">
+            <summary className={`${bouton("secondaire")} cursor-pointer list-none w-fit [&::-webkit-details-marker]:hidden`}>
               {f.afficher} — {f.notesMedicales.toLowerCase()}
             </summary>
             <p className="mt-2 whitespace-pre-line rounded-lg border border-rof-ligne bg-rof-craie p-3 text-sm text-rof-texte">{notes}</p>
@@ -368,7 +369,7 @@ export async function FicheAthlete({
                 <input name={r} defaultValue={liens[r]} placeholder="https://… ou @nom" className={champ} />
               </label>
             ))}
-            <button type="submit" className="self-start rounded-full bg-rof-royal px-5 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white">
+            <button type="submit" className={`${bouton("accent", "md")} self-start`}>
               {f.enregistrer}
             </button>
           </form>

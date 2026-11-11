@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { trierEquipes } from "@/lib/equipes";
 import Link from "next/link";
+import { bouton } from "@/components/ui/boutons";
 import { createClient } from "@/lib/supabase/server";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerStatutsJoueuses, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
@@ -125,97 +126,81 @@ export default async function DirectionPage() {
     })),
   };
 
+  const aFaire = [
+    { n: aGerer.length, texte: "prospect(s) à accepter", href: "#prospects" },
+    { n: nbMessagesEnAttente, texte: "conversation(s) privée(s) en attente", href: "/membres/messages" },
+    { n: nbParcoursNouveaux ?? 0, texte: "questionnaire(s) de parcours à traiter", href: "/membres/admin/parcours" },
+    { n: sansFiche, texte: "fiche(s) de joueur incomplète(s)", href: "/membres/admin/joueurs" },
+  ].filter((t) => t.n > 0);
+
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-5 py-10">
-      <div className="flex items-center justify-between">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-7 px-5 py-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="font-condensed text-sm uppercase tracking-[0.3em] text-rof-poudre">Direction</p>
-          <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">Vue d&apos;organisation</h1>
-          <div className="mt-3">
-            <SelecteurSportAdmin actif={sportFiltre} retour="/membres/admin" />
-          </div>
+          <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">Tableau de bord</h1>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <a
-            href="/api/export/joueurs"
-            className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
-          >
-            Export CSV
-          </a>
-          <Link href="/membres/admin/equipes" className="text-sm text-rof-poudre underline">
-            Gérer les équipes
-          </Link>
-          <Link href="/membres/admin/joueurs" className="text-sm text-rof-poudre underline">
-            Gérer les joueurs
-          </Link>
-          <Link href="/membres/admin/statuts" className="text-sm text-rof-poudre underline">
-            Recalculer les statuts
-          </Link>
-          <Link href="/membres/admin/messages" className="text-sm text-rof-poudre underline">
-            Messages à tous
-          </Link>
-          <Link href="/membres/admin/sondages" className="text-sm text-rof-poudre underline">
-            Sondages
-          </Link>
-          <Link href="/membres/admin/parcours" className="text-sm text-rof-poudre underline">
-            Questionnaires de parcours
-          </Link>
-          <Link href="/membres/admin/comptes" className="text-sm text-rof-poudre underline">
-            Comptes entraîneurs &amp; direction
-          </Link>
-          <Link href="/membres/admin/connexions" className="text-sm text-rof-poudre underline">
-            Dernières connexions
-          </Link>
-          <Link href="/membres/admin/infolettre" className="text-sm text-rof-poudre underline">
-            Infolettre
-          </Link>
-        </div>
+        <SelecteurSportAdmin actif={sportFiltre} retour="/membres/admin" />
       </div>
 
-      <section className="rounded-2xl border-2 border-rof-or bg-rof-blanc p-4">
-        <h2 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-or">À faire</h2>
-        <ul className="mt-2 flex flex-col divide-y divide-rof-ligne">
-          {[
-            { n: aGerer.length, texte: "joueuse(s) Prospect (sans statut) à accepter", href: "#prospects" },
-            { n: nbMessagesEnAttente, texte: "conversation(s) privée(s) en attente de réponse", href: "/membres/messages" },
-            { n: nbParcoursNouveaux ?? 0, texte: "questionnaire(s) de parcours à traiter", href: "/membres/admin/parcours" },
-            { n: sansFiche, texte: "fiche(s) de joueuse incomplète(s)", href: "/membres/admin/joueurs" },
-          ]
-            .filter((t) => t.n > 0)
-            .map((t) => (
-              <li key={t.texte}>
-                <Link href={t.href} className="flex items-center justify-between gap-3 py-2.5 hover:text-rof-or">
-                  <span className="text-rof-texte">
-                    <span className="mr-2 font-condensed text-2xl font-bold text-rof-or">{t.n}</span>
-                    {t.texte}
-                  </span>
-                  <span className="text-rof-gris" aria-hidden>
-                    ›
-                  </span>
-                </Link>
-              </li>
+      <section>
+        <h2 className="mb-2 font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-or">À faire</h2>
+        {aFaire.length > 0 ? (
+          <div className="grid gap-2">
+            {aFaire.map((t) => (
+              <Link
+                key={t.texte}
+                href={t.href}
+                className="flex items-center gap-4 rounded-2xl border border-rof-or/50 bg-rof-blanc p-4 transition-colors hover:border-rof-or active:scale-[0.99]"
+              >
+                <span className="w-12 shrink-0 text-center font-condensed text-4xl font-bold leading-none text-rof-or">{t.n}</span>
+                <span className="min-w-0 flex-1 text-rof-texte">{t.texte}</span>
+                <span className={bouton("primaire", "sm")}>Traiter ›</span>
+              </Link>
             ))}
-        </ul>
-        {aGerer.length + nbMessagesEnAttente + (nbParcoursNouveaux ?? 0) + sansFiche === 0 && (
-          <p className="mt-2 text-sm text-rof-gris">Rien à faire pour le moment. ✓</p>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 rounded-2xl border border-rof-gazon/50 bg-rof-blanc p-4 text-rof-texte">
+            <span className="font-condensed text-2xl text-rof-gazon">✓</span> Rien à faire pour le moment.
+          </div>
         )}
       </section>
 
+      <section>
+        <h2 className="mb-2 font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-gris">Gérer</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <TuileMenu href="/membres/admin/joueurs" titre="Joueurs" sous={`${nbComptes ?? total} inscrits`} icone={ICONES.joueurs} />
+          <TuileMenu href="/membres/admin/equipes" titre="Équipes" sous={`${(teams ?? []).length} actives`} icone={ICONES.equipes} />
+          <TuileMenu href="/membres/admin/statuts" titre="Statuts" sous="Charte d'âge" icone={ICONES.statuts} />
+          <TuileMenu href="/membres/admin/messages" titre="Message à tous" sous="Accueil des membres" icone={ICONES.messages} />
+          <TuileMenu href="/membres/admin/sondages" titre="Sondages" sous="Créer et suivre" icone={ICONES.sondages} />
+          <TuileMenu
+            href="/membres/admin/parcours"
+            titre="Parcours NCAA"
+            sous="Questionnaires"
+            icone={ICONES.parcours}
+            pastille={nbParcoursNouveaux ?? 0}
+          />
+          <TuileMenu href="/membres/admin/infolettre" titre="Infolettre" sous="Abonnés" icone={ICONES.infolettre} />
+          <TuileMenu href="/membres/admin/comptes" titre="Comptes" sous="Entraîneurs, direction" icone={ICONES.comptes} />
+          <TuileMenu href="/membres/admin/connexions" titre="Connexions" sous="Activité récente" icone={ICONES.connexions} />
+          <TuileMenu href="/api/export/joueurs" titre="Export CSV" sous="Tous les joueurs" icone={ICONES.export} externe />
+        </div>
+      </section>
+
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Tuile n={nbComptes ?? total} l="Joueuses inscrites" />
+        <Tuile n={nbComptes ?? total} l="Joueurs inscrits" />
         <Tuile n={(teams ?? []).length} l="Équipes actives" />
         <Tuile n={consentements} l="Consentements photo" couleur="text-rof-gazon" />
         <Tuile n={sansFiche} l="Fiches incomplètes" couleur={sansFiche > 0 ? "text-rof-rouge" : "text-rof-gazon"} />
       </div>
-
-
 
       <div id="prospects">
         <div className="mb-2 flex items-end justify-between gap-3">
           <h3 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">
             Nouvelles connexions à gérer <span className="text-rof-or">({aGerer.length})</span>
           </h3>
-          <Link href="/membres/admin/joueurs?equipe=aucune" className="text-sm text-rof-poudre underline">
+          <Link href="/membres/admin/joueurs?equipe=aucune" className={bouton("secondaire")}>
             Voir tous
           </Link>
         </div>
@@ -234,14 +219,14 @@ export default async function DirectionPage() {
                     <input type="hidden" name="profile_id" value={c.id} />
                     <button
                       type="submit"
-                      className="rounded-full bg-rof-or px-4 py-1.5 font-condensed text-xs font-bold uppercase tracking-wide text-black"
+                      className={bouton("primaire")}
                       title={`${suggere.age} ans au ${suggere.ref.toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" })} (charte Little League)`}
                     >
                       Accepter → {suggere.nom}
                     </button>
                   </form>
                 ) : (
-                  <Link href={`/membres/admin/joueurs?id=${c.id}`} className="text-xs text-rof-rouge underline">
+                  <Link href={`/membres/admin/joueurs?id=${c.id}`} className={bouton("danger")}>
                     Date de naissance manquante
                   </Link>
                 )}
@@ -256,7 +241,7 @@ export default async function DirectionPage() {
       <div>
         <div className="mb-2 flex items-baseline justify-between">
           <h3 className="font-condensed text-xl font-bold uppercase tracking-wide text-rof-poudre">Dernières connexions</h3>
-          <Link href="/membres/admin/connexions" className="text-sm text-rof-poudre underline">
+          <Link href="/membres/admin/connexions" className={bouton("secondaire")}>
             Voir toutes
           </Link>
         </div>
@@ -265,7 +250,7 @@ export default async function DirectionPage() {
             <Link
               key={c.id}
               href={`/membres/admin/joueurs?id=${c.id}`}
-              className="flex items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-2.5 hover:border-rof-or"
+              className={bouton("neutre", "md")}
             >
               <span className="min-w-0 truncate font-semibold text-rof-texte">{c.nom || c.courriel || "—"}</span>
               <span className="shrink-0 text-xs text-rof-gris">{ilYa(c.vue!)}</span>
@@ -282,7 +267,7 @@ export default async function DirectionPage() {
             <Link
               key={t.id}
               href={`/membres/admin/equipes/${t.id}`}
-              className="flex items-center justify-between rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-3 hover:border-rof-or"
+              className={bouton("neutre", "lg")}
             >
               <div>
                 <span className="font-semibold text-rof-texte">{t.name}</span>
@@ -337,6 +322,63 @@ function PipelineSport({
         </div>
       ))}
     </div>
+  );
+}
+
+const ICONES = {
+  joueurs: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM5 21a7 7 0 0 1 14 0",
+  equipes: "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M16 14a5 5 0 0 1 5 6",
+  statuts: "M4 6h16M4 12h10M4 18h6M17 14l2 2 4-4",
+  messages: "M4 5h16v11H9l-5 4z",
+  sondages: "M5 20V10M12 20V4M19 20v-7",
+  parcours: "M4 19h16M6 15l4-4 3 3 5-6",
+  infolettre: "M3 6h18v12H3zM3 7l9 6 9-6",
+  comptes: "M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z",
+  connexions: "M12 7v5l3 3M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z",
+  export: "M12 4v11M7 10l5 5 5-5M5 20h14",
+};
+
+function TuileMenu({
+  href,
+  titre,
+  sous,
+  icone,
+  pastille = 0,
+  externe = false,
+}: {
+  href: string;
+  titre: string;
+  sous: string;
+  icone: string;
+  pastille?: number;
+  externe?: boolean;
+}) {
+  const contenu = (
+    <>
+      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-rof-royal-sombre text-rof-poudre">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d={icone} />
+        </svg>
+      </span>
+      <span className="mt-3 block font-condensed text-lg font-bold uppercase leading-tight text-rof-texte">{titre}</span>
+      <span className="block text-xs text-rof-gris">{sous}</span>
+      {pastille > 0 && (
+        <span className="absolute right-3 top-3 flex h-6 min-w-6 items-center justify-center rounded-full bg-rof-rouge px-1.5 text-xs font-bold text-white">
+          {pastille}
+        </span>
+      )}
+    </>
+  );
+  const classes =
+    "relative block rounded-2xl border border-rof-ligne bg-rof-blanc p-4 transition-colors hover:border-rof-or active:scale-[0.98]";
+  return externe ? (
+    <a href={href} className={classes}>
+      {contenu}
+    </a>
+  ) : (
+    <Link href={href} className={classes}>
+      {contenu}
+    </Link>
   );
 }
 

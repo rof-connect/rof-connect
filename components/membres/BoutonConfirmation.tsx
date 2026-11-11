@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { bouton } from "@/components/ui/boutons";
 
 /**
  * Bouton « Voter » en deux temps : on résume la réponse choisie et on demande de la confirmer.
@@ -38,7 +39,7 @@ export function BoutonConfirmation({ libelle }: { libelle: string }) {
         <button
           type="button"
           onClick={demanderConfirmation}
-          className="w-fit rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+          className={bouton("primaire", "md")}
         >
           {libelle}
         </button>
@@ -51,11 +52,11 @@ export function BoutonConfirmation({ libelle }: { libelle: string }) {
             <button
               type="submit"
               onClick={() => setTimeout(() => setResume(null), 0)}
-              className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white"
+              className={bouton("primaire", "md")}
             >
               Confirmer ma réponse
             </button>
-            <button type="button" onClick={() => setResume(null)} className="text-sm text-rof-gris underline">
+            <button type="button" onClick={() => setResume(null)} className={bouton("neutre")}>
               Modifier
             </button>
           </span>

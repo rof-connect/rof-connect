@@ -1,6 +1,7 @@
 "use client";
 
 import { supprimerDocument, supprimerDocumentGeneral } from "@/app/membres/documents/actions";
+import { bouton } from "@/components/ui/boutons";
 
 export function CarteDocument({
   id,
@@ -40,7 +41,7 @@ export function CarteDocument({
             href={urlSignee}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg bg-rof-or px-3 py-2 font-condensed text-xs font-bold uppercase tracking-wide text-rof-noir"
+            className={bouton("primaire", "sm")}
           >
             Ouvrir
           </a>
@@ -49,7 +50,7 @@ export function CarteDocument({
           <form action={general ? supprimerDocumentGeneral : supprimerDocument}>
             <input type="hidden" name="content_id" value={id} />
             <input type="hidden" name="fichier_path" value={cheminFichier ?? ""} />
-            <button type="submit" className="text-sm text-rof-rouge underline">
+            <button type="submit" className={bouton("danger")}>
               Supprimer
             </button>
           </form>

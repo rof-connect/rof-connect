@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MODELES_IMPORT } from "@/lib/import-templates";
 import { importerLot } from "@/app/membres/import-actions";
+import { bouton } from "@/components/ui/boutons";
 
 type Kind = "agenda" | "video" | "gamechanger" | "signal";
 
@@ -72,7 +73,7 @@ export function ImportExcel({ modeleSlug, teamId, accesDefaut }: { modeleSlug: s
       <div className="flex items-center gap-3">
         <button
           onClick={() => setOuvert(true)}
-          className="w-fit rounded-lg border border-rof-poudre px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-poudre"
+          className={bouton("secondaire", "md")}
         >
           Importer depuis Excel
         </button>
@@ -110,14 +111,14 @@ export function ImportExcel({ modeleSlug, teamId, accesDefaut }: { modeleSlug: s
         <button
           onClick={importer}
           disabled={!lignes || enCours}
-          className="rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-white disabled:opacity-50"
+          className={bouton("primaire", "md")}
         >
           {enCours ? "Importation…" : "Importer"}
         </button>
         <button
           type="button"
           onClick={() => setOuvert(false)}
-          className="rounded-lg border border-rof-ligne px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wide text-rof-gris"
+          className={bouton("neutre", "md")}
         >
           Fermer
         </button>

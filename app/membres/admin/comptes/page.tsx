@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { FormInviterEntraineur } from "@/components/membres/FormInviterEntraineur";
 import { FormInviterDirection } from "@/components/membres/FormInviterDirection";
 import { assignerEquipeCoach } from "./actions";
+import { bouton } from "@/components/ui/boutons";
 
 export default async function ComptesPage() {
   const supabase = await createClient();
@@ -97,7 +98,7 @@ export default async function ComptesPage() {
                         </option>
                       ))}
                     </select>
-                    <button type="submit" className="text-xs text-rof-poudre underline">
+                    <button type="submit" className={bouton("secondaire")}>
                       Assigner à cette équipe
                     </button>
                   </form>

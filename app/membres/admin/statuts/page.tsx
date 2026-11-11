@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { calculerRecalcul } from "@/lib/statuts-recalcul";
 import { dateReferenceAge } from "@/lib/statuts";
 import { appliquerRecalcul } from "@/app/membres/admin/statuts/actions";
+import { bouton } from "@/components/ui/boutons";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export default async function RecalculStatutsPage() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-5 py-10">
       <div>
-        <Link href="/membres/admin" className="text-sm text-rof-poudre underline">
+        <Link href="/membres/admin" className={bouton("secondaire")}>
           ‹ Direction
         </Link>
         <h1 className="mt-2 font-condensed text-3xl font-bold uppercase text-rof-texte">Recalculer les statuts</h1>
@@ -87,7 +88,7 @@ export default async function RecalculStatutsPage() {
           <p className="text-xs text-rof-gris">Décoche une ligne pour garder un statut voulu (surclassement, exception). Le statut est aussi recopié sur ses équipes.</p>
           <button
             type="submit"
-            className="self-start rounded-full bg-rof-or px-5 py-2.5 font-condensed text-sm font-bold uppercase tracking-wide text-black"
+            className={`${bouton("primaire", "md")} self-start`}
           >
             Appliquer les corrections cochées
           </button>

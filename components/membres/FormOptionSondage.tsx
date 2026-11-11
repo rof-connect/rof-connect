@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { majOptionSondage, supprimerOptionSondage } from "@/app/membres/admin/sondages/actions";
 import { compresserImage } from "@/lib/compress-image";
+import { bouton } from "@/components/ui/boutons";
 
 export function FormOptionSondage({
   optionId,
@@ -61,7 +62,7 @@ export function FormOptionSondage({
           className="text-xs text-rof-gris file:mr-3 file:rounded-lg file:border-0 file:bg-rof-blanc file:px-3 file:py-1 file:text-rof-texte"
         />
         <div className="flex items-center gap-3">
-          <button type="submit" disabled={enCours} className="text-sm text-rof-poudre underline disabled:opacity-50">
+          <button type="submit" disabled={enCours} className={bouton("secondaire")}>
             {enCours ? "Envoi…" : "Enregistrer"}
           </button>
           {message && <span className="text-xs text-rof-gazon">{message}</span>}
@@ -69,7 +70,7 @@ export function FormOptionSondage({
       </form>
       <form action={supprimerOptionSondage}>
         <input type="hidden" name="option_id" value={optionId} />
-        <button type="submit" className="text-xs text-rof-rouge underline">
+        <button type="submit" className={bouton("danger")}>
           Supprimer ce choix
         </button>
       </form>

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getDictionnaire } from "@/lib/i18n/server";
 import { FicheAthlete } from "@/components/membres/FicheAthlete";
+import { bouton } from "@/components/ui/boutons";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -28,10 +29,10 @@ export default async function ProfilVuParLaJoueusePage({ params }: { params: Pro
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-5 py-8">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <Link href="/membres/admin/joueurs" className="text-sm text-rof-poudre underline">
+        <Link href="/membres/admin/joueurs" className={bouton("secondaire")}>
           ‹ Gestion des joueurs
         </Link>
-        <Link href={`/membres/admin/joueurs?id=${id}`} className="text-sm font-semibold text-rof-or underline">
+        <Link href={`/membres/admin/joueurs?id=${id}`} className={bouton("primaire")}>
           Modifier la fiche
         </Link>
       </div>

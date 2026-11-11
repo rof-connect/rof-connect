@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supprimerContenu } from "@/app/membres/[section]/actions";
 import { GameChangerEmbed } from "@/components/membres/GameChangerEmbed";
 import type { SectionConfig } from "@/lib/section-config";
+import { bouton } from "@/components/ui/boutons";
 
 export function CarteContenu({
   slug,
@@ -26,7 +27,7 @@ export function CarteContenu({
     <form action={supprimerContenu} className="mt-3 text-right">
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="content_id" value={id} />
-      <button type="submit" className="text-sm text-rof-rouge underline">
+      <button type="submit" className={bouton("danger")}>
         Supprimer
       </button>
     </form>
@@ -46,7 +47,7 @@ export function CarteContenu({
           href={body.url}
           target="_blank"
           rel="noreferrer"
-          className="mt-3 inline-block rounded-lg bg-rof-royal px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wider text-white"
+          className={`${bouton("accent", "md")} mt-3`}
         >
           ▶ Regarder la vidéo
         </a>
@@ -70,7 +71,7 @@ export function CarteContenu({
           href={body.url}
           target="_blank"
           rel="noreferrer"
-          className="mt-3 inline-block rounded-lg bg-rof-or px-4 py-2 font-condensed text-sm font-bold uppercase tracking-wider text-rof-noir"
+          className={`${bouton("primaire", "md")} mt-3`}
         >
           Ouvrir dans GameChanger ↗
         </a>
