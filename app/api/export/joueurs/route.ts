@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { chargerGroupes } from "@/lib/groupes";
+import { chargerNumeros } from "@/lib/numeros-chandail";
 
 const STATUTS: Record<number, string> = {
   1: "Prospect",
@@ -32,11 +34,20 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const teamIdFiltre = searchParams.get("team_id");
+  // Sans team_id : type = equipes | groupes | tout, et sport = softball | baseball (Direction seulement).
+  const type = searchParams.get("type") ?? "tout";
+  const sportFiltre = searchParams.get("sport");
+  const groupes = await chargerGroupes();
 
   let equipeIds: string[];
   if (profile?.role === "admin") {
-    const { data: toutes } = await supabase.from("teams").select("id").eq("archived", false);
-    equipeIds = (toutes ?? []).map((t) => t.id);
+    // Une équipe ou un groupe précis s'exporte même archivé.
+    let requete = supabase.from("teams").select("id, sport");
+    if (!teamIdFiltre) requete = requete.eq("archived", false);
+    const { data: toutes } = await requete;
+    equipeIds = (toutes ?? [])
+      .filter((t) => teamIdFiltre || ((type === "tout" || (type === "groupes") === groupes.has(t.id)) && (!sportFiltre || t.sport === sportFiltre)))
+      .map((t) => t.id);
   } else {
     const { data: mesEquipes } = await supabase
       .from("team_members")
@@ -63,8 +74,9 @@ export async function GET(request: Request) {
     .in("profile_id", profileIds.length ? profileIds : ["00000000-0000-0000-0000-000000000000"]);
   const ficheParProfil = new Map((fiches ?? []).map((f) => [f.profile_id, f]));
 
+  const numeros = await chargerNumeros();
   const entetes = ligneCsv([
-    "Nom", "Équipe", "Sport", "Statut", "Naissance", "Position", "Lance", "Frappe",
+    "Nom", "N°", "Équipe", "Type", "Sport", "Statut", "Naissance", "Position", "Lance", "Frappe",
     "Parent/Tuteur", "Téléphone", "Courriel", "Médical", "Consentement photo", "Inscrit le",
   ]);
 
@@ -75,7 +87,9 @@ export async function GET(request: Request) {
     const inscrit = profil?.created_at ? new Date(profil.created_at).toLocaleDateString("fr-CA") : "";
     return ligneCsv([
       profil?.full_name,
+      numeros[m.profile_id],
       team?.name,
+      groupes.has(m.team_id) ? "Groupe" : "Équipe",
       team?.sport,
       STATUTS[m.status_id] ?? "",
       fiche?.birth_date,
@@ -93,10 +107,20 @@ export async function GET(request: Request) {
 
   const csv = "﻿" + [entetes, ...lignes].join("\n");
 
+  // Nom du fichier : celui de l'équipe ou du groupe exporté.
+  let nomFichier = "rof-joueurs";
+  if (teamIdFiltre) {
+    const { data: t } = await supabase.from("teams").select("name").eq("id", teamIdFiltre).maybeSingle();
+    const slug = (t?.name ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    if (slug) nomFichier = `rof-${slug}`;
+  } else if (type !== "tout") {
+    nomFichier = `rof-${type}${sportFiltre ? "-" + sportFiltre : ""}`;
+  }
+
   return new NextResponse(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="rof-joueurs.csv"`,
+      "Content-Disposition": `attachment; filename="${nomFichier}.csv"`,
     },
   });
 }

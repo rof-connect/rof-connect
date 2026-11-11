@@ -149,6 +149,9 @@ export default async function EquipePage({ params, searchParams }: { params: Pro
           {equipe.option ? ` · ${LABEL_OPTION[equipe.option] ?? equipe.option}` : ""}
           {equipe.archived ? " · archivée" : ""}
         </p>
+        <a href={`/api/export/joueurs?team_id=${equipe.id}`} className={`${bouton("primaire", "md")} mt-3`}>
+          Exporter {estGroupe ? "le groupe" : "l'équipe"} (CSV)
+        </a>
       </div>
 
       <form action={modifierEquipe} className="flex flex-col gap-3 rounded-xl border border-rof-ligne bg-rof-blanc p-4">

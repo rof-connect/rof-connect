@@ -145,6 +145,15 @@ export default async function GestionEquipesPage({
         </details>
       )}
 
+      <div className="mt-4 flex flex-wrap gap-2">
+        <a href={`/api/export/joueurs?type=equipes${sportFiltre ? `&sport=${sportFiltre}` : ""}`} className={bouton("secondaire", "md")}>
+          Exporter toutes les équipes (CSV)
+        </a>
+        <a href={`/api/export/joueurs?type=groupes${sportFiltre ? `&sport=${sportFiltre}` : ""}`} className={bouton("neutre", "md")}>
+          Exporter tous les groupes (CSV)
+        </a>
+      </div>
+
       <div className="mt-6 flex items-center justify-between">
         <h2 className="font-condensed text-lg font-bold uppercase tracking-wide text-rof-poudre">
           {voirArchives ? "Équipes archivées" : "Équipes actives"}
