@@ -6,7 +6,7 @@ import { chargerSondages } from "@/lib/sondages";
 import { getDictionnaire } from "@/lib/i18n/server";
 import { repondre } from "@/app/membres/agenda/actions";
 import { chargerStatutsJoueuses } from "@/lib/statuts";
-import { bouton } from "@/components/ui/boutons";
+import { bouton as styleBouton } from "@/components/ui/boutons";
 
 type EvenementBody = { type?: string; heure?: string | null; lieu?: string | null };
 
@@ -141,7 +141,7 @@ export default async function MembresPage() {
                 </form>
               </div>
             )}
-            <Link href="/membres/agenda" className={`${bouton("secondaire")} mt-3`}>
+            <Link href="/membres/agenda" className={`${styleBouton("secondaire")} mt-3`}>
               {a.voirAgenda}
             </Link>
           </>
