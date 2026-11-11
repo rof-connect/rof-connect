@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getDictionnaire } from "@/lib/i18n/server";
 import { FicheAthlete } from "@/components/membres/FicheAthlete";
+import { bouton } from "@/components/ui/boutons";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -41,7 +42,7 @@ export default async function FicheJoueusePage({ params }: { params: Promise<{ i
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-4 px-5 py-8">
-      <Link href="/membres/equipe" className="text-sm text-rof-poudre underline">
+      <Link href="/membres/equipe" className={bouton("secondaire")}>
         ‹ {t.fiche.retour}
       </Link>
       <FicheAthlete client={admin} profileId={id} t={t} locale={locale} mode="staff" />
