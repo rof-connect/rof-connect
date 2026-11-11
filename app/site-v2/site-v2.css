@@ -805,3 +805,17 @@ html:has(.v2){scroll-behavior:smooth}
 }
 .v2 .gallery.gallery-auto{grid-auto-rows:200px}
 @media (max-width:1000px){.v2 .gallery.gallery-auto{grid-auto-rows:170px}}
+
+/* Benny & Co. : noir et blanc, couleur au passage de la souris (ou au clavier) */
+.v2 .logos-grille li.logo-gris img{filter:grayscale(1);transition:filter .2s}
+.v2 .logos-grille li.logo-gris:hover img,.v2 .logos-grille li.logo-gris:focus-within img{filter:none}
+
+/* Affiliations : logos beaucoup plus petits que ceux des partenaires (moins importants) */
+@media (min-width:601px){
+  .v2 .logos-affiliations{max-width:calc(var(--c) * 136px);gap:10px 12px}
+  .v2 .logos-affiliations li{width:124px;aspect-ratio:2/1}
+  .v2 .logos-affiliations li img{padding:5px}
+}
+@media (max-width:600px){
+  .v2 .logos-affiliations li{aspect-ratio:2/1}
+}

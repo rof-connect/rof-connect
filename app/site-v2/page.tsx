@@ -474,12 +474,12 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
 }
 
 /** Grille de logos centrée : le nombre de colonnes est choisi pour qu'aucun logo ne reste seul sur sa ligne. */
-function GrilleLogos({ classe, logos, cols }: { classe: string; logos: { nom: string; src: string }[]; cols: { d: number; t: number; m: number } }) {
+function GrilleLogos({ classe, logos, cols }: { classe: string; logos: { nom: string; src: string; gris?: boolean }[]; cols: { d: number; t: number; m: number } }) {
   const style = { "--cd": cols.d, "--ct": cols.t, "--cm": cols.m } as React.CSSProperties;
   return (
     <ul className={`logos-grille ${classe}`} style={style} data-reste-m={logos.length % cols.m}>
       {logos.map((l) => (
-        <li key={l.nom}>
+        <li key={l.nom} className={l.gris ? "logo-gris" : undefined}>
           <Image src={l.src} alt={l.nom} fill loading="lazy" sizes="(max-width: 600px) 33vw, 220px" />
         </li>
       ))}

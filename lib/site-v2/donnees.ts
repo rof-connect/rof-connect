@@ -240,12 +240,12 @@ export const GALERIE: { src: string; alt: string }[] = [
 ];
 
 /** Bloc « Nos partenaires » (commanditaires et fournisseurs), les mêmes pour les deux sports. Logos plus grands, en couleur. */
-export const PARTENAIRES_LOGOS: { nom: string; src: string }[] = [
+export const PARTENAIRES_LOGOS: { nom: string; src: string; gris?: boolean }[] = [ // gris : en noir et blanc, couleur au survol de la souris
   { nom: "L'Entrepôt du Baseball", src: "/partenaires/n-entrepot-du-baseball.png" },
   { nom: "Gym L'Armure", src: "/partenaires/n-gym-armure.png" },
   { nom: "Remorques Dionne", src: "/partenaires/n-remorques-dionne.png" },
   { nom: "Sébastien Gervais Photo", src: "/partenaires/n-sebastien-gervais-photo.png" },
-  { nom: "Benny & Co.", src: "/partenaires/n-benny.png" },
+  { nom: "Benny & Co.", src: "/partenaires/n-benny.png", gris: true },
 ];
 
 /** Bloc « Affiliations et circuits » : fédérations, ligues et circuits de tournois. Logos plus petits, en niveaux de gris. */
@@ -279,6 +279,8 @@ export function affiliationsDe(sport: Sport) {
  */
 export function colonnesLogos(n: number, max: { d: number; t: number; m: number }) {
   const choix = (candidats: number[]) => {
+    // D'abord une division exacte (aucune rangée incomplète), du plus grand nombre de colonnes au plus petit (au moins 3).
+    for (const k of [...candidats].sort((x, y) => y - x)) if (k >= 3 && k <= n && n % k === 0) return k;
     for (const k of candidats) if (k <= Math.max(n, 1) && n % k !== 1) return k;
     return candidats[0] ?? 1; // aucune division sans reste de 1 : le CSS répartit alors les 4 derniers logos en 2 rangées
   };
