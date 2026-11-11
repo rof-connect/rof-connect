@@ -190,12 +190,13 @@ export const CONTENU: Record<Sport, Contenu> = {
     stats: [
       ["4", "Titres provinciaux"],
       ["2", "Titres Can-Am United"],
-      ["1", "Titre ECTBL"],
+      ["2", "Titres ECTBL"],
     ],
     calendrier: [],
     bannieres: [
       { style: "provincial", titre: "Champion provincial", sous: "Petite Ligue Québec", annee: "2026", mention: "Champions invaincus", categorie: "Mineur", embleme: "ll" },
-      { style: "tournoi", titre: "ECTBL", sous: "Séries Minor", annee: "2026", mention: "Champions", categorie: "10U · 11-1", embleme: "ll" },
+      { style: "tournoi", titre: "ECTBL", sous: "Séries Senior", annee: "2026", mention: "Champions", categorie: "Senior 16U", embleme: "ll" },
+      { style: "tournoi", titre: "ECTBL", sous: "Séries Minor", annee: "2026", mention: "Champions", categorie: "Mineur 10U", embleme: "ll" },
       { style: "tournoi", titre: "PBR Baseball", sous: "Cortland, NY", annee: "2026", mention: "Champions", categorie: "8U", embleme: "pbr" },
       { style: "tournoi", titre: "Peter Loyen Classic", sous: "PBR Baseball · Ottawa West", annee: "2026", mention: "Champions", categorie: "10U", embleme: "otw" },
       { style: "tournoi", titre: "Ontario Rookie Invitational", sous: "Kingston", annee: "2026", mention: "Champions", categorie: "8U", embleme: "ll" },
@@ -210,7 +211,8 @@ export const CONTENU: Record<Sport, Contenu> = {
         y: "2026",
         l: [
           "Champions provinciaux Petite Ligue Québec — Mineur, parcours invaincu",
-          "Champions ECTBL (séries éliminatoires Minor) — 10U, victoire de 11-1 en finale",
+          "Champions ECTBL (séries éliminatoires Senior) — 16U",
+          "Champions ECTBL (séries éliminatoires Minor) — Mineur 10U, victoire de 11-1 en finale",
           "Champions PBR Baseball (Cortland, NY) — 8U",
           "Champions Peter Loyen Classic (PBR Baseball Ottawa West) — 10U",
           "Champions Ontario Rookie Invitational (Kingston) — 8U",
