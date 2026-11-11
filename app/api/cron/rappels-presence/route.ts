@@ -27,6 +27,7 @@ export async function GET(request: Request) {
   let envoyes = 0;
 
   for (const e of evenements ?? []) {
+    if (((e.body ?? {}) as { mode?: string }).mode === "completer") continue; // entraînement à compléter : pas de présence à confirmer
     const { data: membres } = await admin
       .from("team_members")
       .select("profile_id, profiles (email)")

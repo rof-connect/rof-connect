@@ -25,6 +25,30 @@ export async function repondre(formData: FormData) {
   revalidatePath("/membres");
 }
 
+/**
+ * Entraînement « à compléter » (plan à faire quand on veut) : la joueuse clique « J'ai complété cet entraînement » (état Complété) ; sinon l'état reste Non complété.
+ * Réutilise la table des présences : « yes » = complété, « no » ou aucune ligne = non complété. Aucune présence demandée.
+ */
+export async function marquerComplete(formData: FormData) {
+  const contentId = String(formData.get("content_id") ?? "");
+  const fait = String(formData.get("fait") ?? "") === "1";
+  if (!contentId) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.from("attendance").upsert(
+    { content_id: contentId, profile_id: user.id, response: fait ? "yes" : "no" },
+    { onConflict: "content_id,profile_id" },
+  );
+
+  revalidatePath("/membres/agenda");
+  revalidatePath("/membres");
+}
+
 const TYPES_VALIDES = ["Pratique", "Match", "Tournoi", "Autre"];
 
 export async function ajouterEvenement(formData: FormData) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { repondre, supprimerEvenement } from "@/app/membres/agenda/actions";
+import { marquerComplete, repondre, supprimerEvenement } from "@/app/membres/agenda/actions";
 import { bouton } from "@/components/ui/boutons";
 
 const TYPES_EVENEMENT: Record<string, string> = {
@@ -12,6 +12,8 @@ const TYPES_EVENEMENT: Record<string, string> = {
 };
 
 type Athlete = { id: string; nom: string };
+export type ExerciceProgramme = { code: string; nom: string; series: string; description: string; url?: string | null };
+export type BlocProgramme = { titre: string; info?: string; exercices: ExerciceProgramme[] };
 
 export function CarteEvenement({
   id,
@@ -28,6 +30,10 @@ export function CarteEvenement({
   presents,
   absents,
   sansReponse,
+  mode,
+  pdfUrl,
+  pdfNom,
+  blocs,
 }: {
   id: string;
   titre: string;
@@ -43,7 +49,12 @@ export function CarteEvenement({
   presents: Athlete[];
   absents: Athlete[];
   sansReponse: Athlete[];
+  mode?: string | null; // « completer » : plan à faire quand on veut, la joueuse clique quand c'est complété (pas de présence)
+  pdfUrl?: string | null;
+  pdfNom?: string | null;
+  blocs?: BlocProgramme[] | null; // programme d'entraînement du jour (exercices séparés, avec photos)
 }) {
+  const aCompleter = mode === "completer";
   const [voirListe, setVoirListe] = useState(false);
   const badge = TYPES_EVENEMENT[type] ?? TYPES_EVENEMENT.Autre;
   const d = new Date(date + "T12:00:00");
@@ -80,7 +91,74 @@ export function CarteEvenement({
       </div>
       {note && <p className="mt-3 whitespace-pre-line text-sm text-rof-texte">{note}</p>}
 
-      {!passe ? (
+      {pdfUrl && (
+        <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className={`${bouton("accent", "md")} mt-3 w-full`}>
+          📄 Ouvrir le PDF{pdfNom ? ` : ${pdfNom}` : ""}
+        </a>
+      )}
+
+      {blocs && blocs.length > 0 && (
+        <details open className="mt-4">
+          <summary className="min-h-10 cursor-pointer font-condensed text-base font-bold uppercase tracking-wide text-rof-poudre">
+            Programme du jour · {blocs.reduce((n, b) => n + b.exercices.length, 0)} exercices
+          </summary>
+          <div className="mt-2 flex flex-col gap-6">
+            {blocs.map((b) => (
+              <section key={b.titre}>
+                <h3 className="flex flex-wrap items-baseline justify-between gap-2 border-b-2 border-rof-or pb-1 font-condensed text-lg font-bold uppercase tracking-wide text-rof-or">
+                  {b.titre}
+                  {b.info && <span className="text-xs font-semibold normal-case tracking-normal text-rof-gris">{b.info}</span>}
+                </h3>
+                <ol className="mt-3 flex flex-col gap-4">
+                  {b.exercices.map((e) => (
+                    <li key={e.code} className="overflow-hidden rounded-xl border border-rof-ligne bg-rof-craie">
+                      {e.url && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={e.url} alt={`${e.nom} : position de départ puis d'arrivée`} loading="lazy" className="w-full bg-white object-contain" />
+                      )}
+                      <div className="p-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="font-condensed text-lg font-bold uppercase leading-tight text-rof-texte">
+                            <span className="mr-2 rounded bg-rof-or px-1.5 py-0.5 text-sm text-black">{e.code}</span>
+                            {e.nom}
+                          </p>
+                          <span className="shrink-0 rounded-full border border-rof-or/70 px-3 py-0.5 font-condensed text-sm font-bold text-rof-or">{e.series}</span>
+                        </div>
+                        <p className="mt-2 text-sm leading-relaxed text-rof-gris">{e.description}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))}
+          </div>
+        </details>
+      )}
+
+      {aCompleter ? (
+        <div className="mt-3 flex flex-col gap-2">
+          <p
+            className={`self-start rounded-full border px-3 py-1 font-condensed text-sm font-bold uppercase tracking-wide ${
+              maReponse === "yes" ? "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" : "border-rof-ligne bg-rof-craie text-rof-gris"
+            }`}
+          >
+            {maReponse === "yes" ? "✓ Complété" : "Non complété"}
+          </p>
+          <form action={marquerComplete} className="flex">
+            <input type="hidden" name="content_id" value={id} />
+            <input type="hidden" name="fait" value={maReponse === "yes" ? "0" : "1"} />
+            {maReponse === "yes" ? (
+              <button type="submit" className={bouton("neutre", "md")}>
+                Annuler
+              </button>
+            ) : (
+              <button type="submit" className="min-h-12 flex-1 rounded-full bg-rof-or font-condensed text-base font-bold uppercase tracking-wider text-black transition-colors active:scale-[0.97]">
+                ✓ J&apos;ai complété cet entraînement
+              </button>
+            )}
+          </form>
+        </div>
+      ) : !passe ? (
         <div className="mt-4 grid grid-cols-2 gap-2">
           <form action={repondre} className="flex">
             <input type="hidden" name="content_id" value={id} />
@@ -120,11 +198,18 @@ export function CarteEvenement({
       {peutEditer && (
         <div className="mt-3 border-t border-rof-ligne pt-3">
           <button onClick={() => setVoirListe(!voirListe)} className="flex min-h-10 w-full items-center justify-between rounded-xl bg-rof-craie px-3 text-left">
-            <div className="flex gap-3 text-sm font-semibold">
-              <span className="text-rof-gazon">✓ {presents.length} présent·e·s</span>
-              <span className="text-rof-rouge">✗ {absents.length} absent·e·s</span>
-              <span className="text-rof-gris">{sansReponse.length} sans réponse</span>
-            </div>
+            {aCompleter ? (
+              <div className="flex gap-3 text-sm font-semibold">
+                <span className="text-rof-gazon">✓ {presents.length} complété</span>
+                <span className="text-rof-gris">{absents.length + sansReponse.length} non complété</span>
+              </div>
+            ) : (
+              <div className="flex gap-3 text-sm font-semibold">
+                <span className="text-rof-gazon">✓ {presents.length} présent·e·s</span>
+                <span className="text-rof-rouge">✗ {absents.length} absent·e·s</span>
+                <span className="text-rof-gris">{sansReponse.length} sans réponse</span>
+              </div>
+            )}
             <span className="text-rof-gris">{voirListe ? "▲" : "▼"}</span>
           </button>
           {voirListe && (
@@ -133,7 +218,9 @@ export function CarteEvenement({
                 <div key={j.id} className="text-rof-gazon">✓ {j.nom}</div>
               ))}
               {absents.map((j) => (
-                <div key={j.id} className="text-rof-rouge">✗ {j.nom}</div>
+                <div key={j.id} className={aCompleter ? "text-rof-gris" : "text-rof-rouge"}>
+                  {aCompleter ? "—" : "✗"} {j.nom}
+                </div>
               ))}
               {sansReponse.map((j) => (
                 <div key={j.id} className="text-rof-gris">— {j.nom}</div>

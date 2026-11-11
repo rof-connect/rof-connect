@@ -4,11 +4,11 @@ import { FormAjouterJoueuse } from "@/components/membres/FormAjouterJoueuse";
 import { chargerMessagesTous } from "@/lib/messages-tous";
 import { chargerSondages } from "@/lib/sondages";
 import { getDictionnaire } from "@/lib/i18n/server";
-import { repondre } from "@/app/membres/agenda/actions";
+import { marquerComplete, repondre } from "@/app/membres/agenda/actions";
 import { chargerStatutsJoueuses } from "@/lib/statuts";
 import { bouton as styleBouton } from "@/components/ui/boutons";
 
-type EvenementBody = { type?: string; heure?: string | null; lieu?: string | null };
+type EvenementBody = { type?: string; heure?: string | null; lieu?: string | null; mode?: string | null };
 
 function dateLocale(decalageJours = 0) {
   const d = new Date(Date.now() + decalageJours * 86400000);
@@ -56,8 +56,9 @@ export default async function MembresPage() {
         .limit(20)
     : { data: [] as { id: string; title: string; event_date: string | null; team_id: string; body: unknown }[] };
 
-  const prochain = (aVenir ?? [])[0] ?? null;
-  const nbSemaine = (aVenir ?? []).filter((e) => (e.event_date ?? "") <= dansSeptJours).length;
+  const evenementsReguliers = (aVenir ?? []).filter((e) => ((e.body ?? {}) as EvenementBody).mode !== "completer");
+  const prochain = evenementsReguliers[0] ?? null;
+  const nbSemaine = evenementsReguliers.filter((e) => (e.event_date ?? "") <= dansSeptJours).length;
 
   let maReponse: "yes" | "no" | null = null;
   if (prochain) {
@@ -70,10 +71,37 @@ export default async function MembresPage() {
     maReponse = (rep?.response as "yes" | "no" | undefined) ?? null;
   }
 
+  // À FAIRE : entraînements à compléter (à faire avant leur date, ou en retard depuis moins de 14 jours).
+  let tachesPlan: { id: string; title: string; event_date: string; lieu: string; enRetard: boolean }[] = [];
+  if (estAthlete && teamIds.length) {
+    const { data: plans } = await supabase
+      .from("contents")
+      .select("id, title, event_date, body")
+      .in("team_id", teamIds)
+      .eq("kind", "agenda")
+      .gte("event_date", dateLocale(-14))
+      .lte("event_date", dansSeptJours)
+      .order("event_date", { ascending: true })
+      .limit(60);
+    const aCompleter = (plans ?? []).filter((e) => ((e.body ?? {}) as EvenementBody).mode === "completer");
+    const { data: faits } = aCompleter.length
+      ? await supabase.from("attendance").select("content_id, response").eq("profile_id", user!.id).in("content_id", aCompleter.map((e) => e.id))
+      : { data: [] as { content_id: string; response: string }[] };
+    const dejaFaits = new Set((faits ?? []).filter((f) => f.response === "yes").map((f) => f.content_id));
+    tachesPlan = aCompleter
+      .filter((e) => !dejaFaits.has(e.id))
+      .map((e) => ({ id: e.id, title: e.title, event_date: e.event_date ?? "", lieu: ((e.body ?? {}) as EvenementBody).lieu ?? "", enRetard: (e.event_date ?? "") < aujourdhui }));
+  }
+  let ficheIncomplete = false;
+  if (profile?.role === "member") {
+    const { data: fiche } = await supabase.from("athlete_details").select("birth_date").eq("profile_id", user!.id).maybeSingle();
+    ficheIncomplete = !fiche?.birth_date;
+  }
+
   const sondages = await chargerSondages(user!.id, estAdmin);
   const sondagesAFaire = sondages.filter((s) => !s.closed && !s.monVote && s.maDates.length === 0).length;
 
-  const nbAFaire = sondagesAFaire;
+  const nbAFaire = sondagesAFaire + tachesPlan.length + (ficheIncomplete ? 1 : 0);
 
   const messages = await chargerMessagesTous(locale === "en" ? "en" : "fr");
   const statutPropre = (await chargerStatutsJoueuses())[user!.id] ?? 1;
@@ -106,6 +134,60 @@ export default async function MembresPage() {
         {m2.bienvenue}, {profile?.full_name || user?.email}
       </h1>
 
+      {(estAthlete || profile?.role === "member") && (
+        <section id="afaire" aria-label={a.aFaire} className="mt-6 rounded-xl border-2 border-rof-or bg-rof-blanc p-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-or">{a.aFaire}</p>
+            <span className={`rounded-full px-3 py-0.5 font-condensed text-sm font-bold ${nbAFaire ? "bg-rof-or text-black" : "bg-rof-gazon/20 text-rof-gazon"}`}>{nbAFaire}</span>
+          </div>
+          {nbAFaire === 0 && <p className="mt-2 text-sm text-rof-gazon">{locale === "en" ? "All done ✓" : "Tout est fait ✓"}</p>}
+          <ul className="mt-3 flex flex-col gap-3">
+            {tachesPlan.map((tache) => (
+              <li key={tache.id} className="rounded-xl border border-rof-ligne bg-rof-craie p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-condensed text-lg font-bold uppercase leading-tight text-rof-texte">{tache.title}</p>
+                  {tache.enRetard && <span className="shrink-0 rounded-full border border-rof-rouge/60 px-2 py-0.5 font-condensed text-xs font-bold uppercase text-rof-rouge">{locale === "en" ? "Late" : "En retard"}</span>}
+                </div>
+                <p className="mt-0.5 text-xs text-rof-gris">
+                  {tache.lieu}
+                  {tache.event_date ? ` · ${locale === "en" ? "by" : "avant le"} ${new Date(tache.event_date + "T12:00:00").toLocaleDateString(locale === "en" ? "en-CA" : "fr-CA", { weekday: "long", day: "numeric", month: "long" })}` : ""}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Link href="/membres/agenda" className={styleBouton("secondaire", "md")}>
+                    {locale === "en" ? "See the program" : "Voir le programme"}
+                  </Link>
+                  <form action={marquerComplete}>
+                    <input type="hidden" name="content_id" value={tache.id} />
+                    <input type="hidden" name="fait" value="1" />
+                    <button type="submit" className={styleBouton("primaire", "md")}>
+                      ✓ {locale === "en" ? "I completed it" : "J'ai complété"}
+                    </button>
+                  </form>
+                </div>
+              </li>
+            ))}
+            {sondagesAFaire > 0 && (
+              <li>
+                <Link href="/membres/sondages" className="flex items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-craie p-3">
+                  <span className="font-condensed text-base font-bold uppercase text-rof-texte">
+                    {sondagesAFaire} {a.sondagesAFaire}
+                  </span>
+                  <span className="text-rof-or" aria-hidden>→</span>
+                </Link>
+              </li>
+            )}
+            {ficheIncomplete && (
+              <li>
+                <Link href="/membres/moi" className="flex items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-craie p-3">
+                  <span className="font-condensed text-base font-bold uppercase text-rof-texte">{locale === "en" ? "Add my date of birth" : "Ajouter ma date de naissance"}</span>
+                  <span className="text-rof-or" aria-hidden>→</span>
+                </Link>
+              </li>
+            )}
+          </ul>
+        </section>
+      )}
+
       <section className="mt-6 rounded-xl border border-rof-or bg-rof-blanc p-4">
         <p className="font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">{a.prochain}</p>
         {prochain ? (
@@ -113,7 +195,21 @@ export default async function MembresPage() {
             <p className="mt-1 font-condensed text-2xl font-bold uppercase text-rof-texte">{prochain.title}</p>
             <p className="text-sm text-rof-gris">{details}</p>
             {teamIds.length > 1 && <p className="text-xs text-rof-gris">{nomEquipe.get(prochain.team_id)}</p>}
-            {estAthlete && (
+            {estAthlete && body.mode === "completer" && (
+              <div className="mt-4 flex flex-col gap-2">
+                <p className={`self-start rounded-full border px-3 py-1 font-condensed text-xs font-bold uppercase tracking-wide ${maReponse === "yes" ? "border-rof-gazon/60 text-rof-gazon" : "border-rof-ligne text-rof-gris"}`}>
+                  {maReponse === "yes" ? "✓ Complété" : "Non complété"}
+                </p>
+                <form action={marquerComplete} className="flex">
+                  <input type="hidden" name="content_id" value={prochain.id} />
+                  <input type="hidden" name="fait" value={maReponse === "yes" ? "0" : "1"} />
+                  <button type="submit" className={`${bouton} ${maReponse === "yes" ? "border border-rof-ligne text-rof-texte" : "bg-rof-or text-black"}`}>
+                    {maReponse === "yes" ? "Annuler" : "✓ J'ai complété cet entraînement"}
+                  </button>
+                </form>
+              </div>
+            )}
+            {estAthlete && body.mode !== "completer" && (
               <div className="mt-4 flex gap-2">
                 <form action={repondre} className="flex flex-1">
                   <input type="hidden" name="content_id" value={prochain.id} />
@@ -151,14 +247,14 @@ export default async function MembresPage() {
       </section>
 
       <div className="mt-3 grid grid-cols-2 gap-3">
-        <Link href="/membres/sondages" className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
+        <Link href="#afaire" className="rounded-xl border border-rof-ligne bg-rof-blanc p-4">
           <p className="font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-gris">{a.aFaire}</p>
           <p className={`font-condensed text-3xl font-bold ${nbAFaire ? "text-rof-rouge" : "text-rof-gazon"}`}>
             {nbAFaire}
           </p>
           <p className="text-xs text-rof-gris">
             {nbAFaire
-              ? `${sondagesAFaire} ${a.sondagesAFaire}`
+              ? `${nbAFaire} ${locale === "en" ? "task" : "tâche"}${nbAFaire > 1 ? "s" : ""}`
               : a.toutEstFait}
           </p>
         </Link>

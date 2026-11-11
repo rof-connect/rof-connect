@@ -4,12 +4,17 @@ import { CarteEvenement } from "@/components/membres/CarteEvenement";
 import { FormAjoutEvenement } from "@/components/membres/FormAjoutEvenement";
 import { ImportExcel } from "@/components/membres/ImportExcel";
 import { bouton } from "@/components/ui/boutons";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 type EvenementBody = {
   type?: string;
   heure?: string | null;
   lieu?: string | null;
   note?: string | null;
+  mode?: string | null; // « completer » : entraînement à faire quand on veut, bouton « complété » à la place de la présence
+  pdf_path?: string | null;
+  pdf_nom?: string | null;
+  exercices_blocs?: { titre: string; info?: string; exercices: { code: string; nom: string; series: string; description: string; image?: string }[] }[];
 };
 
 function aujourdhui() {
@@ -71,6 +76,24 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
     }
   }
 
+  // PDF joint à un événement : lien signé d'une heure (l'événement lui-même n'est visible que par les membres autorisés).
+  const adminStockage = createAdminClient();
+  const urlsPdf = new Map<string, string>();
+  for (const e of evenements ?? []) {
+    const chemin = ((e.body ?? {}) as EvenementBody).pdf_path;
+    if (!chemin) continue;
+    const { data } = await adminStockage.storage.from("media").createSignedUrl(chemin, 60 * 60);
+    if (data?.signedUrl) urlsPdf.set(e.id, data.signedUrl);
+  }
+
+  // Photos des exercices : liens signés d'une heure, demandés en une seule fois.
+  const cheminsImages = [...new Set((evenements ?? []).flatMap((e) => ((e.body ?? {}) as EvenementBody).exercices_blocs?.flatMap((b) => b.exercices.map((x) => x.image ?? "")) ?? []).filter(Boolean))];
+  const urlsImages = new Map<string, string>();
+  if (cheminsImages.length) {
+    const { data } = await adminStockage.storage.from("media").createSignedUrls(cheminsImages, 60 * 60);
+    for (const d of data ?? []) if (d.path && d.signedUrl) urlsImages.set(d.path, d.signedUrl);
+  }
+
   const jour = aujourdhui();
   const aVenir = (evenements ?? []).filter((e) => (e.event_date ?? "") >= jour);
   const passes = (evenements ?? []).filter((e) => (e.event_date ?? "") < jour).reverse();
@@ -99,6 +122,10 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         presents={roster.filter((j) => rows.find((p) => p.profile_id === j.id && p.response === "yes"))}
         absents={roster.filter((j) => rows.find((p) => p.profile_id === j.id && p.response === "no"))}
         sansReponse={roster.filter((j) => !rows.find((p) => p.profile_id === j.id))}
+        mode={body.mode ?? null}
+        pdfUrl={urlsPdf.get(e.id) ?? null}
+        pdfNom={body.pdf_nom ?? null}
+        blocs={body.exercices_blocs?.map((b) => ({ titre: b.titre, info: b.info, exercices: b.exercices.map((x) => ({ code: x.code, nom: x.nom, series: x.series, description: x.description, url: x.image ? urlsImages.get(x.image) ?? null : null })) })) ?? null}
       />
     );
   };
