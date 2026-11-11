@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { inscrireAthlete, inscrireEntraineur } from "@/app/inscription/actions";
 import type { Dictionnaire } from "@/lib/i18n/dictionaries";
+import { ChampPiege } from "@/components/inscription/ChampPiege";
 
 export function FormInscription({
   i,
@@ -40,7 +41,8 @@ export function FormInscription({
       </div>
 
       {type === "athlete" ? (
-        <form action={inscrireAthlete} className="flex flex-col gap-4">
+        <form action={inscrireAthlete} className="relative flex flex-col gap-4">
+          <ChampPiege />
           <Champ label={i.nomAthlete} name="full_name" required placeholder="Ex. : Bella Di Peco" />
           <Champ label={i.courrielParent} name="email" type="email" required placeholder="parent@courriel.com" />
           <Champ label={i.motDePasse} name="password" type="password" required minLength={8} />
@@ -112,7 +114,8 @@ export function FormInscription({
           </button>
         </form>
       ) : (
-        <form action={inscrireEntraineur} className="flex flex-col gap-4">
+        <form action={inscrireEntraineur} className="relative flex flex-col gap-4">
+          <ChampPiege />
           <p className="text-sm text-rof-gris">{i.entraineurIntro}</p>
           <Champ label={i.nomEntraineur} name="full_name" required placeholder="Ex. : Sophie Tremblay" />
           <Champ label={i.courrielEntraineur} name="email" type="email" required placeholder="entraineur@courriel.com" />

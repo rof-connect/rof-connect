@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { envoyerADirection, echapper } from "@/lib/notifier-direction";
 import { definirSportJoueuse } from "@/lib/sport-joueuses";
+import { nomSuspect, piegeRempli, sansLien } from "@/lib/anti-pourriel";
+
+const NOM_INVALIDE = "Le nom contient des caractères ou un lien non permis. Écris seulement le prénom et le nom.";
 
 export async function inscrireAthlete(formData: FormData) {
   const fullName = String(formData.get("full_name") ?? "").trim();
@@ -25,8 +28,14 @@ export async function inscrireAthlete(formData: FormData) {
   const photoConsent = formData.get("photo_consent") === "on";
   const sport = String(formData.get("sport") ?? "") === "baseball" ? "baseball" : String(formData.get("sport") ?? "") === "softball" ? "softball" : "";
 
+  // Robot : on fait comme si tout avait fonctionné, sans créer de compte ni envoyer de courriel.
+  if (piegeRempli(formData)) redirect("/inscription/confirmation");
+
   if (!fullName || !email || !password) {
     redirect("/inscription?erreur=" + encodeURIComponent("Complète au minimum le nom, le courriel et le mot de passe."));
+  }
+  if (nomSuspect(fullName) || nomSuspect(guardianName)) {
+    redirect("/inscription?erreur=" + encodeURIComponent(NOM_INVALIDE));
   }
 
   const supabase = await createClient();
@@ -69,7 +78,7 @@ export async function inscrireAthlete(formData: FormData) {
   const ligne = (label: string, valeur: string) =>
     valeur ? `<tr><td style="padding:3px 14px 3px 0;color:#666">${label}</td><td style="padding:3px 0"><b>${echapper(valeur)}</b></td></tr>` : "";
   await envoyerADirection(
-    `Nouvelle inscription : ${fullName}`,
+    `Nouvelle inscription : ${sansLien(fullName)}`,
     `<div style="font-family:Arial,sans-serif;color:#111;max-width:560px;line-height:1.5">` +
       `<div style="background:#000;color:#fff;padding:16px 20px"><div style="color:#D9B44A;font-size:12px;letter-spacing:2px">ROF CONNECT · NOUVELLE INSCRIPTION</div>` +
       `<div style="font-size:19px;font-weight:bold;margin-top:4px">${echapper(fullName)}</div></div>` +
@@ -93,10 +102,15 @@ export async function inscrireEntraineur(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
+  if (piegeRempli(formData)) redirect("/inscription/confirmation?type=entraineur");
+
   if (!fullName || !email || !password) {
     redirect(
       "/inscription?type=entraineur&erreur=" + encodeURIComponent("Complète le nom, le courriel et le mot de passe."),
     );
+  }
+  if (nomSuspect(fullName)) {
+    redirect("/inscription?type=entraineur&erreur=" + encodeURIComponent(NOM_INVALIDE));
   }
 
   const supabase = await createClient();
@@ -118,7 +132,7 @@ export async function inscrireEntraineur(formData: FormData) {
   await admin.from("profiles").update({ role: "coach", full_name: fullName }).eq("id", signUpData.user!.id);
 
   await envoyerADirection(
-    `Nouvelle inscription entraîneur : ${fullName}`,
+    `Nouvelle inscription entraîneur : ${sansLien(fullName)}`,
     `<p style="font-family:Arial,sans-serif"><b>${echapper(fullName)}</b> (${echapper(email)}) s'est inscrit·e comme entraîneur. À assigner à une équipe dans Direction.</p>`,
   );
 
