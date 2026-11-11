@@ -6,6 +6,9 @@ import { ajouterAEquipe, changerStatut, retirerDeEquipe } from "../../joueurs/ac
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerGroupes } from "@/lib/groupes";
 import { chargerSportsJoueuses } from "@/lib/sport-joueuses";
+import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
+import { ajouterEnLot, ajouterParNoms } from "../actions-lot";
+import { ToutCocher } from "@/components/membres/ToutCocher";
 import { bouton } from "@/components/ui/boutons";
 
 const LABEL_OPTION: Record<string, string> = {
@@ -34,8 +37,11 @@ const STATUTS = [
 const champ = "w-full rounded-lg border border-rof-ligne bg-rof-craie px-3 py-2 text-sm text-rof-texte";
 const etiquette = "mb-1 text-xs font-semibold uppercase tracking-wide text-rof-gris";
 
-export default async function EquipePage({ params }: { params: Promise<{ id: string }> }) {
+type Recherche = { q?: string; statut?: string; de?: string; a?: string; sans?: string; lot?: string; refusees?: string; absents?: string };
+
+export default async function EquipePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Recherche> }) {
   const { id } = await params;
+  const rech = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -90,7 +96,7 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
   const { data: tous } = await supabase.from("profiles").select("id, full_name").eq("role", "member");
   // Seules les joueuses du même sport que l'équipe sont proposées (une joueuse de softball ne peut pas aller en baseball, et inversement).
   const sportsJoueuses = await chargerSportsJoueuses();
-  const { data: liensSport } = await supabase.from("team_members").select("profile_id, teams(sport, archived)").eq("role_in_team", "athlete");
+  const { data: liensSport } = await supabase.from("team_members").select("profile_id, status_id, teams(sport, archived)").eq("role_in_team", "athlete");
   const sportsParEquipes = new Map<string, Set<string>>();
   (liensSport ?? []).forEach((l) => {
     const t = Array.isArray(l.teams) ? l.teams[0] : l.teams;
@@ -105,6 +111,30 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
   const disponibles = (tous ?? [])
     .filter((p) => !dejaDedans.has(p.id) && !archivees.has(p.id) && compatible(p.id))
     .sort((a, b) => (a.full_name ?? "").localeCompare(b.full_name ?? ""));
+
+  // Ajout en lot : filtres par nom, statut, date de naissance, et « sans équipe ».
+  const statutsJoueuses = await chargerStatutsJoueuses();
+  const statutsEquipes = new Map<string, number[]>();
+  (liensSport ?? []).forEach((l) => {
+    const t = Array.isArray(l.teams) ? l.teams[0] : l.teams;
+    if (t && !t.archived) statutsEquipes.set(l.profile_id, [...(statutsEquipes.get(l.profile_id) ?? []), l.status_id]);
+  });
+  const { data: naissances } = await supabase
+    .from("athlete_details")
+    .select("profile_id, birth_date")
+    .in("profile_id", disponibles.length ? disponibles.map((p) => p.id) : ["00000000-0000-0000-0000-000000000000"]);
+  const naissanceDe = new Map((naissances ?? []).map((n) => [n.profile_id, n.birth_date as string | null]));
+  const norm = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const q = norm((rech.q ?? "").trim());
+  const filtreStatut = Number(rech.statut ?? 0) || 0;
+  const de = /^\d{4}-\d{2}-\d{2}$/.test(rech.de ?? "") ? (rech.de as string) : "";
+  const a = /^\d{4}-\d{2}-\d{2}$/.test(rech.a ?? "") ? (rech.a as string) : "";
+  const candidats = disponibles
+    .map((p) => ({ ...p, statut: statutEffectif(p.id, statutsJoueuses, statutsEquipes.get(p.id) ?? []), naissance: naissanceDe.get(p.id) ?? null, nbEquipes: (statutsEquipes.get(p.id) ?? []).length }))
+    .filter((p) => (!q || norm(p.full_name ?? "").includes(q)) && (!filtreStatut || p.statut === filtreStatut) && (!de || (p.naissance && p.naissance >= de)) && (!a || (p.naissance && p.naissance <= a)) && (rech.sans !== "1" || p.nbEquipes === 0))
+    .slice(0, 300);
+  const filtresActifs = Boolean(q || filtreStatut || de || a || rech.sans === "1");
+  const nomStatut = (idStatut: number) => STATUTS.find((x) => x.id === idStatut)?.nom ?? "—";
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-5 py-10">
@@ -235,6 +265,97 @@ export default async function EquipePage({ params }: { params: Promise<{ id: str
           </div>
         ))}
         {joueuses.length === 0 && <p className="text-sm text-rof-gris">Aucune joueuse dans cette équipe.</p>}
+
+        {rech.lot !== undefined && (
+          <p role="status" className="rounded-xl border border-rof-gazon/60 bg-rof-blanc p-3 text-sm text-rof-texte">
+            {Number(rech.lot)} joueuse{Number(rech.lot) > 1 ? "s" : ""} ajoutée{Number(rech.lot) > 1 ? "s" : ""}.
+            {Number(rech.refusees) > 0 && ` ${rech.refusees} refusée${Number(rech.refusees) > 1 ? "s" : ""} (sport différent de celui de ${estGroupe ? "ce groupe" : "cette équipe"}).`}
+            {rech.absents && <span className="mt-1 block text-rof-gris">Noms non reconnus : {rech.absents}</span>}
+          </p>
+        )}
+
+        <details className="mt-2 rounded-xl border border-dashed border-rof-or p-3" open={filtresActifs}>
+          <summary className="cursor-pointer font-condensed text-sm font-bold uppercase tracking-wide text-rof-or">Ajouter plusieurs joueuses à la fois</summary>
+
+          <form method="get" className="mt-3 grid grid-cols-2 gap-2">
+            <div className="col-span-2">
+              <p className={etiquette}>Nom contient</p>
+              <input name="q" defaultValue={rech.q ?? ""} placeholder="Ex. : Di Peco" className={champ} />
+            </div>
+            <div>
+              <p className={etiquette}>Statut</p>
+              <select name="statut" defaultValue={String(filtreStatut || "")} className={champ}>
+                <option value="">Tous les statuts</option>
+                {STATUTS.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    {st.nom}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <label className="flex items-end gap-2 pb-2 text-sm text-rof-texte">
+              <input type="checkbox" name="sans" value="1" defaultChecked={rech.sans === "1"} className="h-4 w-4" />
+              Sans équipe seulement
+            </label>
+            <div>
+              <p className={etiquette}>Née à partir du</p>
+              <input type="date" name="de" defaultValue={de} className={champ} />
+            </div>
+            <div>
+              <p className={etiquette}>Née jusqu&apos;au</p>
+              <input type="date" name="a" defaultValue={a} className={champ} />
+            </div>
+            <div className="col-span-2 flex flex-wrap gap-2">
+              <button type="submit" className={bouton("accent", "md")}>
+                Filtrer
+              </button>
+              {filtresActifs && (
+                <Link href={`/membres/admin/equipes/${equipe.id}`} className={bouton("neutre", "md")}>
+                  Effacer les filtres
+                </Link>
+              )}
+            </div>
+          </form>
+
+          <form action={ajouterEnLot} className="mt-3 flex flex-col gap-2">
+            <input type="hidden" name="team_id" value={equipe.id} />
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs text-rof-gris">
+                {candidats.length} joueuse{candidats.length > 1 ? "s" : ""} disponible{candidats.length > 1 ? "s" : ""}
+                {candidats.length === 300 ? " (300 premières)" : ""}
+              </p>
+              <ToutCocher className={bouton("neutre")} />
+            </div>
+            <ul className="max-h-80 overflow-y-auto rounded-lg border border-rof-ligne bg-rof-blanc">
+              {candidats.map((p) => (
+                <li key={p.id} className="border-b border-rof-ligne last:border-b-0">
+                  <label className="flex min-h-11 cursor-pointer items-center gap-3 px-3 py-2 text-sm text-rof-texte">
+                    <input type="checkbox" name="profile_id" value={p.id} className="h-4 w-4 shrink-0" />
+                    <span className="min-w-0 flex-1 truncate font-semibold">{p.full_name ?? "—"}</span>
+                    <span className="shrink-0 text-xs text-rof-gris">
+                      {nomStatut(p.statut)}
+                      {p.naissance ? ` · ${p.naissance}` : ""}
+                      {p.nbEquipes === 0 ? " · sans équipe" : ""}
+                    </span>
+                  </label>
+                </li>
+              ))}
+              {candidats.length === 0 && <li className="px-3 py-3 text-sm text-rof-gris">Aucune joueuse ne correspond.</li>}
+            </ul>
+            <button type="submit" className={`${bouton("primaire", "md")} self-start`} disabled={candidats.length === 0}>
+              + Ajouter les joueuses cochées
+            </button>
+          </form>
+
+          <form action={ajouterParNoms} className="mt-4 flex flex-col gap-2 border-t border-rof-ligne pt-3">
+            <input type="hidden" name="team_id" value={equipe.id} />
+            <p className={etiquette}>Ou coller une liste de noms (un par ligne, dans n&apos;importe quel ordre)</p>
+            <textarea name="noms" rows={5} placeholder={"Alicia Dupont\nTremblay, Camille\n…"} className={champ} />
+            <button type="submit" className={`${bouton("accent", "md")} self-start`}>
+              Importer la liste
+            </button>
+          </form>
+        </details>
 
         {disponibles.length > 0 && (
           <form action={ajouterAEquipe} className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-rof-or p-3">
