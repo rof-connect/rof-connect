@@ -169,6 +169,33 @@ export default async function MembresPage() {
         </Link>
       </div>
 
+      <section className="mt-6">
+        <p className="font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-gris">{a.acces}</p>
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          {[
+            { href: "/membres/agenda", label: t.nav.agenda, icone: "M4 6h16v14H4zM4 10h16M8 3v4M16 3v4" },
+            { href: "/membres/documents", label: t.nav.documents, icone: "M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6" },
+            { href: "/membres/sondages", label: t.nav.sondages, icone: "M5 20V10M12 20V4M19 20v-7" },
+            { href: "/membres/parcours", label: t.nav.parcours, icone: "M4 19h16M6 15l4-4 3 3 5-6" },
+            { href: "/membres/messages", label: t.nav.messages, icone: "M4 5h16v11H9l-5 4z" },
+            { href: "/membres/contact", label: t.nav.contact, icone: "M4 6h16v12H4zM4 7l8 6 8-6" },
+          ].map((r) => (
+            <Link
+              key={r.href}
+              href={r.href}
+              className="flex flex-col items-center gap-2 rounded-2xl border border-rof-ligne bg-rof-blanc px-2 py-4 text-center transition-colors hover:border-rof-or active:scale-[0.97]"
+            >
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-rof-royal-sombre text-rof-poudre">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d={r.icone} />
+                </svg>
+              </span>
+              <span className="font-condensed text-sm font-bold uppercase tracking-wide text-rof-texte">{r.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {messagesAffiches.length > 0 && (
         <section className="mt-3 flex flex-col gap-2 rounded-xl border border-rof-ligne bg-rof-blanc p-4">
           <p className="font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">{m2.messageATous}</p>
