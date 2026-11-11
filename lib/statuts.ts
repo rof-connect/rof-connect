@@ -72,31 +72,42 @@ export function premierSeptembre(now = new Date()) {
   return new Date(annee, 8, 1);
 }
 
+export type SportAge = "softball" | "baseball";
+
 /**
- * Date à laquelle l'âge est calculé, pour le baseball ET le softball (choix de la Direction) :
- * charte d'âge Little League — âge au 31 août de l'année du printemps
- * (saisons Automne 2026 et Printemps 2027 → 31 août 2027).
+ * Date à laquelle l'âge est calculé, selon la charte d'âge du sport (saison 2027) :
+ * - baseball : charte Little League 2027, âge au 31 août 2027 (année du printemps) ;
+ * - softball : charte USA Softball 2027, âge au 31 août 2026 (veille du début de la saison, le 1er septembre 2026).
+ * Chaque année, la date se déplace d'un an d'elle-même (le 1er septembre).
  */
-export function dateReferenceAge(now = new Date()) {
-  return new Date(premierSeptembre(now).getFullYear() + 1, 7, 31);
+export function dateReferenceAge(now = new Date(), sport: SportAge = "baseball") {
+  const printemps = premierSeptembre(now).getFullYear() + 1;
+  return new Date(sport === "softball" ? printemps - 1 : printemps, 7, 31);
 }
 
-/** Statut selon l'âge à la date de référence (12 ans = 12U). Entre 9U et 18U. null si la date est invalide. */
+/**
+ * Statut selon la charte d'âge du sport.
+ * - Baseball (Little League) : le statut est l'âge (12 ans = 12U), entre 9U et 18U.
+ * - Softball (USA Softball) : le statut est la division, c'est-à-dire l'âge arrondi au nombre pair (15 ou 16 ans = 16U), entre 9U et 18U.
+ * null si la date de naissance est invalide.
+ */
 export function statutSelonNaissance(
   naissance: string | null | undefined,
+  sport: SportAge = "baseball",
   now = new Date(),
-): { id: number; nom: string; age: number; ref: Date } | null {
+): { id: number; nom: string; age: number; ref: Date; charte: string } | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(naissance ?? "");
   if (!m) return null;
-  const ref = dateReferenceAge(now);
+  const ref = dateReferenceAge(now, sport);
   const moisRef = ref.getMonth() + 1;
   const jourRef = ref.getDate();
   let age = ref.getFullYear() - Number(m[1]);
   if (Number(m[2]) > moisRef || (Number(m[2]) === moisRef && Number(m[3]) > jourRef)) age--;
-  if (age < 0 || age > 60) return null;
-  const borne = Math.min(18, Math.max(9, age));
+  if (age < 5 || age > 60) return null; // en dessous de 5 ans : date de naissance probablement erronée
+  const division = sport === "softball" ? Math.ceil(age / 2) * 2 : age;
+  const borne = Math.min(18, Math.max(9, division));
   const statut = STATUTS.find((s) => s.nom === `${borne}U`);
-  return statut ? { id: statut.id, nom: statut.nom, age, ref } : null;
+  return statut ? { id: statut.id, nom: statut.nom, age, ref, charte: sport === "softball" ? "USA Softball" : "Little League" } : null;
 }
 
 /** Le parcours NCAA n'est offert qu'aux joueuses dont le statut n'est plus Prospect. */

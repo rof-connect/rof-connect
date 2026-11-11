@@ -9,7 +9,7 @@ import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
 import { chargerConnexions, ilYa } from "@/lib/dernieres-connexions";
 import { sportAdmin } from "@/lib/sport-admin";
 import { chargerGroupes } from "@/lib/groupes";
-import { chargerSportsJoueuses } from "@/lib/sport-joueuses";
+import { chargerSportsJoueuses, sportPourAge } from "@/lib/sport-joueuses";
 import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 
 const STATUTS = [
@@ -206,7 +206,7 @@ export default async function DirectionPage() {
         </div>
         <div className="grid gap-2">
           {aGerer.slice(0, 10).map((c) => {
-            const suggere = statutSelonNaissance(naissanceDe.get(c.id));
+            const suggere = statutSelonNaissance(naissanceDe.get(c.id), sportPourAge(c.id, sportsJoueuses));
             return (
               <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rof-ligne bg-rof-blanc px-4 py-2.5">
                 <Link href={`/membres/admin/joueurs?id=${c.id}`} className="min-w-0 flex-1 hover:text-rof-or">
@@ -220,7 +220,7 @@ export default async function DirectionPage() {
                     <button
                       type="submit"
                       className={bouton("primaire")}
-                      title={`${suggere.age} ans au ${suggere.ref.toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" })} (charte Little League)`}
+                      title={`${suggere.age} ans au ${suggere.ref.toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" })} (charte ${suggere.charte})`}
                     >
                       Accepter → {suggere.nom}
                     </button>

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { calculerRecalcul } from "@/lib/statuts-recalcul";
 import { definirStatutsJoueuses } from "@/lib/statuts";
 
-/** Applique la charte Little League aux joueuses déjà placées dont le statut ne correspond pas. Les prospects ne sont pas touchés. */
+/** Applique la charte d'âge de leur sport (Little League ou USA Softball) aux joueuses déjà placées dont le statut ne correspond pas. Les prospects ne sont pas touchés. */
 export async function appliquerRecalcul(formData: FormData) {
   const supabase = await createClient();
   const {

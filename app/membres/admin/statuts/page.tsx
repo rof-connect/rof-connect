@@ -20,7 +20,8 @@ export default async function RecalculStatutsPage() {
   if (moi?.role !== "admin") redirect("/membres");
 
   const { corrections, sansNaissance, prospects, dejaBons } = await calculerRecalcul();
-  const ref = fmt(dateReferenceAge());
+  const refBaseball = fmt(dateReferenceAge(new Date(), "baseball"));
+  const refSoftball = fmt(dateReferenceAge(new Date(), "softball"));
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-5 py-10">
@@ -30,8 +31,9 @@ export default async function RecalculStatutsPage() {
         </Link>
         <h1 className="mt-2 font-condensed text-3xl font-bold uppercase text-rof-texte">Recalculer les statuts</h1>
         <p className="mt-1 text-sm text-rof-gris">
-          Charte d&apos;âge Little League, baseball et softball : âge au <strong className="text-rof-texte">{ref}</strong>. Les prospects ne sont pas
-          touchés : ils restent à accepter un par un.
+          Baseball : charte Little League, âge au <strong className="text-rof-texte">{refBaseball}</strong>. Softball : charte USA Softball, âge au{" "}
+          <strong className="text-rof-texte">{refSoftball}</strong>, statut = division (15 ou 16 ans = 16U). Les prospects ne sont pas touchés : ils restent
+          à accepter un par un.
         </p>
       </div>
 

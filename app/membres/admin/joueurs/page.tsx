@@ -6,7 +6,7 @@ import { ajouterAEquipe, deplacerVersEquipe, retirerDeEquipe, modifierJoueuse, a
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerTousLiens } from "@/lib/liens-sociaux";
 import { changerNumeroJoueuse, changerInfosRoster, changerSportJoueuse } from "@/app/membres/admin/joueurs/actions";
-import { chargerSportsJoueuses, sportEffectif } from "@/lib/sport-joueuses";
+import { chargerSportsJoueuses, sportEffectif, sportPourAge } from "@/lib/sport-joueuses";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
 import { sportAdmin } from "@/lib/sport-admin";
@@ -246,13 +246,13 @@ export default async function JoueursPage({
               </button>
             </form>
             {(() => {
-              const suggere = statutSelonNaissance(j.naissance);
+              const suggere = statutSelonNaissance(j.naissance, sportPourAge(profileId, sportsJoueuses, j.memberships.map((m) => (Array.isArray(m.teams) ? m.teams[0] : m.teams)?.sport ?? "")));
               const actuel = statutEffectif(profileId, statutsJoueuses, j.memberships.map((m) => m.status_id));
               if (!suggere) return <p className="mt-1 text-xs text-rof-rouge">Date de naissance manquante : impossible de calculer le statut selon l&apos;âge.</p>;
               return (
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-rof-gris">
                   <span>
-                    Selon son âge au {suggere.ref.toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" })} ({suggere.age} ans, charte Little League) : <strong className="text-rof-texte">{suggere.nom}</strong>
+                    Selon son âge au {suggere.ref.toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" })} ({suggere.age} ans, charte {suggere.charte}) : <strong className="text-rof-texte">{suggere.nom}</strong>
                   </span>
                   {suggere.id !== actuel && (
                     <form action={changerStatutJoueuse}>
@@ -600,7 +600,7 @@ export default async function JoueursPage({
         {joueurs.map(([profileId, j]) => {
           const actuel = statutEffectif(profileId, statutsJoueuses, j.memberships.map((m) => m.status_id));
           const noms = j.memberships.map((m) => (Array.isArray(m.teams) ? m.teams[0] : m.teams)?.name).filter(Boolean) as string[];
-          const suggere = statutSelonNaissance(j.naissance);
+          const suggere = statutSelonNaissance(j.naissance, sportPourAge(profileId, sportsJoueuses, j.memberships.map((m) => (Array.isArray(m.teams) ? m.teams[0] : m.teams)?.sport ?? "")));
           const aCorriger = actuel > 1 && suggere && suggere.id !== actuel;
           return (
             <li key={profileId}>

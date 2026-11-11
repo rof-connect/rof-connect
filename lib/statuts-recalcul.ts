@@ -2,6 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { STATUTS, chargerStatutsJoueuses, statutEffectif, statutSelonNaissance } from "@/lib/statuts";
+import { chargerSportsJoueuses, sportPourAge } from "@/lib/sport-joueuses";
 
 export type Correction = {
   profileId: string;
@@ -12,6 +13,7 @@ export type Correction = {
   actuelNom: string;
   nouveau: number;
   nouveauNom: string;
+  charte: string;
 };
 
 export type Recalcul = {
@@ -24,25 +26,29 @@ export type Recalcul = {
 const nomStatut = (id: number) => STATUTS.find((s) => s.id === id)?.nom ?? String(id);
 
 /**
- * Compare le statut actuel de chaque joueuse (non archivée) à celui de la charte Little League.
+ * Compare le statut actuel de chaque joueuse (non archivée) à celui de la charte d'âge de son sport (baseball : Little League ; softball : USA Softball).
  * Les prospects (statut 1) ne sont jamais touchés : ils restent à accepter un par un.
  * Toujours recalculé côté serveur, au moment d'afficher comme au moment d'appliquer.
  */
 export async function calculerRecalcul(): Promise<Recalcul> {
   const admin = createAdminClient();
-  const [{ data: comptes }, { data: liens }, { data: fiches }, statuts, archivees] = await Promise.all([
+  const [{ data: comptes }, { data: liens }, { data: fiches }, statuts, archivees, sports] = await Promise.all([
     admin.from("profiles").select("id, full_name, email").eq("role", "member"),
-    admin.from("team_members").select("profile_id, status_id, teams!inner (archived)").eq("role_in_team", "athlete").eq("teams.archived", false),
+    admin.from("team_members").select("profile_id, status_id, teams!inner (archived, sport)").eq("role_in_team", "athlete").eq("teams.archived", false),
     admin.from("athlete_details").select("profile_id, birth_date"),
     chargerStatutsJoueuses(),
     chargerArchivees(),
+    chargerSportsJoueuses(),
   ]);
 
   const statutsEquipes = new Map<string, number[]>();
+  const sportsEquipes = new Map<string, string[]>();
   for (const l of liens ?? []) {
     const liste = statutsEquipes.get(l.profile_id) ?? [];
     liste.push(l.status_id);
     statutsEquipes.set(l.profile_id, liste);
+    const t = Array.isArray(l.teams) ? l.teams[0] : l.teams;
+    if (t?.sport) sportsEquipes.set(l.profile_id, [...(sportsEquipes.get(l.profile_id) ?? []), t.sport]);
   }
   const naissance = new Map((fiches ?? []).map((f) => [f.profile_id, f.birth_date as string | null]));
 
@@ -56,7 +62,7 @@ export async function calculerRecalcul(): Promise<Recalcul> {
     }
     const nom = c.full_name || c.email || "—";
     const n = naissance.get(c.id);
-    const suggere = statutSelonNaissance(n);
+    const suggere = statutSelonNaissance(n, sportPourAge(c.id, sports, sportsEquipes.get(c.id) ?? []));
     if (!suggere || !n) {
       res.sansNaissance.push({ profileId: c.id, nom, actuelNom: nomStatut(actuel) });
       continue;
@@ -74,6 +80,7 @@ export async function calculerRecalcul(): Promise<Recalcul> {
       actuelNom: nomStatut(actuel),
       nouveau: suggere.id,
       nouveauNom: suggere.nom,
+      charte: suggere.charte,
     });
   }
   res.corrections.sort((a, b) => a.nom.localeCompare(b.nom, "fr"));

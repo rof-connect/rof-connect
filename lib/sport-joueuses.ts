@@ -63,3 +63,9 @@ export async function verifierSportEquipe(profileId: string, teamId: string): Pr
 export function sportEffectif(profileId: string, sports: Record<string, string>, sportsEquipes: string[]): string | null {
   return sports[profileId] ?? (sportsEquipes.length ? sportsEquipes[0] : null);
 }
+
+/** Sport servant à choisir la charte d'âge : celui de la joueuse, sinon celui de ses équipes, sinon softball. */
+export function sportPourAge(profileId: string, sports: Record<string, string>, sportsEquipes: string[] = []): "softball" | "baseball" {
+  const v = sports[profileId] ?? sportsEquipes[0];
+  return v === "baseball" ? "baseball" : "softball";
+}

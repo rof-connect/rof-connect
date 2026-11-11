@@ -9,7 +9,7 @@ import { chargerStatutsJoueuses, definirStatutJoueuse, statutEffectif, statutSel
 import { definirLiens, liensDuFormulaire } from "@/lib/liens-sociaux";
 import { cheminPhotoProfil } from "@/lib/photo-profil";
 import { definirNumeros } from "@/lib/numeros-chandail";
-import { definirSportJoueuse, verifierSportEquipe } from "@/lib/sport-joueuses";
+import { chargerSportsJoueuses, definirSportJoueuse, sportPourAge, verifierSportEquipe } from "@/lib/sport-joueuses";
 import { presentationDe, majPresentation } from "@/lib/presentation";
 
 const STATUT_PAR_LABEL: Record<string, number> = {
@@ -342,14 +342,14 @@ export async function archiverJoueuse(formData: FormData) {
   revalidatePath("/membres/admin");
 }
 
-/** Accepter une joueuse : elle passe de Prospect au statut de son âge selon la charte Little League (31 août de l'année du printemps), dans les deux sports. */
+/** Accepter une joueuse : elle passe de Prospect au statut de son âge selon la charte de son sport (baseball : Little League ; softball : USA Softball). */
 export async function accepterJoueuse(formData: FormData) {
   const moi = await verifierAdmin();
   if (!moi) return;
   const profileId = String(formData.get("profile_id") ?? "");
   if (!profileId) return;
   const { data: fiche } = await createAdminClient().from("athlete_details").select("birth_date").eq("profile_id", profileId).maybeSingle();
-  const statut = statutSelonNaissance(fiche?.birth_date);
+  const statut = statutSelonNaissance(fiche?.birth_date, sportPourAge(profileId, await chargerSportsJoueuses()));
   if (!statut) return; // date de naissance manquante : à compléter dans la fiche
   await definirStatutJoueuse(profileId, statut.id);
   revalidatePath("/membres/admin/joueurs");
