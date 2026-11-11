@@ -248,6 +248,7 @@ export const PARTENAIRES_LOGOS: { nom: string; src: string; gris?: boolean }[] =
   { nom: "Remorques Dionne", src: "/partenaires/n-remorques-dionne.png" },
   { nom: "Sébastien Gervais Photo", src: "/partenaires/n-sebastien-gervais-photo.png" },
   { nom: "Benny & Co.", src: "/partenaires/n-benny.png", gris: true },
+  { nom: "Subaru Repentigny", src: "/partenaires/n-subaru-repentigny.png" },
 ];
 
 /** Bloc « Affiliations et circuits » : fédérations, ligues et circuits de tournois. Logos plus petits, en niveaux de gris. */

@@ -415,7 +415,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
             <GrilleLogos
               classe="logos-partenaires"
               logos={PARTENAIRES_LOGOS}
-              cols={colonnesLogos(PARTENAIRES_LOGOS.length, { d: 5, t: 3, m: 3 })}
+              cols={colonnesLogos(PARTENAIRES_LOGOS.length, { d: 6, t: 3, m: 3 })}
             />
             <h3 className="logos-sous-titre">
               Affiliations <em>et circuits</em>
