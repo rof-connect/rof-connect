@@ -189,7 +189,7 @@ export const CONTENU: Record<Sport, Contenu> = {
     },
     stats: [
       ["4", "Titres provinciaux"],
-      ["2", "Titres Can-Am United"],
+      ["3", "Titres Can-Am United"],
       ["2", "Titres ECTBL"],
     ],
     calendrier: [],
