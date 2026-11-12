@@ -92,10 +92,15 @@ export default async function DirectionPage() {
   const ficheParProfil = new Map((fiches ?? []).map((f) => [f.profile_id, f]));
 
   const total = (membres ?? []).length;
-  const sansFiche = (membres ?? []).filter((m) => {
-    const f = ficheParProfil.get(m.profile_id);
-    return !f?.birth_date || !f?.guardian_phone;
-  }).length;
+  // Une joueuse compte une seule fois, même si elle est dans plusieurs équipes.
+  const sansFiche = new Set(
+    (membres ?? [])
+      .filter((m) => {
+        const f = ficheParProfil.get(m.profile_id);
+        return !f?.birth_date || !f?.guardian_phone;
+      })
+      .map((m) => m.profile_id),
+  ).size;
   const consentements = (membres ?? []).filter((m) => ficheParProfil.get(m.profile_id)?.photo_consent).length;
 
   const parEquipe = (teams ?? []).map((t) => ({
@@ -120,7 +125,7 @@ export default async function DirectionPage() {
     { n: aGerer.length, texte: "prospect(s) à accepter", href: "#prospects" },
     { n: nbMessagesEnAttente, texte: "conversation(s) privée(s) en attente", href: "/membres/admin/conversations" },
     { n: nbParcoursNouveaux ?? 0, texte: "questionnaire(s) de parcours à traiter", href: "/membres/admin/parcours" },
-    { n: sansFiche, texte: "fiche(s) de joueur incomplète(s)", href: "/membres/admin/joueurs" },
+    { n: sansFiche, texte: "fiche(s) de joueur incomplète(s)", href: "/membres/admin/joueurs?fiche=incomplete" },
   ].filter((t) => t.n > 0);
 
   return (

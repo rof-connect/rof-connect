@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { deconnecter } from "@/app/connexion/actions";
 import { LogoR } from "@/components/LogoR";
@@ -16,11 +17,14 @@ export default async function MembresLayout({ children }: { children: React.Reac
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
+  const { data: profile } = await supabase.from("profiles").select("role, parent_id, full_name").eq("id", user!.id).single();
+  // Accès « 2e courriel » d'une famille : on bascule sur le compte principal pour voir l'agenda et tout le reste.
+  if (profile?.parent_id && profile.role !== "admin" && (profile.full_name ?? "").endsWith("(2e courriel)")) redirect("/membres/acces-principal");
   const estAdmin = profile?.role === "admin";
 
   const { locale, t } = await getDictionnaire();
-  const { membres: famMembres } = await famille(createAdminClient(), user!.id);
+  const { membres: famMembresTous } = await famille(createAdminClient(), user!.id);
+  const famMembres = famMembresTous.filter((m) => !(m.full_name ?? "").endsWith("(2e courriel)")); // les accès « 2e courriel » ne sont pas des joueuses
 
   return (
     <div className="flex min-h-screen flex-col bg-rof-noir">

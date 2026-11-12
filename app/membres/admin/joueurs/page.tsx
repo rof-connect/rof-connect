@@ -50,9 +50,9 @@ function normaliser(s: string) {
 export default async function JoueursPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; sport?: string; equipe?: string; statut?: string; id?: string }>;
+  searchParams: Promise<{ q?: string; sport?: string; equipe?: string; statut?: string; id?: string; fiche?: string }>;
 }) {
-  const { q = "", sport: sportUrl = "", equipe = "", statut = "", id = "" } = await searchParams;
+  const { q = "", sport: sportUrl = "", equipe = "", statut = "", id = "", fiche: ficheFiltre = "" } = await searchParams;
   // Sport de gestion mémorisé (Tous / Softball / Baseball) quand aucun filtre de sport n'est demandé dans l'adresse.
   const sportMemorise = await sportAdmin();
   const sport = sportUrl || sportMemorise;
@@ -125,6 +125,11 @@ export default async function JoueursPage({
   const infoDe = (id: string, k: "ville" | "grad" | "taille" | "ecole") => fichesJoueuses[id]?.profil?.[k] || infosRoster[id]?.[k] || "";
   const tousLesJoueurs = Array.from(parJoueur.entries()).sort((a, b) => a[1].nom.localeCompare(b[1].nom));
   const nbArchivees = tousLesJoueurs.filter(([pid]) => archivees.has(pid)).length;
+  // Ce qui manque à la fiche d'inscription d'une joueuse (date de naissance, téléphone du parent).
+  const manquants = (pid: string) => {
+    const f = ficheParProfil.get(pid);
+    return [...(!f?.birth_date ? ["Date de naissance"] : []), ...(!f?.guardian_phone ? ["Téléphone du parent"] : [])];
+  };
 
   const recherche = normaliser(q.trim());
   const joueurs = tousLesJoueurs.filter(([pid, j]) => {
@@ -132,6 +137,7 @@ export default async function JoueursPage({
     if (recherche && !normaliser(j.nom).includes(recherche) && !normaliser(j.email).includes(recherche)) return false;
     if (equipe === "archivees") return archivees.has(pid);
     if (archivees.has(pid)) return false;
+    if (ficheFiltre === "incomplete" && !(j.memberships.length > 0 && manquants(pid).length > 0)) return false;
     // Statut : toujours celui du joueur (même sans équipe), pas celui d'une équipe.
     if (statut && String(statutEffectif(pid, statutsJoueuses, j.memberships.map((m) => m.status_id))) !== statut) return false;
     if (equipe === "aucune") return j.memberships.length === 0;
@@ -149,7 +155,7 @@ export default async function JoueursPage({
       );
     });
   });
-  const filtreActif = Boolean(q || sport || equipe || statut || id);
+  const filtreActif = Boolean(q || sport || equipe || statut || id || ficheFiltre);
 
   const nomStatut = (sid: number) => STATUTS.find((s) => s.id === sid)?.nom ?? "—";
   const initiales = (nom: string) =>
@@ -620,6 +626,7 @@ export default async function JoueursPage({
                     ))}
                     {noms.length > 2 && <Pastille>+{noms.length - 2}</Pastille>}
                     {!j.naissance && <Pastille ton="rouge">Date manquante</Pastille>}
+                    {ficheFiltre === "incomplete" && !ficheParProfil.get(profileId)?.guardian_phone && <Pastille ton="rouge">Téléphone du parent manquant</Pastille>}
                     {aCorriger && <Pastille ton="rouge">→ {suggere!.nom}</Pastille>}
                     {archivees.has(profileId) && <Pastille ton="rouge">Archivé(e)</Pastille>}
                   </span>
