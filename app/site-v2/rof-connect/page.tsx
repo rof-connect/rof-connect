@@ -2,6 +2,7 @@ import { accueilHref } from "@/lib/site-v2/adresses";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
+import { TelephoneAccueil, TelephoneMessages, TelephoneProgramme } from "@/components/site-v2/Telephone";
 import { CONTENU, sportDe } from "@/lib/site-v2/donnees";
 
 export const metadata: Metadata = {
@@ -111,6 +112,22 @@ export default async function RofConnectPage({ searchParams }: { searchParams: P
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="block rc-poche">
+        <div className="wrap">
+          <div className="head">
+            <h2>
+              Dans <em>ta poche</em>
+            </h2>
+          </div>
+          <div className="rc-telephones">
+            <TelephoneAccueil />
+            <TelephoneProgramme />
+            <TelephoneMessages />
+          </div>
+          <p className="rc-note-demo">Écrans de démonstration : les noms et les messages sont fictifs.</p>
         </div>
       </section>
 

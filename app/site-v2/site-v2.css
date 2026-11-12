@@ -857,3 +857,57 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .rc-saisons b{display:block;font-family:var(--display);font-size:28px;letter-spacing:.03em}
 .v2 .rc-saisons span{font-size:14px;color:#C9D4EE}
 @media (max-width:900px){.v2 .rc-bandeau{grid-template-columns:1fr;padding:28px}}
+
+/* Fenêtre de téléphone : écrans de démonstration de ROF Connect */
+.v2 .rc-poche{background:var(--mist);padding-top:72px}
+.v2 .rc-telephones{display:grid;grid-template-columns:repeat(3,1fr);gap:36px 28px;justify-items:center}
+.v2 .rc-note-demo{margin-top:28px;text-align:center;font-size:13px;color:#5A6680}
+.v2 .tel-fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:16px;width:100%}
+.v2 .tel-fig figcaption{font-family:var(--display);font-size:26px;letter-spacing:.03em;color:var(--royal-deep);text-align:center}
+.v2 .tel{position:relative;width:min(100%,290px);aspect-ratio:9/18.5;background:#0b0b0f;border-radius:44px;padding:11px;box-shadow:0 0 0 2px #2b2e38,0 28px 60px rgba(6,15,46,.35)}
+.v2 .tel-encoche{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:34%;height:20px;background:#0b0b0f;border-radius:0 0 14px 14px;z-index:3}
+.v2 .tel-ecran{height:100%;border-radius:34px;overflow:hidden;background:#000;color:#fff;display:flex;flex-direction:column;font-family:var(--body);font-size:11.5px;line-height:1.35}
+.v2 .tel-statut{display:flex;justify-content:space-between;padding:9px 20px 4px;font-size:10px;font-weight:700;color:#fff}
+.v2 .tel-entete{display:flex;align-items:center;gap:8px;padding:6px 14px 8px;border-bottom:1px solid #2A2A2A;font-family:var(--display);font-size:17px;letter-spacing:.04em;text-transform:uppercase}
+.v2 .tel-logo{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;background:#2F63C4;font-size:13px}
+.v2 .tel-corps{flex:1;overflow:hidden;padding:12px 12px 6px;display:flex;flex-direction:column;gap:9px}
+.v2 .tel-salut{font-family:var(--display);font-size:20px;letter-spacing:.03em;text-transform:uppercase}
+.v2 .tel-afaire{border:2px solid #D9B44A;border-radius:12px;padding:9px;display:flex;flex-direction:column;gap:7px;background:#0A0A0A}
+.v2 .tel-ligne{display:flex;justify-content:space-between;align-items:center;color:#D9B44A;font-family:var(--display);font-size:14px;letter-spacing:.12em}
+.v2 .tel-pastille{background:#D9B44A;color:#000;border-radius:99px;padding:0 9px;font-weight:800;font-size:12px}
+.v2 .tel-carte{background:#111;border:1px solid #2A2A2A;border-radius:10px;padding:9px;display:flex;flex-direction:column;gap:3px}
+.v2 .tel-carte strong{font-family:var(--display);font-size:14px;line-height:1.1;letter-spacing:.02em}
+.v2 .tel-carte small,.v2 .tel-prochain span,.v2 .tel-prochain small{color:#A8A8A8;font-size:10px}
+.v2 .tel-carte.mince{flex-direction:row;align-items:center;justify-content:space-between}
+.v2 .tel-etat{align-self:flex-start;border:1px solid #2A2A2A;border-radius:99px;padding:1px 9px;font-size:9.5px;font-weight:700;text-transform:uppercase;color:#A8A8A8;margin:3px 0}
+.v2 .tel-btns{display:flex;gap:6px;margin-top:5px}
+.v2 .tel-btns.plein{margin-top:auto}
+.v2 .tel-btn{flex:1;text-align:center;background:#D9B44A;color:#000;border-radius:99px;padding:7px 4px;font-weight:800;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+.v2 .tel-btn.sec{background:transparent;color:#fff;border:1px solid #5B8FEA}
+.v2 .tel-prochain{border:1px solid #D9B44A;border-radius:12px;padding:9px;display:flex;flex-direction:column;gap:2px;background:#0A0A0A}
+.v2 .tel-prochain small{color:#D9B44A;font-weight:800;letter-spacing:.14em}
+.v2 .tel-prochain strong{font-family:var(--display);font-size:16px;letter-spacing:.02em}
+.v2 .tel-exo{border:1px solid #2A2A2A;border-radius:10px;overflow:hidden;background:#111}
+.v2 .tel-photo{background:#fff;padding:5px 0}
+.v2 .tel-photo svg{display:block;margin:0 auto;width:44%;fill:none;stroke:#0A1F5C;stroke-width:2.4;stroke-linecap:round}
+.v2 .tel-photo svg circle{fill:#0A1F5C}
+.v2 .tel-exo-t{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px}
+.v2 .tel-exo-t span{font-family:var(--display);font-size:13px;letter-spacing:.02em;text-transform:uppercase}
+.v2 .tel-exo-t i{font-style:normal;background:#D9B44A;color:#000;border-radius:3px;padding:0 4px;margin-right:3px;font-size:11px}
+.v2 .tel-exo-t em{font-style:normal;border:1px solid #D9B44A;color:#D9B44A;border-radius:99px;padding:0 8px;font-weight:800;font-size:10px;white-space:nowrap}
+.v2 .tel-chats{display:flex;gap:6px}
+.v2 .tel-chats span{border-radius:99px;padding:5px 11px;background:#111;color:#A8A8A8;font-family:var(--display);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase}
+.v2 .tel-chats span.on{background:#D9B44A;color:#000}
+.v2 .tel-fil{flex:1;display:flex;flex-direction:column;gap:8px;border:1px solid #2A2A2A;border-radius:10px;background:#0A0A0A;padding:9px}
+.v2 .tel-bulle{max-width:86%;border-radius:14px;padding:7px 10px;font-size:11.5px;display:flex;flex-direction:column;gap:1px}
+.v2 .tel-bulle b{font-family:var(--display);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#5B8FEA}
+.v2 .tel-bulle small{font-size:8.5px;opacity:.7;text-align:right}
+.v2 .tel-bulle.autre{align-self:flex-start;background:#141414}
+.v2 .tel-bulle.moi{align-self:flex-end;background:#D9B44A;color:#000}
+.v2 .tel-saisie{display:flex;gap:6px;align-items:center}
+.v2 .tel-saisie span{flex:1;border:1px solid #2A2A2A;background:#111;border-radius:8px;padding:8px;color:#777;font-size:10.5px}
+.v2 .tel-saisie i{font-style:normal;background:#D9B44A;color:#000;border-radius:99px;padding:7px 10px;font-weight:800;font-size:10px;text-transform:uppercase}
+.v2 .tel-onglets{display:flex;justify-content:space-around;border-top:1px solid #2A2A2A;background:#0A0A0A;padding:7px 4px 12px;font-family:var(--display);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#A8A8A8}
+.v2 .tel-onglets .on{color:#5B8FEA}
+@media (max-width:1000px){.v2 .rc-telephones{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.v2 .rc-telephones{grid-template-columns:1fr}}
