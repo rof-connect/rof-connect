@@ -30,8 +30,11 @@ export function BarreOnglets({
 }) {
   const pathname = usePathname() ?? "/membres";
 
+  // Pour la Direction, l'accueil est la page de direction.
   const onglets: Onglet[] = [
-    { href: "/membres", label: labels.accueil, icone: "accueil", actifSi: (p) => p === "/membres" },
+    estAdmin
+      ? { href: "/membres/admin", label: labels.direction, icone: "direction", actifSi: (p) => commence(p, "/membres/admin") }
+      : { href: "/membres", label: labels.accueil, icone: "accueil", actifSi: (p) => p === "/membres" },
     { href: "/membres/agenda", label: labels.agenda, icone: "agenda", actifSi: (p) => commence(p, "/membres/agenda") },
     { href: "/membres/equipe", label: labels.equipe, icone: "equipe", actifSi: (p) => commence(p, "/membres/equipe", "/membres/gc") },
     { href: "/membres/messages", label: labels.messages, icone: "messages", actifSi: (p) => commence(p, "/membres/messages") },
@@ -42,9 +45,6 @@ export function BarreOnglets({
       actifSi: (p) => commence(p, "/membres/moi", "/membres/parcours", "/membres/documents", "/membres/sondages", "/membres/contact"),
     },
   ];
-  if (estAdmin) {
-    onglets.push({ href: "/membres/admin", label: labels.direction, icone: "direction", actifSi: (p) => commence(p, "/membres/admin") });
-  }
 
   return (
     <nav

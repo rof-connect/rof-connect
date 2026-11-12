@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { FormAjouterJoueuse } from "@/components/membres/FormAjouterJoueuse";
 import { chargerMessagesTous } from "@/lib/messages-tous";
@@ -26,6 +27,7 @@ export default async function MembresPage() {
   const m2 = t.membres;
   const a = t.accueilJour;
   const estAdmin = profile?.role === "admin";
+  if (estAdmin) redirect("/membres/admin"); // l'accueil de la Direction est la page de direction
 
   const { data: memberships } = await supabase
     .from("team_members")

@@ -5,7 +5,7 @@ import { CONTENU, sportDe } from "@/lib/site-v2/donnees";
 
 export const metadata: Metadata = {
   title: "ROF Connect — Royal On Field",
-  description: "ROF Connect : l'espace membres de Royal On Field. Agenda, entraînements à distance, messages, documents et plus, pour les joueuses, les joueurs, les parents et les entraîneurs.",
+  description: "ROF Connect : l'outil exclusif au programme Royal On Field pour mieux suivre chaque athlète, 12 mois par année.",
 };
 
 type Fonction = { t: string; d: string; icone: string };
@@ -32,7 +32,7 @@ const PUBLICS: { t: string; d: string }[] = [
 const ETAPES: { n: string; t: string; d: string }[] = [
   { n: "01", t: "S'inscrire", d: "Remplis le formulaire d'inscription avec le courriel du parent." },
   { n: "02", t: "Être placé", d: "La Direction accepte la joueuse ou le joueur, puis l'ajoute à son équipe selon l'âge." },
-  { n: "03", t: "Se connecter", d: "Un courriel et un mot de passe, et tout l'espace membres s'ouvre." },
+  { n: "03", t: "Se connecter", d: "Un courriel et un mot de passe, et l'espace réservé aux athlètes du programme s'ouvre." },
 ];
 
 export default async function RofConnectPage({ searchParams }: { searchParams: Promise<{ sport?: string }> }) {
@@ -49,7 +49,7 @@ export default async function RofConnectPage({ searchParams }: { searchParams: P
           <div className="kicker">Espace membres · Royal On Field</div>
           <h1>ROF Connect</h1>
           <p className="lead">
-            L&apos;espace membres de Royal On Field : l&apos;agenda, les entraînements, les messages et les documents de ton équipe, au même endroit, sur ton téléphone ou ton ordinateur.
+            L&apos;outil exclusif au programme Royal On Field. Il permet de mieux suivre chaque athlète, 12 mois par année : en saison, entre les saisons et à distance.
           </p>
           <div className="btns rc-btns">
             <Link className="btn solid" href="/connexion">
@@ -62,7 +62,37 @@ export default async function RofConnectPage({ searchParams }: { searchParams: P
         </div>
       </section>
 
-      <section className="block">
+      <section className="block rc-exclusif">
+        <div className="wrap">
+          <div className="rc-bandeau">
+            <div>
+              <div className="kicker">Exclusif au programme</div>
+              <h2>
+                Un suivi <em>12 mois</em> par année
+              </h2>
+              <p>
+                ROF Connect n&apos;est offert qu&apos;aux athlètes de Royal On Field. L&apos;encadrement ne s&apos;arrête pas à la fin de la saison : les entraînements, les échanges avec le personnel et le parcours vers les programmes collégiaux se poursuivent toute l&apos;année.
+              </p>
+            </div>
+            <ul className="rc-saisons">
+              <li>
+                <b>En saison</b>
+                <span>Matchs, pratiques, présences, alignements</span>
+              </li>
+              <li>
+                <b>Hors saison</b>
+                <span>Entraînements à distance, programme du jour, suivi des complétés</span>
+              </li>
+              <li>
+                <b>Toute l&apos;année</b>
+                <span>Messages, documents, fiche de recrutement et parcours NCAA</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="block" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="head">
             <h2>

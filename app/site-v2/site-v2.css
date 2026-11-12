@@ -839,3 +839,13 @@ html:has(.v2){scroll-behavior:smooth}
 @media (max-width:1000px){.v2 .rc-publics{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:800px){.v2 .rc-grille{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.v2 .rc-grille,.v2 .rc-publics{grid-template-columns:1fr}}
+.v2 .rc-exclusif{padding-bottom:48px}
+.v2 .rc-bandeau{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center;background:linear-gradient(110deg,var(--royal) 0%,var(--royal-deep) 100%);color:#fff;border-radius:8px;padding:44px}
+.v2 .rc-bandeau h2{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.88;margin-top:10px}
+.v2 .rc-bandeau h2 em{font-style:normal;color:var(--accent)}
+.v2 .rc-bandeau p{margin-top:14px;font-size:16px;line-height:1.6;color:#DCE5F7;max-width:520px}
+.v2 .rc-saisons{list-style:none;display:grid;gap:12px}
+.v2 .rc-saisons li{background:rgba(255,255,255,.08);border-left:5px solid var(--accent);border-radius:6px;padding:16px 20px}
+.v2 .rc-saisons b{display:block;font-family:var(--display);font-size:28px;letter-spacing:.03em}
+.v2 .rc-saisons span{font-size:14px;color:#C9D4EE}
+@media (max-width:900px){.v2 .rc-bandeau{grid-template-columns:1fr;padding:28px}}
