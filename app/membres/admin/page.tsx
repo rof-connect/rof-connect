@@ -9,6 +9,7 @@ import { accepterJoueuse } from "@/app/membres/admin/joueurs/actions";
 import { chargerConnexions, ilYa } from "@/lib/dernieres-connexions";
 import { sportAdmin } from "@/lib/sport-admin";
 import { chargerGroupes } from "@/lib/groupes";
+import { nbConversationsEnAttente } from "@/lib/conversations-admin";
 import { chargerSportsJoueuses, sportPourAge } from "@/lib/sport-joueuses";
 import { SelecteurSportAdmin } from "@/components/membres/SelecteurSportAdmin";
 
@@ -80,19 +81,8 @@ export default async function DirectionPage() {
     .from("parcours_demandes")
     .select("id", { count: "exact", head: true })
     .eq("statut", "nouveau");
-  const il_y_a_30j = new Date(Date.now() - 30 * 86400000).toISOString();
-  const { data: privesRecents } = await supabase
-    .from("messages")
-    .select("thread_profile_id, author_id, created_at")
-    .eq("channel", "private")
-    .gte("created_at", il_y_a_30j)
-    .order("created_at", { ascending: false });
-  // Une conversation privée attend une réponse quand son dernier message vient de la joueuse.
-  const dernierParFil = new Map<string, string>();
-  (privesRecents ?? []).forEach((m) => {
-    if (m.thread_profile_id && !dernierParFil.has(m.thread_profile_id)) dernierParFil.set(m.thread_profile_id, m.author_id);
-  });
-  const nbMessagesEnAttente = [...dernierParFil.entries()].filter(([fil, auteur]) => fil === auteur).length;
+  // Conversations privées : une attend une réponse quand son dernier message n'est pas du personnel (lecture admin, même hors équipe).
+  const nbMessagesEnAttente = await nbConversationsEnAttente();
 
   const profileIds = (membres ?? []).map((m) => m.profile_id);
   const { data: fiches } = await supabase
@@ -128,7 +118,7 @@ export default async function DirectionPage() {
 
   const aFaire = [
     { n: aGerer.length, texte: "prospect(s) à accepter", href: "#prospects" },
-    { n: nbMessagesEnAttente, texte: "conversation(s) privée(s) en attente", href: "/membres/messages" },
+    { n: nbMessagesEnAttente, texte: "conversation(s) privée(s) en attente", href: "/membres/admin/conversations" },
     { n: nbParcoursNouveaux ?? 0, texte: "questionnaire(s) de parcours à traiter", href: "/membres/admin/parcours" },
     { n: sansFiche, texte: "fiche(s) de joueur incomplète(s)", href: "/membres/admin/joueurs" },
   ].filter((t) => t.n > 0);

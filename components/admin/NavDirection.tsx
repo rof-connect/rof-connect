@@ -9,6 +9,7 @@ const ONGLETS: { href: string; label: string; icone: string }[] = [
   { href: "/membres/admin/joueurs", label: "Joueurs", icone: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM5 21a7 7 0 0 1 14 0" },
   { href: "/membres/admin/equipes", label: "Équipes", icone: "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20a6 6 0 0 1 12 0M17 11a2.5 2.5 0 1 0 0-5M16 14a5 5 0 0 1 5 6" },
   { href: "/membres/admin/statuts", label: "Statuts", icone: "M4 6h16M4 12h10M4 18h6M17 14l2 2 4-4" },
+  { href: "/membres/admin/conversations", label: "Conversations", icone: "M4 5h16v11H9l-5 4zM8 9h8M8 12h5" },
   { href: "/membres/admin/messages", label: "Messages", icone: "M4 5h16v11H9l-5 4z" },
   { href: "/membres/admin/sondages", label: "Sondages", icone: "M5 20V10M12 20V4M19 20v-7" },
   { href: "/membres/admin/parcours", label: "Parcours", icone: "M4 19h16M6 15l4-4 3 3 5-6" },
