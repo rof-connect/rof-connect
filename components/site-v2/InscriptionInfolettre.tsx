@@ -45,13 +45,13 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
   // Réévalué à chaque changement de sport : ouvrir le volet baseball affiche la demande même si le softball a été refusé.
   useEffect(() => {
     setOuvert(false);
-    setMobile(window.matchMedia("(max-width: 700px)").matches);
     if (deja()) return;
     let fait = false;
     const ouvrir = () => {
       if (fait) return;
       fait = true;
       avant.current = document.activeElement as HTMLElement | null;
+      setMobile(window.matchMedia("(max-width: 700px)").matches);
       setOuvert(true);
     };
     const t = setTimeout(ouvrir, DELAI_MS);

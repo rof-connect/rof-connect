@@ -178,9 +178,7 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
     const ficheDe = new Map((fiches ?? []).map((f) => [f.profile_id, f]));
     joueuses = await Promise.all(
       ids.map(async (id) => {
-        const reglages = actives[id]; // présent seulement si la joueuse a activé sa page publique
         const fiche = ficheDe.get(id);
-        const profil = reglages?.profil ?? {};
         return {
           id,
           nom: nomDe.get(id) || "Joueuse",
