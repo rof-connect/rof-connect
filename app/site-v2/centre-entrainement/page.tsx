@@ -1,3 +1,4 @@
+import { accueilHref } from "@/lib/site-v2/adresses";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,7 +15,7 @@ export default async function CentrePage({ searchParams }: { searchParams: Promi
     <Cadre sport={sport}>
       <section className="roster-hero">
         <div className="wrap">
-          <Link className="retour" href={`/site-v2?sport=${sport}`}>
+          <Link className="retour" href={accueilHref(sport)}>
             ← Accueil {c.mot.toLowerCase()}
           </Link>
           <div className="kicker">Royal {c.mot} On Field · Repentigny, QC</div>

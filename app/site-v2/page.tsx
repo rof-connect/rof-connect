@@ -129,7 +129,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
               <>
               <div className="teams">
                 {c.aVenir && (
-                  <Link className="team team-avenir" href="/site-v2/varsity">
+                  <Link className="team team-avenir" href="/varsity">
                     <div className="big" aria-hidden>V</div>
                     <span className="team-tags">
                       <span className="team-tag">{c.aVenir.etiquette}</span>
@@ -140,7 +140,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                   </Link>
                 )}
                 {equipes.map((t) => (
-                  <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href={t.roster || t.matchs ? `/site-v2/equipes/${t.id}` : "/inscription"}>
+                  <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href={t.roster || t.matchs ? `/equipes/${t.id}` : "/inscription"}>
                     <div className="big" aria-hidden>{niveauNom(t.nom).niveau.replace("Varsity", "V")}</div>
                     {t.categorie && (
                       <span className="team-tags">
@@ -169,7 +169,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                   <div className="volet-groupe" key={g.nom}>
                     <h4>
                       {g.nom}
-                      {g.sous && <small> ( {g.sous} )</small>}
+                      {g.sous && <small> ({g.sous})</small>}
                     </h4>
                     <div className="teams teams-volet">
                       {g.equipes.map((e) => (
@@ -195,7 +195,7 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
                 Calendrier <em>{c.saison}</em>
               </h2>
               {c.noteCalendrier && <span className="pill">{c.noteCalendrier}</span>}
-              <Link className="btn solid btn-horaire" href={`/site-v2/calendrier?sport=${sport}`}>Horaire de chaque équipe →</Link>
+              <Link className="btn solid btn-horaire" href={`/calendrier?sport=${sport}`}>Horaire de chaque équipe →</Link>
             </div>
             {c.calendrier.length > 0 && <p className="cal-note">Dates et lieux à confirmer — mis à jour au fur et à mesure.</p>}
             <div className="sched">
@@ -317,7 +317,15 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
           <div className="wrap">
             <div className="head">
               <h2>
-                Committed. <em>{c.engagementsSous}</em>
+                {sport === "baseball" ? (
+                  <>
+                    Engagements <em>collégiaux</em>
+                  </>
+                ) : (
+                  <>
+                    Committed. <em>{c.engagementsSous}</em>
+                  </>
+                )}
               </h2>
               <span className="pill hl">#EarnTheCrown</span>
             </div>

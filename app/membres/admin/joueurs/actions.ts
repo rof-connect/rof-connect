@@ -1,3 +1,4 @@
+import { normaliserTaille } from "@/lib/taille";
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -403,7 +404,7 @@ export async function changerInfosRoster(formData: FormData) {
       ...(existant?.profil ?? {}),
       ville: net(formData.get("ville"), 60),
       grad: /^20\d{2}$/.test(grad) ? grad : "",
-      taille: net(formData.get("taille"), 20),
+      taille: normaliserTaille(net(formData.get("taille"), 20)),
       ecole: net(formData.get("ecole"), 80),
     },
   });

@@ -9,9 +9,17 @@ const PAUSE_REFUS_JOURS = 90;
 
 const initial: EtatInfolettre = { ok: false, erreur: null };
 
-/** Fenêtre à l'ouverture du site : inscription à l'infolettre. Le visiteur peut refuser, et on ne le redemande pas avant 90 jours. */
+const DELAI_MS = 25000; // ouverture après 25 secondes…
+const DEFILEMENT = 0.5; // …ou dès que la moitié de la page a défilé (jamais au chargement)
+
+/**
+ * Inscription à l'infolettre : jamais au chargement, seulement après 25 s ou 50 % de défilement.
+ * Sur ordinateur, une fenêtre ; sur mobile, un bandeau en bas de l'écran (jamais plein écran).
+ * Le visiteur peut refuser, et on ne le redemande pas avant 90 jours.
+ */
 export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball" }) {
   const [ouvert, setOuvert] = useState(false);
+  const [mobile, setMobile] = useState(false);
   const [etat, action, enCours] = useActionState(sInscrireInfolettre, initial);
   const boite = useRef<HTMLDivElement>(null);
   const champ = useRef<HTMLInputElement>(null);
@@ -37,12 +45,25 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
   // Réévalué à chaque changement de sport : ouvrir le volet baseball affiche la demande même si le softball a été refusé.
   useEffect(() => {
     setOuvert(false);
+    setMobile(window.matchMedia("(max-width: 700px)").matches);
     if (deja()) return;
-    const t = setTimeout(() => {
+    let fait = false;
+    const ouvrir = () => {
+      if (fait) return;
+      fait = true;
       avant.current = document.activeElement as HTMLElement | null;
       setOuvert(true);
-    }, 1800);
-    return () => clearTimeout(t);
+    };
+    const t = setTimeout(ouvrir, DELAI_MS);
+    const surDefilement = () => {
+      const haut = window.scrollY + window.innerHeight;
+      if (haut / document.documentElement.scrollHeight >= DEFILEMENT) ouvrir();
+    };
+    window.addEventListener("scroll", surDefilement, { passive: true });
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("scroll", surDefilement);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sport]);
 
@@ -51,7 +72,7 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
   }, [etat.ok]);
 
   useEffect(() => {
-    if (ouvert) champ.current?.focus();
+    if (ouvert && !mobile) champ.current?.focus(); // sur mobile, pas de clavier ouvert d'office
   }, [ouvert]);
 
   const fermer = (refus: boolean) => {
@@ -78,8 +99,8 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
 
   if (!ouvert) return null;
   return (
-    <div className="infolettre-fond" onMouseDown={(e) => e.target === e.currentTarget && fermer(true)}>
-      <div ref={boite} className="infolettre" role="dialog" aria-modal="true" aria-labelledby="infolettre-titre" aria-describedby="infolettre-texte" onKeyDown={clavier}>
+    <div className={`infolettre-fond${mobile ? " bandeau" : ""}`} onMouseDown={(e) => e.target === e.currentTarget && fermer(true)}>
+      <div ref={boite} className="infolettre" role="dialog" aria-modal={mobile ? undefined : true} aria-labelledby="infolettre-titre" aria-describedby="infolettre-texte" onKeyDown={clavier}>
         <button type="button" className="infolettre-x" aria-label="Fermer sans m'inscrire" onClick={() => fermer(true)}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
             <path d="M5 5l14 14M19 5 5 19" />

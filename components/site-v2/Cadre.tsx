@@ -1,3 +1,4 @@
+import { accueilHref } from "@/lib/site-v2/adresses";
 import Image from "next/image";
 import Link from "next/link";
 import { Entete } from "./Entete";
@@ -8,7 +9,7 @@ import { liensUtilitaires } from "@/lib/site-v2/menu";
 /** Cadre commun du site public : barre utilitaire, en-tête, pied de page et symboles SVG. */
 export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; provisoire?: boolean; accueil?: boolean; children: React.ReactNode }) {
   // Sur l'accueil, les ancres restent locales ; ailleurs (roster), elles reviennent à l'accueil du sport.
-  const base = accueil ? "" : `/site-v2?sport=${sport}`;
+  const base = accueil ? "" : accueilHref(sport);
   return (
     <div className="v2" data-sport={sport}>
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
@@ -40,7 +41,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
           </div>
           <div className="sport-switch" role="group" aria-label="Choisir le sport">
             {SPORTS.map((s) => (
-              <Link key={s} href={`/site-v2?sport=${s}`} scroll={false} className={s === sport ? "on" : ""} aria-current={s === sport ? "true" : undefined}>
+              <Link key={s} href={accueilHref(s)} scroll={false} className={s === sport ? "on" : ""} aria-current={s === sport ? "true" : undefined}>
                 {CONTENU[s].mot}
               </Link>
             ))}
@@ -69,8 +70,8 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
             </div>
             <div>
               <h5>Programmes</h5>
-              <Link href="/site-v2?sport=softball">Softball</Link>
-              <Link href="/site-v2?sport=baseball">Baseball</Link>
+              <Link href="/site-v2">Softball</Link>
+              <Link href="/baseball">Baseball</Link>
               <a href={`${base}#recrutement`}>Le parcours Royal</a>
             </div>
             <div>
@@ -78,8 +79,8 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
               <a href={`${base}#equipes`}>Équipes</a>
               <a href={`${base}#calendrier`}>Calendrier</a>
               <a href={`${base}#engagements`}>Engagements</a>
-              <Link href={`/site-v2/centre-entrainement?sport=${sport}`}>Centre d&apos;entraînement</Link>
-              <Link href={`/site-v2/organisation?sport=${sport}`}>Organisation</Link>
+              <Link href={`/centre-entrainement?sport=${sport}`}>Centre d&apos;entraînement</Link>
+              <Link href={`/organisation?sport=${sport}`}>Organisation</Link>
               <Link href="/connexion">ROF Connect</Link>
             </div>
             <div>

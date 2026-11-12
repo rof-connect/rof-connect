@@ -1,3 +1,4 @@
+import { normaliserTaille } from "@/lib/taille";
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -22,7 +23,7 @@ export async function definirInfosRoster(changements: Record<string, InfosRoster
   for (const [id, v] of Object.entries(changements)) {
     const ville = String(v.ville ?? "").trim().slice(0, 60);
     const ecole = String(v.ecole ?? "").trim().slice(0, 80);
-    const taille = String(v.taille ?? "").trim().slice(0, 12);
+    const taille = normaliserTaille(String(v.taille ?? "").trim().slice(0, 12));
     const grad = /^20\d{2}$/.test(String(v.grad ?? "").trim()) ? String(v.grad).trim() : "";
     const nouveau: InfosRoster = { ...(ville ? { ville } : {}), ...(grad ? { grad } : {}), ...(taille ? { taille } : {}), ...(ecole ? { ecole } : {}) };
     if (Object.keys(nouveau).length === 0) delete tous[id];

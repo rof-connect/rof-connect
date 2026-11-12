@@ -155,9 +155,9 @@ export const CONTENU: Record<Sport, Contenu> = {
     accroche:
       "Le programme élite de baseball de Lanaudière. Du 8U au Prep School, bâti sur le même standard Royal : travail, caractère, excellence.",
     saison: "Saison 2027",
-    noteCalendrier: "Calendrier en préparation",
+    noteCalendrier: "",
     engagementsSous: "Ils ont signé.",
-    lead: "Le même parcours Royal, adapté au baseball : développement, exposition et accompagnement vers les programmes collégiaux américains.",
+    lead: "Le même parcours Royal, adapté au baseball : développement, exposition et préparation vers les programmes collégiaux.",
     etapes: [
       { n: "01", t: "PSES", d: "5e et 6e année — les fondations : technique, plaisir du jeu et habitudes d'athlète." },
       { n: "02", t: "Collège L'Assomption", d: "Le secondaire : conciliation sport-études et développement structuré." },
@@ -170,7 +170,7 @@ export const CONTENU: Record<Sport, Contenu> = {
       groupes: [
         {
           nom: "PSES",
-          sous: "Primaire · 5e et 6e année",
+          sous: "primaire · 5e et 6e année",
           equipes: [
             { niveau: "Bleu", nom: "PSES" },
             { niveau: "Noir", nom: "PSES" },
@@ -178,7 +178,7 @@ export const CONTENU: Record<Sport, Contenu> = {
         },
         {
           nom: "Collège L'Assomption",
-          sous: "Secondaire",
+          sous: "secondaire",
           equipes: [
             { niveau: "Sec. 1", nom: "Collège L'Assomption" },
             { niveau: "Sec. 2-3", nom: "Collège L'Assomption" },
@@ -188,7 +188,7 @@ export const CONTENU: Record<Sport, Contenu> = {
       ],
     },
     stats: [
-      ["4", "Titres provinciaux"],
+      ["1", "Titre provincial"], // recalculé plus bas d'après les bannières du palmarès
       ["3", "Titres Can-Am United"],
       ["2", "Titres ECTBL"],
     ],
@@ -229,9 +229,15 @@ export const CONTENU: Record<Sport, Contenu> = {
     ],
     videCalendrier: "Les tournois et showcases du programme baseball seront publiés ici dès qu'ils seront confirmés.",
     videPalmares: "Le palmarès du programme baseball sera ajouté ici.",
-    videEngagements: "Les premiers engagements universitaires du programme baseball seront célébrés ici.",
+    videEngagements: "Les premiers engagements collégiaux du programme baseball seront célébrés ici.",
   },
 };
+
+// Statistique provinciale du baseball : toujours le nombre réel de bannières « Champion provincial » du palmarès.
+{
+  const n = CONTENU.baseball.bannieres.filter((b) => b.style === "provincial").length;
+  CONTENU.baseball.stats[0] = [String(n), n > 1 ? "Titres provinciaux" : "Titre provincial"];
+}
 
 export const GALERIE: { src: string; alt: string }[] = [
   { src: "/photos/trio-sourire.jpg", alt: "Trois joueuses de Royal On Field posent ensemble devant le décor « Earn the Crown »" },
@@ -472,7 +478,7 @@ export const FAQ_PARENTS: { q: string; r?: string; liste?: { t: string; d: strin
     r: "Royal On Field prépare ses joueuses au niveau collégial : développement sur le terrain, tournois et showcases aux États-Unis devant les recruteurs, et un profil FieldLevel du programme. On aide aussi les familles à s'orienter grâce au questionnaire de parcours (12e année, école en ligne ou cégep). Notre accompagnement dans le processus de recrutement lui-même reste toutefois limité. Pour un suivi complet (dossier, vidéos, communications avec les entraîneurs, négociation des bourses), nous recommandons de faire appel à une agence spécialisée en recrutement universitaire. La Direction peut vous orienter vers des agences reconnues. Trois athlètes de Royal On Field ont déjà signé en NJCAA Division 1.",
     boutons: [
       { label: "Questionnaire de parcours", href: "/parcours", plein: true },
-      { label: "Nous joindre", href: "/site-v2/organisation?sport=softball#contact" },
+      { label: "Nous joindre", href: "/organisation?sport=softball#contact" },
     ],
   },
 ];

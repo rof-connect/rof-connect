@@ -7,6 +7,7 @@ import { urlPhotoProfil } from "@/lib/photo-profil";
 import { chargerNumeros } from "@/lib/numeros-chandail";
 import { chargerInfosRoster } from "@/lib/infos-roster";
 import { STATUTS, chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
+import { normaliserTaille } from "@/lib/taille";
 import { nomAffiche, nomPublicParDefaut } from "./equipes";
 import { NIVEAU_COMPETITION_PROVISOIRE, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, idGameChanger, lienGameChanger, profilFieldLevel, type Sport } from "./donnees";
 
@@ -25,10 +26,15 @@ const POSITIONS_FR: Record<string, string> = {
   "3b": "3e but",
   ss: "Arrêt-court",
   shortstop: "Arrêt-court",
-  pitcher: "Lanceur·euse",
-  catcher: "Receveur·euse",
 };
-const positionFr = (p: string) => POSITIONS_FR[p.toLowerCase()] ?? p;
+/** Positions au féminin pour le softball (Lanceuse, Receveuse) et au masculin pour le baseball (Lanceur, Receveur). */
+function positionFr(p: string, sport: string) {
+  const f = sport === "softball";
+  const cle = p.toLowerCase().replace(/\s+/g, "");
+  if (["pitcher", "lanceur", "lanceuse", "lanceur·euse"].includes(cle)) return f ? "Lanceuse" : "Lanceur";
+  if (["catcher", "receveur", "receveuse", "receveur·euse"].includes(cle)) return f ? "Receveuse" : "Receveur";
+  return POSITIONS_FR[p.toLowerCase()] ?? p;
+}
 
 export type JoueuseRoster = {
   id: string;
@@ -180,10 +186,10 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           nom: nomDe.get(id) || "Joueuse",
           numero: numeros[id] ?? "",
           statut: nomStatut(id),
-          positions: (fiche?.position ?? "").split(",").map((x: string) => positionFr(x.trim())).filter(Boolean),
+          positions: (fiche?.position ?? "").split(",").map((x: string) => positionFr(x.trim(), equipe!.sport)).filter(Boolean),
           lance: fiche?.throws ?? "",
           frappe: fiche?.bats ?? "",
-          taille: fichesPres[id]?.profil?.taille || infos[id]?.taille || "",
+          taille: normaliserTaille(fichesPres[id]?.profil?.taille || infos[id]?.taille || ""),
           // École et ville : masquées par défaut, publiées seulement si la famille a coché « Afficher mon école et ma ville sur le site public ». « Masquer mon profil du site public » retire la joueuse de l'alignement.
           ecole: fichesPres[id]?.profil?.afficherEcoleVille === true ? fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "" : "",
           ville: fichesPres[id]?.profil?.afficherEcoleVille === true ? fichesPres[id]?.profil?.ville || infos[id]?.ville || "" : "",

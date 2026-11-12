@@ -1,3 +1,4 @@
+import { normaliserTaille } from "@/lib/taille";
 // Outils purs (sans accès aux données) pour la page de présentation : lecture des champs saisis par la joueuse.
 
 export type Mesure = { label: string; valeur: string };
@@ -72,7 +73,7 @@ export function profilDuFormulaire(formData: FormData): Profil {
     .filter((e) => /^\d{4}-\d{2}-\d{2}$/.test(e.date) && e.nom);
   const refNom = nettoyer(formData.get("ref_nom"), 80);
   return {
-    taille: nettoyer(formData.get("taille"), 20),
+    taille: normaliserTaille(nettoyer(formData.get("taille"), 20)),
     poids: nettoyer(formData.get("poids"), 20),
     ecole: nettoyer(formData.get("ecole"), 80),
     ville: nettoyer(formData.get("ville"), 60),

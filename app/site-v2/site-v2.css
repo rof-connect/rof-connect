@@ -768,6 +768,14 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .infolettre-x:hover{background:#EEF2FB}
 .v2 .infolettre-x:focus-visible{outline:2px solid var(--royal);outline-offset:1px}
 @media (max-width:480px){.v2 .infolettre{padding:26px 20px 20px}.v2 .infolettre h2{font-size:38px}}
+/* Mobile : bandeau en bas de l'écran, sans fond sombre ni fenêtre plein écran */
+@media (max-width:700px){
+  .v2 .infolettre-fond.bandeau{background:transparent;align-items:flex-end;padding:0;pointer-events:none}
+  .v2 .infolettre-fond.bandeau .infolettre{pointer-events:auto;max-width:none;border-radius:14px 14px 0 0;padding:18px 18px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.28)}
+  .v2 .infolettre-fond.bandeau .infolettre h2{font-size:30px;margin-bottom:6px}
+  .v2 .infolettre-fond.bandeau .infolettre p{font-size:14px;margin-bottom:10px}
+  .v2 .infolettre-fond.bandeau .infolettre-boutons{margin:12px 0 8px}
+}
 
 /* Ordinateur : la photo d'accueil a la même largeur que le reste du contenu (alignée sur les bords des sections) */
 @media (min-width:1001px){

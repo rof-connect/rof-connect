@@ -1,3 +1,4 @@
+import { normaliserTaille } from "@/lib/taille";
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { liensDe } from "@/lib/liens-sociaux";
@@ -51,7 +52,7 @@ export async function chargerFiche(profileId: string): Promise<FicheRecrutement 
   return {
     apropos: (reglages.apropos ?? "").trim(),
     faits: ([
-      ["Taille", profil.taille],
+      ["Taille", normaliserTaille(profil.taille)],
       ["Poids", profil.poids],
       ["Moyenne", profil.moyenne],
     ] as [string, string | undefined][]).filter(([, v]) => v) as [string, string][],

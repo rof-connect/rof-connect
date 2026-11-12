@@ -6,12 +6,12 @@ const SITE = "https://royalonfield.ca";
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = [
     "/",
-    "/site-v2?sport=baseball",
-    "/site-v2/organisation",
-    "/site-v2/centre-entrainement",
-    "/site-v2/calendrier",
-    "/site-v2/varsity",
-    "/site-v2/rof-connect",
+    "/baseball",
+    "/organisation",
+    "/centre-entrainement",
+    "/calendrier",
+    "/varsity",
+    "/rof-connect",
     "/inscription",
     "/parcours",
   ];

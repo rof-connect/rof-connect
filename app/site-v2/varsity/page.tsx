@@ -15,7 +15,7 @@ export default function VarsityPage() {
     <Cadre sport="softball">
       <section className="roster-hero">
         <div className="wrap">
-          <Link className="retour" href="/site-v2?sport=softball#equipes">
+          <Link className="retour" href="/site-v2#equipes">
             ← Toutes les équipes softball
           </Link>
           <div className="kicker">Royal Softball On Field · {v.sous}</div>

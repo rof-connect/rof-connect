@@ -1,3 +1,4 @@
+import { accueilHref } from "@/lib/site-v2/adresses";
 import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
 import { Organisation } from "@/components/site-v2/Organisation";
@@ -16,7 +17,7 @@ export default async function OrganisationPage({ searchParams }: { searchParams:
     <Cadre sport={sport}>
       <section className="roster-hero">
         <div className="wrap">
-          <Link className="retour" href={`/site-v2?sport=${sport}`}>
+          <Link className="retour" href={accueilHref(sport)}>
             ← Accueil {c.mot.toLowerCase()}
           </Link>
           <div className="kicker">Royal {c.mot} On Field · Repentigny, QC</div>

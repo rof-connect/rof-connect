@@ -56,7 +56,7 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
             )}
           </div>
           <div>
-            <Link className="retour" href={`/site-v2/equipes/${e.id}`}>
+            <Link className="retour" href={`/equipes/${e.id}`}>
               ← Roster {e.nom}
             </Link>
             <div className="kicker">
@@ -87,7 +87,7 @@ export default async function ProfilJoueuse({ params }: { params: Promise<{ id: 
               <br />
               <em>de la joueuse</em>
             </h2>
-            <Link className="more" href={`/site-v2/equipes/${e.id}`}>Voir tout le roster →</Link>
+            <Link className="more" href={`/equipes/${e.id}`}>Voir tout le roster →</Link>
           </div>
           <dl className="fiche-joueuse">
             {infos.map(([k, v]) => (

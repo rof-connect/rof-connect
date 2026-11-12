@@ -1,3 +1,4 @@
+import { accueilHref } from "@/lib/site-v2/adresses";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -27,7 +28,7 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
     <Cadre sport={r.sport} provisoire={r.provisoire}>
       <section className="roster-hero">
         <div className="wrap">
-          <Link className="retour" href={`/site-v2?sport=${r.sport}#equipes`}>
+          <Link className="retour" href={`${accueilHref(r.sport)}#equipes`}>
             ← Toutes les équipes {c.mot.toLowerCase()}
           </Link>
           <div className="kicker">Royal {c.mot} On Field · Saison {r.saison}</div>
