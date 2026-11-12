@@ -819,3 +819,23 @@ html:has(.v2){scroll-behavior:smooth}
 @media (max-width:600px){
   .v2 .logos-affiliations li{aspect-ratio:2/1}
 }
+
+/* Page de présentation de ROF Connect */
+.v2 .rc-btns{margin-top:28px}
+.v2 .rc-grille{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.v2 .rc-carte{border:1px solid var(--line);border-top:5px solid var(--royal);border-radius:6px;padding:26px;background:#fff}
+.v2 .rc-carte .rc-ic{color:var(--royal);margin-bottom:14px}
+.v2 .rc-carte h3{font-family:var(--display);font-size:30px;line-height:.95;color:var(--royal-deep);letter-spacing:.02em}
+.v2 .rc-carte p{margin-top:10px;font-size:14px;line-height:1.55;color:#4A5570}
+.v2 .rc-publics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.v2 .rc-public{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-left:5px solid var(--accent);border-radius:6px;padding:24px}
+.v2 .rc-public h3{font-family:var(--display);font-size:30px;line-height:.95;letter-spacing:.02em}
+.v2 .rc-public p{margin-top:10px;font-size:14px;line-height:1.55;color:#C9D4EE}
+.v2 .rc-ghost{border-color:var(--royal);color:var(--royal)}
+.v2 .rc-ghost:hover{background:var(--royal);color:#fff}
+.v2 .rc-mobile{margin-top:32px;border:1px solid var(--line);border-left:5px solid var(--mark);border-radius:6px;padding:24px 28px;background:var(--mist)}
+.v2 .rc-mobile h3{font-family:var(--display);font-size:30px;color:var(--royal-deep);letter-spacing:.02em}
+.v2 .rc-mobile p{margin-top:8px;font-size:15px;line-height:1.6;color:#4A5570;max-width:760px}
+@media (max-width:1000px){.v2 .rc-publics{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:800px){.v2 .rc-grille{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.v2 .rc-grille,.v2 .rc-publics{grid-template-columns:1fr}}
