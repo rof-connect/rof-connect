@@ -125,17 +125,26 @@ export default async function RosterPage({ params, searchParams }: { params: Pro
                 );
               })}
             </div>
+          ) : r.restreint ? (
+            <div className="empty-clair">
+              <h3>L&apos;alignement n&apos;est pas publié.</h3>
+              <p>Pour protéger la vie privée des jeunes, les alignements ne sont publiés qu&apos;à partir de la catégorie 14U.</p>
+            </div>
           ) : (
             <div className="empty-clair">
               <h3>Le roster sera publié bientôt.</h3>
-              <p>Les {mot}s de l&apos;équipe apparaîtront ici dès qu&apos;elles auront été acceptées par la Direction.</p>
+              <p>
+                {f
+                  ? "Les joueuses de l'équipe apparaîtront ici dès qu'elles auront été acceptées par la Direction."
+                  : "Les joueurs de l'équipe apparaîtront ici dès qu'ils auront été acceptés par la Direction."}
+              </p>
             </div>
           )}
 
           {r.afficher && r.joueuses.length > 0 && (
             <p className="roster-note">
               L / F : lance (Gauche / Droite) · frappe (Gauche / Droite / Ambidextre).
-              {r.joueuses.some((j) => j.lien) && ` Clique sur une ${mot} pour voir sa fiche de recrutement.`}
+              {r.joueuses.some((j) => j.lien) && ` Clique sur ${f ? "une joueuse" : "un joueur"} pour voir sa fiche.`}
             </p>
           )}
         </div>

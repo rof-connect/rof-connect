@@ -82,8 +82,8 @@ export function CartePresentation({ reglages, lectureSeule = false }: { reglages
             <input name="ville" defaultValue={p.ville ?? ""} placeholder="Repentigny, QC" className={champ} />
           </label>
           <label className="flex items-start gap-2 text-xs text-rof-gris sm:col-span-2">
-            <input type="checkbox" name="masquer_ecole_ville" defaultChecked={p.masquerEcoleVille === true} className="mt-0.5 h-4 w-4" />
-            <span>Masquer mon école et ma ville sur le site public (l&apos;alignement de l&apos;équipe affichera « — »).</span>
+            <input type="checkbox" name="afficher_ecole_ville" defaultChecked={p.afficherEcoleVille === true} className="mt-0.5 h-4 w-4" />
+            <span>Afficher mon école et ma ville sur le site public (sinon, l&apos;alignement de l&apos;équipe affichera « — »).</span>
           </label>
           <label className="flex items-start gap-2 text-xs text-rof-gris sm:col-span-2">
             <input type="checkbox" name="masquer_site" defaultChecked={p.masquerSite === true} className="mt-0.5 h-4 w-4" />

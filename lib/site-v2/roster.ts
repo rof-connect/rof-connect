@@ -47,6 +47,17 @@ export type JoueuseRoster = {
   lien: string; // sa page sur le site (fiche de recrutement incluse si elle l'a activée)
 };
 
+/** Vie privée : aucun nom d'enfant n'est publié sous 14U (softball et baseball), ni dans l'alignement ni sur une fiche. */
+export const STATUT_MIN_PUBLIC = 7; // 14U
+/** Un alignement de moins de 8 inscrits n'est pas publié (il ne permettrait pas de rester discret). */
+export const MIN_ROSTER_PUBLIC = 8;
+
+/** Niveau d'âge le plus élevé du nom d'équipe (« 9/10U » → 10). Sans niveau (Varsity, Prep School) : élevé, donc publiable. */
+export function niveauEquipe(nom: string): number {
+  const nombres = [...nom.matchAll(/(\d{1,2})\s*U(?![a-z])/gi)].map((m) => Number(m[1]));
+  return nombres.length ? Math.max(...nombres) : 99;
+}
+
 export type RosterEquipe = {
   id: string;
   nom: string;
@@ -59,14 +70,16 @@ export type RosterEquipe = {
   gamechangerLien: string; // page de l'équipe sur GameChanger (bouton)
   gamechanger: string; // identifiant du widget calendrier GameChanger (vide = aucun)
   afficher: boolean; // la Direction autorise l'affichage du roster (par défaut : oui)
+  restreint: boolean; // équipe sous 14U : alignement jamais publié
+  petit: boolean; // moins de 8 inscrits : alignement pas encore publié
   provisoire: boolean;
 };
 
 /**
  * Roster public d'une équipe. Les alignements sont affichés ; la Direction peut en retirer un par équipe (nouvelle équipe : masqué par défaut).
  * Sont listées les joueuses de l'équipe dont le statut n'est plus Prospect, sans les archivées.
- * Données publiées : nom, positions, lance/frappe. Taille et grad year si saisis. École et ville sauf si la famille a coché
- * « Masquer mon école et ma ville » ; la joueuse n'est pas listée si la famille a coché « Masquer mon profil du site public ». La photo seulement avec l'autorisation de photo de l'inscription. Jamais : date de naissance,
+ * Données publiées : nom, positions, lance/frappe. Taille et grad year si saisis. École et ville seulement si la famille a coché
+ * « Afficher mon école et ma ville sur le site public » ; la joueuse n'est pas listée si la famille a coché « Masquer mon profil du site public ». La photo seulement avec l'autorisation de photo de l'inscription. Jamais : date de naissance,
  * coordonnées, courriel, notes médicales.
  */
 export async function chargerRoster(teamId: string, apercu = false): Promise<RosterEquipe | null> {
@@ -117,6 +130,8 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
     gamechangerLien: lienGameChanger(equipe.gamechanger_url) || lienGameChanger(GAMECHANGER_LIEN_PROVISOIRE[nomPublicParDefaut(equipe.name)]),
     gamechanger: idGameChanger(equipe.gamechanger_widget_id) || idGameChanger(GAMECHANGER_PROVISOIRE[nomPublicParDefaut(equipe.name)]),
     afficher,
+    restreint: niveauEquipe(equipe.name) < 14,
+    petit: false,
     provisoire,
   };
   if (!afficher) return { ...base, total: 0, joueuses: [] };
@@ -136,10 +151,16 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
   const ids = [
     ...new Set(
       (membres ?? [])
-        .filter((m) => !archivees.has(m.profile_id) && !fichesPres[m.profile_id]?.profil?.masquerSite && statutEffectif(m.profile_id, statuts, [m.status_id]) > 1)
+        .filter((m) => !archivees.has(m.profile_id) && !fichesPres[m.profile_id]?.profil?.masquerSite && statutEffectif(m.profile_id, statuts, [m.status_id]) >= STATUT_MIN_PUBLIC)
         .map((m) => m.profile_id),
     ),
   ];
+  // Équipe sous 14U : on ne lit ni ne publie aucun nom (seulement le nombre d'inscrits).
+  if (base.restreint) {
+    const nb = new Set((membres ?? []).filter((m) => !archivees.has(m.profile_id) && statutEffectif(m.profile_id, statuts, [m.status_id]) > 1).map((m) => m.profile_id)).size;
+    return { ...base, total: nb, joueuses: [] };
+  }
+  if (ids.length < MIN_ROSTER_PUBLIC) return { ...base, petit: true, total: ids.length, joueuses: [] };
 
   let joueuses: JoueuseRoster[] = [];
   if (ids.length) {
@@ -163,9 +184,9 @@ export async function chargerRoster(teamId: string, apercu = false): Promise<Ros
           lance: fiche?.throws ?? "",
           frappe: fiche?.bats ?? "",
           taille: fichesPres[id]?.profil?.taille || infos[id]?.taille || "",
-          // École et ville : affichées (autorisation des parents obtenue par la Direction) sauf si la famille a coché « Masquer mon école et ma ville ». « Masquer mon profil du site public » retire la joueuse de l'alignement.
-          ecole: fichesPres[id]?.profil?.masquerEcoleVille !== true ? fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "" : "",
-          ville: fichesPres[id]?.profil?.masquerEcoleVille !== true ? fichesPres[id]?.profil?.ville || infos[id]?.ville || "" : "",
+          // École et ville : masquées par défaut, publiées seulement si la famille a coché « Afficher mon école et ma ville sur le site public ». « Masquer mon profil du site public » retire la joueuse de l'alignement.
+          ecole: fichesPres[id]?.profil?.afficherEcoleVille === true ? fichesPres[id]?.profil?.ecole || infos[id]?.ecole || "" : "",
+          ville: fichesPres[id]?.profil?.afficherEcoleVille === true ? fichesPres[id]?.profil?.ville || infos[id]?.ville || "" : "",
           grad: fichesPres[id]?.profil?.grad || infos[id]?.grad || "",
           fieldlevel: profilFieldLevel(fiche?.fieldlevel_url),
           photo: await urlPhotoProfil(id), // l'organisation décide d'afficher les photos : pas d'autorisation individuelle requise
