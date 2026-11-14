@@ -297,7 +297,7 @@ export const ANIMATIONS = {
 
 function Silhouette({ s }) {
   const ligne = (a, b, coul, w = 6) => (
-    <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={coul} strokeWidth={w} strokeLinecap="round" />
+    <line x1={r2(a.x)} y1={r2(a.y)} x2={r2(b.x)} y2={r2(b.y)} stroke={coul} strokeWidth={w} strokeLinecap="round" />
   );
   return (
     <g>
@@ -306,13 +306,16 @@ function Silhouette({ s }) {
       {ligne(s.epaule, s.bl.coude, C.loin, 5)}{ligne(s.bl.coude, s.bl.main, C.loin, 5)}
       {/* Tronc et tête */}
       {ligne(s.hanche, s.epaule, C.proche, 8)}
-      <circle cx={s.tete.x} cy={s.tete.y} r={8} fill={C.proche} />
+      <circle cx={r2(s.tete.x)} cy={r2(s.tete.y)} r={8} fill={C.proche} />
       {/* Côté proche */}
       {ligne(s.hanche, s.jp.genou, C.proche)}{ligne(s.jp.genou, s.jp.cheville, C.proche)}{ligne(s.jp.cheville, s.jp.orteil, C.proche, 5)}
       {ligne(s.epaule, s.bp.coude, C.proche, 5)}{ligne(s.bp.coude, s.bp.main, C.proche, 5)}
     </g>
   );
 }
+
+// Arrondi à 2 décimales : évite une différence d'affichage entre le serveur et le navigateur (hydratation).
+const r2 = (v) => Math.round(v * 100) / 100;
 
 export function Animation({ id, hauteur = 150 }) {
   const anim = ANIMATIONS[id];
@@ -396,8 +399,9 @@ function CarteExercice({ item, fait, onToggle, valeurTest, onTest, reference }) 
   return (
     <div style={{ border: `1px solid ${fait ? C.vert : C.bord}`, borderRadius: 12, marginBottom: 10, background: C.carte, overflow: "hidden" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: 10, cursor: "pointer" }} onClick={() => setOuvert(!ouvert)}>
-        <div style={{ width: 84, flexShrink: 0, borderRadius: 8, overflow: "hidden" }}>
-          <Animation id={ex.anim} hauteur={63} />
+        <div style={{ position: "relative", width: 128, flexShrink: 0, borderRadius: 8, overflow: "hidden" }}>
+          <Animation id={ex.anim} hauteur={96} />
+          <span style={{ position: "absolute", left: 5, bottom: 5, background: "rgba(0,0,0,.65)", color: "#fff", borderRadius: 99, padding: "1px 7px", fontSize: 10, fontWeight: 800, letterSpacing: 0.5 }} aria-hidden>▶ DÉMO</span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 700, color: C.texte, textDecoration: fait ? "line-through" : "none" }}>{ex.nom}</div>
