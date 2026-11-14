@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { marquerComplete, repondre, supprimerEvenement } from "@/app/membres/agenda/actions";
 import { bouton } from "@/components/ui/boutons";
 
@@ -34,6 +34,7 @@ export function CarteEvenement({
   pdfUrl,
   pdfNom,
   blocs,
+  profilId,
 }: {
   id: string;
   titre: string;
@@ -53,42 +54,117 @@ export function CarteEvenement({
   pdfUrl?: string | null;
   pdfNom?: string | null;
   blocs?: BlocProgramme[] | null; // programme d'entraînement du jour (exercices séparés, avec photos)
+  profilId?: string; // pour mémoriser les étapes cochées de cette personne sur l'appareil
 }) {
   const aCompleter = mode === "completer";
   const [voirListe, setVoirListe] = useState(false);
+  // La carte s'affiche en résumé; la personne l'ouvre pour voir les détails.
+  const [ouvert, setOuvert] = useState(false);
+
+  // Étapes (exercices) cochées, mémorisées sur l'appareil.
+  const cleCoches = `rof-etapes-${profilId ?? "moi"}-${id}`;
+  const [coches, setCoches] = useState<string[]>([]);
+  useEffect(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem(cleCoches) ?? "[]");
+      // Lecture unique de l'appareil au montage (localStorage n'existe pas côté serveur).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (Array.isArray(v)) setCoches(v.filter((x) => typeof x === "string"));
+    } catch {}
+  }, [cleCoches]);
+  const basculerEtape = (cle: string) =>
+    setCoches((c) => {
+      const n = c.includes(cle) ? c.filter((x) => x !== cle) : [...c, cle];
+      try {
+        localStorage.setItem(cleCoches, JSON.stringify(n));
+      } catch {}
+      return n;
+    });
+  const clesEtapes = (blocs ?? []).flatMap((b) => b.exercices.map((e) => `${b.titre}::${e.code}`));
+  const nbEtapes = clesEtapes.length;
+  const nbCochees = clesEtapes.filter((k) => coches.includes(k)).length;
+
+  const statut = aCompleter
+    ? maReponse === "yes"
+      ? { texte: "✓ Complété", classe: "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" }
+      : { texte: "À faire", classe: "border-rof-or/60 bg-rof-or/10 text-rof-or" }
+    : maReponse === "yes"
+      ? { texte: "✓ Présent·e", classe: "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" }
+      : maReponse === "no"
+        ? { texte: "✗ Absent·e", classe: "border-rof-rouge/60 bg-rof-rouge/10 text-rof-rouge" }
+        : passe
+          ? null
+          : { texte: "À répondre", classe: "border-rof-ligne bg-rof-craie text-rof-gris" };
   const badge = TYPES_EVENEMENT[type] ?? TYPES_EVENEMENT.Autre;
   const d = new Date(date + "T12:00:00");
   const valide = !Number.isNaN(d.getTime());
   const jourSemaine = valide ? d.toLocaleDateString("fr-CA", { weekday: "short" }).replace(".", "") : "";
   const mois = valide ? d.toLocaleDateString("fr-CA", { month: "short" }).replace(".", "") : "";
 
+  // Couleur de la bande de gauche : permet de reconnaître le type d'un coup d'œil.
+  const BARRES: Record<string, string> = { Pratique: "bg-rof-gazon", Match: "bg-rof-poudre", Tournoi: "bg-rof-or", Autre: "bg-rof-gris" };
+  const barre = aCompleter ? "bg-rof-or" : BARRES[type] ?? BARRES.Autre;
+  const couleurType = aCompleter ? "text-rof-or" : (badge.split(" ").find((c) => c.startsWith("text-")) ?? "text-rof-gris");
+  const libelleType = aCompleter ? "Entraînement à faire" : type || "Autre";
+  const progression = nbEtapes ? Math.round((nbCochees / nbEtapes) * 100) : 0;
+
   return (
-    <div className={`rounded-2xl border bg-rof-blanc p-4 ${passe ? "border-rof-ligne opacity-80" : "border-rof-ligne"}`}>
-      <div className="flex gap-4">
-        <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-rof-royal-sombre py-2 text-center">
-          <span className="font-condensed text-xs uppercase tracking-wide text-rof-poudre">{jourSemaine}</span>
-          <span className="font-condensed text-3xl font-bold leading-none text-rof-texte">{valide ? d.getDate() : "?"}</span>
-          <span className="font-condensed text-xs uppercase tracking-wide text-rof-poudre">{mois}</span>
+    <div
+      className={`overflow-hidden rounded-xl border bg-rof-blanc transition-colors ${ouvert ? "border-rof-poudre/60" : "border-rof-ligne"} ${passe ? "opacity-75" : ""}`}
+    >
+      <button
+        type="button"
+        onClick={() => setOuvert(!ouvert)}
+        aria-expanded={ouvert}
+        className="flex w-full items-stretch gap-3 p-3 text-left active:bg-rof-craie"
+      >
+        <span aria-hidden="true" className={`w-1 shrink-0 rounded-full ${barre}`} />
+        <div className="flex w-10 shrink-0 flex-col items-center justify-center leading-none">
+          <span className="font-condensed text-[11px] uppercase tracking-wide text-rof-poudre">{jourSemaine}</span>
+          <span className="font-condensed text-2xl font-bold text-rof-texte">{valide ? d.getDate() : "?"}</span>
+          <span className="font-condensed text-[10px] uppercase tracking-wide text-rof-gris">{mois}</span>
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap gap-1.5">
-            <span className={`rounded-full border px-2 py-0.5 font-condensed text-xs font-bold uppercase tracking-wide ${badge}`}>{type || "Autre"}</span>
-            {equipe && (
-              <span className="rounded-full border border-rof-ligne bg-rof-craie px-2 py-0.5 font-condensed text-xs font-bold uppercase tracking-wide text-rof-gris">
-                {equipe}
-              </span>
-            )}
-          </div>
-          <div className="mt-1 font-condensed text-xl font-bold uppercase leading-tight text-rof-texte">{titre}</div>
-          {(heure || lieu) && (
-            <div className="mt-0.5 text-sm text-rof-gris">
-              {heure && <span className="text-rof-texte">{heure}</span>}
-              {heure && lieu ? " · " : ""}
-              {lieu}
-            </div>
+        <div className="min-w-0 flex-1 self-center">
+          <p className={`font-condensed text-lg font-bold uppercase leading-tight text-rof-texte ${ouvert ? "" : "line-clamp-2"}`}>{titre}</p>
+          <p className={`text-xs text-rof-gris ${ouvert ? "" : "truncate"}`}>
+            <span className={`font-semibold ${couleurType}`}>{libelleType}</span>
+            {heure && <> · <span className="text-rof-texte">{heure}</span></>}
+            {lieu && <> · {lieu}</>}
+            {equipe && <> · {equipe}</>}
+          </p>
+          {peutEditer && (
+            <p className="mt-0.5 truncate text-[11px] text-rof-gris">
+              {aCompleter
+                ? `✓ ${presents.length} complété · ${absents.length + sansReponse.length} à faire`
+                : `✓ ${presents.length} · ✗ ${absents.length} · ${sansReponse.length} sans réponse`}
+            </p>
           )}
         </div>
-      </div>
+        <div className="flex shrink-0 flex-col items-end justify-center gap-1">
+          {statut && (
+            <span className={`whitespace-nowrap rounded-full border px-2 py-0.5 font-condensed text-[11px] font-bold uppercase tracking-wide ${statut.classe}`}>
+              {statut.texte}
+            </span>
+          )}
+          {nbEtapes > 0 && (
+            <span className={`font-condensed text-[11px] font-bold uppercase ${nbCochees === nbEtapes ? "text-rof-gazon" : "text-rof-gris"}`}>
+              {nbCochees}/{nbEtapes} étapes
+            </span>
+          )}
+        </div>
+        <span aria-hidden="true" className={`shrink-0 self-center text-rof-poudre transition-transform ${ouvert ? "rotate-180" : ""}`}>
+          ▼
+        </span>
+      </button>
+
+      {nbEtapes > 0 && (
+        <div className="h-1 w-full bg-rof-craie" aria-hidden="true">
+          <div className={`h-1 ${nbCochees === nbEtapes ? "bg-rof-gazon" : "bg-rof-or"}`} style={{ width: `${progression}%` }} />
+        </div>
+      )}
+
+      {ouvert && (
+      <div className="border-t border-rof-ligne px-4 pb-4 pt-1">
       {note && <p className="mt-3 whitespace-pre-line text-sm text-rof-texte">{note}</p>}
 
       {pdfUrl && (
@@ -100,7 +176,7 @@ export function CarteEvenement({
       {blocs && blocs.length > 0 && (
         <details open className="mt-4">
           <summary className="min-h-10 cursor-pointer font-condensed text-base font-bold uppercase tracking-wide text-rof-poudre">
-            Programme du jour · {blocs.reduce((n, b) => n + b.exercices.length, 0)} exercices
+            Programme du jour · {nbCochees}/{nbEtapes} étapes faites
           </summary>
           <div className="mt-2 flex flex-col gap-6">
             {blocs.map((b) => (
@@ -110,24 +186,32 @@ export function CarteEvenement({
                   {b.info && <span className="text-xs font-semibold normal-case tracking-normal text-rof-gris">{b.info}</span>}
                 </h3>
                 <ol className="mt-3 flex flex-col gap-4">
-                  {b.exercices.map((e) => (
-                    <li key={e.code} className="overflow-hidden rounded-xl border border-rof-ligne bg-rof-craie">
+                  {b.exercices.map((e) => {
+                    const cleEtape = `${b.titre}::${e.code}`;
+                    const faite = coches.includes(cleEtape);
+                    return (
+                    <li key={e.code} className={`overflow-hidden rounded-xl border bg-rof-craie ${faite ? "border-rof-gazon/60" : "border-rof-ligne"}`}>
                       {e.url && (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={e.url} alt={`${e.nom} : position de départ puis d'arrivée`} loading="lazy" className="w-full bg-white object-contain" />
                       )}
                       <div className="p-3">
                         <div className="flex items-start justify-between gap-3">
-                          <p className="font-condensed text-lg font-bold uppercase leading-tight text-rof-texte">
+                          <p className={`font-condensed text-lg font-bold uppercase leading-tight ${faite ? "text-rof-gris line-through" : "text-rof-texte"}`}>
                             <span className="mr-2 rounded bg-rof-or px-1.5 py-0.5 text-sm text-black">{e.code}</span>
                             {e.nom}
                           </p>
                           <span className="shrink-0 rounded-full border border-rof-or/70 px-3 py-0.5 font-condensed text-sm font-bold text-rof-or">{e.series}</span>
                         </div>
                         <p className="mt-2 text-sm leading-relaxed text-rof-gris">{e.description}</p>
+                        <label className={`mt-3 flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border px-3 font-condensed text-sm font-bold uppercase tracking-wide ${faite ? "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" : "border-rof-ligne text-rof-texte"}`}>
+                          <input type="checkbox" checked={faite} onChange={() => basculerEtape(cleEtape)} className="h-5 w-5 accent-[#4FB477]" />
+                          {faite ? "✓ Étape faite" : "Cocher quand c'est fait"}
+                        </label>
                       </div>
                     </li>
-                  ))}
+                    );
+                  })}
                 </ol>
               </section>
             ))}
@@ -237,6 +321,8 @@ export function CarteEvenement({
             </button>
           </form>
         </div>
+      )}
+      </div>
       )}
     </div>
   );

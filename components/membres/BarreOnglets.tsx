@@ -42,7 +42,7 @@ export function BarreOnglets({
       href: "/membres/moi",
       label: labels.moi,
       icone: "moi",
-      actifSi: (p) => commence(p, "/membres/moi", "/membres/parcours", "/membres/documents", "/membres/sondages", "/membres/contact"),
+      actifSi: (p) => commence(p, "/membres/moi", "/membres/sprint", "/membres/parcours", "/membres/documents", "/membres/sondages", "/membres/contact"),
     },
   ];
 

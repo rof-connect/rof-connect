@@ -99,6 +99,20 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
   const passes = (evenements ?? []).filter((e) => (e.event_date ?? "") < jour).reverse();
   const plusieursEquipes = equipes.length > 1;
 
+  // Regroupe les événements à venir : Aujourd'hui, Demain, Cette semaine, Plus tard.
+  const jours = (d: string) => Math.round((Date.parse(d + "T12:00:00Z") - Date.parse(jour + "T12:00:00Z")) / 86400000);
+  const periode = (d: string) => {
+    const n = jours(d);
+    return n <= 0 ? "Aujourd'hui" : n === 1 ? "Demain" : n <= 7 ? "Cette semaine" : "Plus tard";
+  };
+  const groupesAVenir: { titre: string; items: typeof aVenir }[] = [];
+  for (const e of aVenir) {
+    const titre = periode(e.event_date ?? jour);
+    const g = groupesAVenir.find((x) => x.titre === titre);
+    if (g) g.items.push(e);
+    else groupesAVenir.push({ titre, items: [e] });
+  }
+
   const carte = (e: NonNullable<typeof evenements>[number], passe: boolean) => {
     const body = (e.body ?? {}) as EvenementBody;
     const rows = (presences ?? []).filter((p) => p.content_id === e.id);
@@ -123,6 +137,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         absents={roster.filter((j) => rows.find((p) => p.profile_id === j.id && p.response === "no"))}
         sansReponse={roster.filter((j) => !rows.find((p) => p.profile_id === j.id))}
         mode={body.mode ?? null}
+        profilId={user!.id}
         pdfUrl={urlsPdf.get(e.id) ?? null}
         pdfNom={body.pdf_nom ?? null}
         blocs={body.exercices_blocs?.map((b) => ({ titre: b.titre, info: b.info, exercices: b.exercices.map((x) => ({ code: x.code, nom: x.nom, series: x.series, description: x.description, url: x.image ? urlsImages.get(x.image) ?? null : null })) })) ?? null}
@@ -172,9 +187,15 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         </details>
       )}
 
-      <section className="flex flex-col gap-3">
+      <section className="flex flex-col gap-2">
         <h2 className="font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-or">À venir ({aVenir.length})</h2>
-        {aVenir.map((e) => carte(e, false))}
+        {aVenir.length > 0 && <p className="text-xs text-rof-gris">Touche un événement pour voir les détails.</p>}
+        {groupesAVenir.map((g) => (
+          <div key={g.titre} className="flex flex-col gap-2">
+            <h3 className="mt-1 font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-gris">{g.titre}</h3>
+            {g.items.map((e) => carte(e, false))}
+          </div>
+        ))}
         {equipes.length > 0 && aVenir.length === 0 && (
           <p className="rounded-2xl border border-rof-ligne bg-rof-blanc p-4 text-sm text-rof-gris">Aucun événement à venir pour le moment.</p>
         )}

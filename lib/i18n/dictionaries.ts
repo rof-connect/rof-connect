@@ -6,6 +6,7 @@ export const dictionnaires = {
       accueil: "Accueil",
       parcours: "Parcours",
       sondages: "Sondages",
+      sprint: "Programme sprint",
       contact: "Contact",
       agenda: "Agenda",
       documents: "Documents",
@@ -303,6 +304,7 @@ export const dictionnaires = {
       parcoursDesc: "Admissibilité NCAA et plan de recrutement",
       documentsDesc: "Formulaires, documents et paiements",
       sondagesDesc: "Sondages à répondre",
+      sprintDesc: "6 semaines · 2 × 30 min pour gagner en vitesse",
       contactDesc: "Joindre la direction",
     },
     membres: {
@@ -324,6 +326,7 @@ export const dictionnaires = {
       accueil: "Home",
       parcours: "Pathway",
       sondages: "Polls",
+      sprint: "Sprint program",
       contact: "Contact",
       agenda: "Schedule",
       documents: "Documents",
@@ -620,6 +623,7 @@ export const dictionnaires = {
       parcoursDesc: "NCAA eligibility and recruiting plan",
       documentsDesc: "Forms, documents and payments",
       sondagesDesc: "Polls to answer",
+      sprintDesc: "6 weeks · 2 × 30 min to get faster",
       contactDesc: "Reach the staff",
     },
     membres: {
