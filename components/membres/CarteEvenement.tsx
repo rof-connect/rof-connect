@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { marquerComplete, repondre, supprimerEvenement } from "@/app/membres/agenda/actions";
 import { bouton } from "@/components/ui/boutons";
+import { Animation } from "@/components/membres/ProgrammeSprint";
 
 const TYPES_EVENEMENT: Record<string, string> = {
   Pratique: "border-rof-gazon/50 bg-rof-gazon/10 text-rof-gazon",
@@ -13,7 +14,7 @@ const TYPES_EVENEMENT: Record<string, string> = {
 };
 
 type Athlete = { id: string; nom: string };
-export type ExerciceProgramme = { code: string; nom: string; series: string; description: string; url?: string | null };
+export type ExerciceProgramme = { code: string; nom: string; series: string; description: string; url?: string | null; anim?: string | null };
 export type BlocProgramme = { titre: string; info?: string; exercices: ExerciceProgramme[] };
 
 export function CarteEvenement({
@@ -359,6 +360,13 @@ export function BlocsProgramme({
                 const faite = coches.includes(cleEtape);
                 return (
                 <li key={e.code} className={`overflow-hidden rounded-xl border bg-rof-craie ${faite ? "border-rof-gazon/60" : "border-rof-ligne"}`}>
+                  {!e.url && e.anim && (
+                    <div className="bg-rof-royal-sombre px-6 pt-2">
+                      <div className="mx-auto max-w-[260px]">
+                        <Animation id={e.anim} hauteur={150} />
+                      </div>
+                    </div>
+                  )}
                   {e.url && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={e.url} alt={`${e.nom} : position de départ puis d'arrivée`} loading="lazy" className="w-full bg-white object-contain" />

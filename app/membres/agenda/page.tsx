@@ -16,7 +16,7 @@ type EvenementBody = {
   mode?: string | null; // « completer » : entraînement à faire quand on veut, bouton « complété » à la place de la présence
   pdf_path?: string | null;
   pdf_nom?: string | null;
-  exercices_blocs?: { titre: string; info?: string; exercices: { code: string; nom: string; series: string; description: string; image?: string }[] }[];
+  exercices_blocs?: { titre: string; info?: string; exercices: { code: string; nom: string; series: string; description: string; image?: string; anim?: string }[] }[];
 };
 
 function aujourdhui() {
@@ -151,7 +151,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         profilId={user!.id}
         pdfUrl={urlsPdf.get(e.id) ?? null}
         pdfNom={body.pdf_nom ?? null}
-        blocs={body.exercices_blocs?.map((b) => ({ titre: b.titre, info: b.info, exercices: b.exercices.map((x) => ({ code: x.code, nom: x.nom, series: x.series, description: x.description, url: x.image ? urlsImages.get(x.image) ?? null : null })) })) ?? null}
+        blocs={body.exercices_blocs?.map((b) => ({ titre: b.titre, info: b.info, exercices: b.exercices.map((x) => ({ code: x.code, nom: x.nom, series: x.series, description: x.description, anim: x.anim ?? null, url: x.image ? urlsImages.get(x.image) ?? null : null })) })) ?? null}
       />
     );
   };
