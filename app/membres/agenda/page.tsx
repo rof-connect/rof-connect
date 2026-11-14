@@ -5,6 +5,8 @@ import { FormAjoutEvenement } from "@/components/membres/FormAjoutEvenement";
 import { ImportExcel } from "@/components/membres/ImportExcel";
 import { bouton } from "@/components/ui/boutons";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { parcoursOuvert } from "@/lib/statuts";
+import { seancesSprintAgenda } from "@/lib/programme-sprint";
 
 type EvenementBody = {
   type?: string;
@@ -95,8 +97,15 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
   }
 
   const jour = aujourdhui();
-  const aVenir = (evenements ?? []).filter((e) => (e.event_date ?? "") >= jour);
-  const passes = (evenements ?? []).filter((e) => (e.event_date ?? "") < jour).reverse();
+
+  // Programme sprint : séances ajoutées à l'agenda des joueuses qui ne sont plus Prospect
+  // (la Direction et les entraîneurs les voient aussi). Vue « Toutes » seulement.
+  const voitSprint = !filtre && (estAdmin || equipes.some((e) => e.peutEditer) || (await parcoursOuvert(user!.id)));
+  const seancesSprint = voitSprint ? (seancesSprintAgenda() as NonNullable<typeof evenements>) : [];
+  const tous = [...(evenements ?? []), ...seancesSprint].sort((a, b) => (a.event_date ?? "").localeCompare(b.event_date ?? ""));
+
+  const aVenir = tous.filter((e) => (e.event_date ?? "") >= jour);
+  const passes = tous.filter((e) => (e.event_date ?? "") < jour).reverse();
   const plusieursEquipes = equipes.length > 1;
 
   // Regroupe les événements à venir : Aujourd'hui, Demain, Cette semaine, Plus tard.
@@ -129,7 +138,9 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         heure={body.heure ?? null}
         lieu={body.lieu ?? null}
         note={body.note ?? null}
-        equipe={plusieursEquipes ? nomEquipe.get(e.team_id) : undefined}
+        equipe={e.id.startsWith("sprint-") ? "Programme sprint" : plusieursEquipes ? nomEquipe.get(e.team_id) : undefined}
+        completionLocale={e.id.startsWith("sprint-")}
+        lienProgramme={e.id.startsWith("sprint-") ? `/membres/sprint?${e.id.replace(/^sprint-s(\d)-([AB])$/, "semaine=$1&seance=$2")}` : undefined}
         passe={passe}
         maReponse={maReponse}
         peutEditer={peutEditer}

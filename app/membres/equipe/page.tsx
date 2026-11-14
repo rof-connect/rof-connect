@@ -60,7 +60,7 @@ export default async function EquipePage() {
       <div className="mt-6 flex flex-col gap-3">
         <CarteHub href="/membres/gc" titre={t.nav.gc} description={h.gcDesc} />
         <CarteHub titre={t.nav.videos} description={h.videosDesc} bientot={h.bientot} />
-        <CarteHub titre={h.plansTitre} description={h.plansDesc} bientot={h.bientot} />
+        <CarteHub href="/membres/plans" titre={h.plansTitre} description={h.plansDesc} />
         <CarteHub titre={t.nav.signaux} description={h.signauxDesc} bientot={h.bientot} />
       </div>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { marquerComplete, repondre, supprimerEvenement } from "@/app/membres/agenda/actions";
 import { bouton } from "@/components/ui/boutons";
@@ -35,6 +36,8 @@ export function CarteEvenement({
   pdfNom,
   blocs,
   profilId,
+  completionLocale = false,
+  lienProgramme,
 }: {
   id: string;
   titre: string;
@@ -55,42 +58,43 @@ export function CarteEvenement({
   pdfNom?: string | null;
   blocs?: BlocProgramme[] | null; // programme d'entraînement du jour (exercices séparés, avec photos)
   profilId?: string; // pour mémoriser les étapes cochées de cette personne sur l'appareil
+  completionLocale?: boolean; // séance générée par l'app : « complété » gardé sur l'appareil
+  lienProgramme?: string; // lien vers la page complète du programme (animations)
 }) {
   const aCompleter = mode === "completer";
   const [voirListe, setVoirListe] = useState(false);
   // La carte s'affiche en résumé; la personne l'ouvre pour voir les détails.
   const [ouvert, setOuvert] = useState(false);
 
-  // Étapes (exercices) cochées, mémorisées sur l'appareil.
-  const cleCoches = `rof-etapes-${profilId ?? "moi"}-${id}`;
-  const [coches, setCoches] = useState<string[]>([]);
+  const { coches, basculerEtape, nbEtapes, nbCochees } = useEtapes(`rof-etapes-${profilId ?? "moi"}-${id}`, blocs);
+
+  // Séances générées par l'app (ex. programme sprint) : « complété » mémorisé sur l'appareil.
+  const cleFait = `rof-fait-${profilId ?? "moi"}-${id}`;
+  const [faitLocal, setFaitLocal] = useState(false);
   useEffect(() => {
+    if (!completionLocale) return;
     try {
-      const v = JSON.parse(localStorage.getItem(cleCoches) ?? "[]");
       // Lecture unique de l'appareil au montage (localStorage n'existe pas côté serveur).
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (Array.isArray(v)) setCoches(v.filter((x) => typeof x === "string"));
+      setFaitLocal(localStorage.getItem(cleFait) === "1");
     } catch {}
-  }, [cleCoches]);
-  const basculerEtape = (cle: string) =>
-    setCoches((c) => {
-      const n = c.includes(cle) ? c.filter((x) => x !== cle) : [...c, cle];
-      try {
-        localStorage.setItem(cleCoches, JSON.stringify(n));
-      } catch {}
-      return n;
-    });
-  const clesEtapes = (blocs ?? []).flatMap((b) => b.exercices.map((e) => `${b.titre}::${e.code}`));
-  const nbEtapes = clesEtapes.length;
-  const nbCochees = clesEtapes.filter((k) => coches.includes(k)).length;
+  }, [cleFait, completionLocale]);
+  const basculerFaitLocal = () => {
+    const n = !faitLocal;
+    setFaitLocal(n);
+    try {
+      localStorage.setItem(cleFait, n ? "1" : "0");
+    } catch {}
+  };
+  const reponse = completionLocale ? (faitLocal ? "yes" : null) : maReponse;
 
   const statut = aCompleter
-    ? maReponse === "yes"
+    ? reponse === "yes"
       ? { texte: "✓ Complété", classe: "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" }
       : { texte: "À faire", classe: "border-rof-or/60 bg-rof-or/10 text-rof-or" }
-    : maReponse === "yes"
+    : reponse === "yes"
       ? { texte: "✓ Présent·e", classe: "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" }
-      : maReponse === "no"
+      : reponse === "no"
         ? { texte: "✗ Absent·e", classe: "border-rof-rouge/60 bg-rof-rouge/10 text-rof-rouge" }
         : passe
           ? null
@@ -173,65 +177,38 @@ export function CarteEvenement({
         </a>
       )}
 
+      {lienProgramme && (
+        <Link href={lienProgramme} className={`${bouton("accent", "md")} mt-3 w-full`}>
+          ▶ Ouvrir le programme avec les animations
+        </Link>
+      )}
+
       {blocs && blocs.length > 0 && (
-        <details open className="mt-4">
-          <summary className="min-h-10 cursor-pointer font-condensed text-base font-bold uppercase tracking-wide text-rof-poudre">
-            Programme du jour · {nbCochees}/{nbEtapes} étapes faites
-          </summary>
-          <div className="mt-2 flex flex-col gap-6">
-            {blocs.map((b) => (
-              <section key={b.titre}>
-                <h3 className="flex flex-wrap items-baseline justify-between gap-2 border-b-2 border-rof-or pb-1 font-condensed text-lg font-bold uppercase tracking-wide text-rof-or">
-                  {b.titre}
-                  {b.info && <span className="text-xs font-semibold normal-case tracking-normal text-rof-gris">{b.info}</span>}
-                </h3>
-                <ol className="mt-3 flex flex-col gap-4">
-                  {b.exercices.map((e) => {
-                    const cleEtape = `${b.titre}::${e.code}`;
-                    const faite = coches.includes(cleEtape);
-                    return (
-                    <li key={e.code} className={`overflow-hidden rounded-xl border bg-rof-craie ${faite ? "border-rof-gazon/60" : "border-rof-ligne"}`}>
-                      {e.url && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={e.url} alt={`${e.nom} : position de départ puis d'arrivée`} loading="lazy" className="w-full bg-white object-contain" />
-                      )}
-                      <div className="p-3">
-                        <div className="flex items-start justify-between gap-3">
-                          <p className={`font-condensed text-lg font-bold uppercase leading-tight ${faite ? "text-rof-gris line-through" : "text-rof-texte"}`}>
-                            <span className="mr-2 rounded bg-rof-or px-1.5 py-0.5 text-sm text-black">{e.code}</span>
-                            {e.nom}
-                          </p>
-                          <span className="shrink-0 rounded-full border border-rof-or/70 px-3 py-0.5 font-condensed text-sm font-bold text-rof-or">{e.series}</span>
-                        </div>
-                        <p className="mt-2 text-sm leading-relaxed text-rof-gris">{e.description}</p>
-                        <label className={`mt-3 flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border px-3 font-condensed text-sm font-bold uppercase tracking-wide ${faite ? "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" : "border-rof-ligne text-rof-texte"}`}>
-                          <input type="checkbox" checked={faite} onChange={() => basculerEtape(cleEtape)} className="h-5 w-5 accent-[#4FB477]" />
-                          {faite ? "✓ Étape faite" : "Cocher quand c'est fait"}
-                        </label>
-                      </div>
-                    </li>
-                    );
-                  })}
-                </ol>
-              </section>
-            ))}
-          </div>
-        </details>
+        <BlocsProgramme blocs={blocs} coches={coches} basculerEtape={basculerEtape} titre={`Programme du jour · ${nbCochees}/${nbEtapes} étapes faites`} />
       )}
 
       {aCompleter ? (
         <div className="mt-3 flex flex-col gap-2">
           <p
             className={`self-start rounded-full border px-3 py-1 font-condensed text-sm font-bold uppercase tracking-wide ${
-              maReponse === "yes" ? "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" : "border-rof-ligne bg-rof-craie text-rof-gris"
+              reponse === "yes" ? "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" : "border-rof-ligne bg-rof-craie text-rof-gris"
             }`}
           >
-            {maReponse === "yes" ? "✓ Complété" : "Non complété"}
+            {reponse === "yes" ? "✓ Complété" : "Non complété"}
           </p>
+          {completionLocale ? (
+            <button
+              type="button"
+              onClick={basculerFaitLocal}
+              className={reponse === "yes" ? bouton("neutre", "md") : "min-h-12 flex-1 rounded-full bg-rof-or font-condensed text-base font-bold uppercase tracking-wider text-black transition-colors active:scale-[0.97]"}
+            >
+              {reponse === "yes" ? "Annuler" : "✓ J'ai complété cet entraînement"}
+            </button>
+          ) : (
           <form action={marquerComplete} className="flex">
             <input type="hidden" name="content_id" value={id} />
-            <input type="hidden" name="fait" value={maReponse === "yes" ? "0" : "1"} />
-            {maReponse === "yes" ? (
+            <input type="hidden" name="fait" value={reponse === "yes" ? "0" : "1"} />
+            {reponse === "yes" ? (
               <button type="submit" className={bouton("neutre", "md")}>
                 Annuler
               </button>
@@ -241,6 +218,7 @@ export function CarteEvenement({
               </button>
             )}
           </form>
+          )}
         </div>
       ) : !passe ? (
         <div className="mt-4 grid grid-cols-2 gap-2">
@@ -325,5 +303,87 @@ export function CarteEvenement({
       </div>
       )}
     </div>
+  );
+}
+
+/** Étapes cochées d'un programme, mémorisées sur l'appareil (même clé dans l'agenda et dans Plans). */
+export function useEtapes(cle: string, blocs?: BlocProgramme[] | null) {
+  const [coches, setCoches] = useState<string[]>([]);
+  useEffect(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem(cle) ?? "[]");
+      // Lecture unique de l'appareil au montage (localStorage n'existe pas côté serveur).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (Array.isArray(v)) setCoches(v.filter((x) => typeof x === "string"));
+    } catch {}
+  }, [cle]);
+  const basculerEtape = (k: string) =>
+    setCoches((c) => {
+      const n = c.includes(k) ? c.filter((x) => x !== k) : [...c, k];
+      try {
+        localStorage.setItem(cle, JSON.stringify(n));
+      } catch {}
+      return n;
+    });
+  const cles = (blocs ?? []).flatMap((b) => b.exercices.map((e) => `${b.titre}::${e.code}`));
+  return { coches, basculerEtape, nbEtapes: cles.length, nbCochees: cles.filter((k) => coches.includes(k)).length };
+}
+
+/** Programme d'exercices par bloc, avec une case à cocher par étape. */
+export function BlocsProgramme({
+  blocs,
+  coches,
+  basculerEtape,
+  titre,
+}: {
+  blocs: BlocProgramme[];
+  coches: string[];
+  basculerEtape: (cle: string) => void;
+  titre: string;
+}) {
+  return (
+    <details open className="mt-4">
+      <summary className="min-h-10 cursor-pointer font-condensed text-base font-bold uppercase tracking-wide text-rof-poudre">
+        {titre}
+      </summary>
+      <div className="mt-2 flex flex-col gap-6">
+        {blocs.map((b) => (
+          <section key={b.titre}>
+            <h3 className="flex flex-wrap items-baseline justify-between gap-2 border-b-2 border-rof-or pb-1 font-condensed text-lg font-bold uppercase tracking-wide text-rof-or">
+              {b.titre}
+              {b.info && <span className="text-xs font-semibold normal-case tracking-normal text-rof-gris">{b.info}</span>}
+            </h3>
+            <ol className="mt-3 flex flex-col gap-4">
+              {b.exercices.map((e) => {
+                const cleEtape = `${b.titre}::${e.code}`;
+                const faite = coches.includes(cleEtape);
+                return (
+                <li key={e.code} className={`overflow-hidden rounded-xl border bg-rof-craie ${faite ? "border-rof-gazon/60" : "border-rof-ligne"}`}>
+                  {e.url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={e.url} alt={`${e.nom} : position de départ puis d'arrivée`} loading="lazy" className="w-full bg-white object-contain" />
+                  )}
+                  <div className="p-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className={`font-condensed text-lg font-bold uppercase leading-tight ${faite ? "text-rof-gris line-through" : "text-rof-texte"}`}>
+                        <span className="mr-2 rounded bg-rof-or px-1.5 py-0.5 text-sm text-black">{e.code}</span>
+                        {e.nom}
+                      </p>
+                      <span className="shrink-0 rounded-full border border-rof-or/70 px-3 py-0.5 font-condensed text-sm font-bold text-rof-or">{e.series}</span>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-rof-gris">{e.description}</p>
+                    <label className={`mt-3 flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border px-3 font-condensed text-sm font-bold uppercase tracking-wide ${faite ? "border-rof-gazon/60 bg-rof-gazon/10 text-rof-gazon" : "border-rof-ligne text-rof-texte"}`}>
+                      <input type="checkbox" checked={faite} onChange={() => basculerEtape(cleEtape)} className="h-5 w-5 accent-[#4FB477]" />
+                      {faite ? "✓ Étape faite" : "Cocher quand c'est fait"}
+                    </label>
+                  </div>
+                </li>
+                );
+              })}
+            </ol>
+          </section>
+        ))}
+      </div>
+    </details>
   );
 }

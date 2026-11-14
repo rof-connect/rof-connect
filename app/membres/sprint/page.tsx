@@ -2,15 +2,23 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { parcoursOuvert } from "@/lib/statuts";
 import ProgrammeSprint from "@/components/membres/ProgrammeSprint";
+import { seanceDuJour } from "@/lib/programme-sprint";
 
 export const metadata = { title: "Programme sprint · ROF Connect" };
 
-export default async function SprintPage() {
+export default async function SprintPage({ searchParams }: { searchParams: Promise<{ semaine?: string; seance?: string }> }) {
+  const q = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   const { data: profile } = await supabase.from("profiles").select("role").eq("id", user!.id).single();
+
+  // Semaine en cours selon la date de départ du programme (ou celle demandée par le lien de l'agenda).
+  const duJour = seanceDuJour();
+  const demandee = Number(q.semaine);
+  const semaine = demandee >= 1 && demandee <= 6 ? Math.floor(demandee) : duJour.semaine;
+  const seance: "A" | "B" = q.seance === "B" ? "B" : q.seance === "A" ? "A" : duJour.seance === "B" ? "B" : "A";
 
   // Réservé aux joueuses dont le statut n'est plus Prospect (la Direction et les entraîneurs y accèdent toujours).
   if (profile?.role === "member" && !(await parcoursOuvert(user!.id))) {
@@ -39,7 +47,7 @@ export default async function SprintPage() {
         <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">Programme sprint</h1>
         <p className="mt-1 text-sm text-rof-gris">6 semaines · 2 séances de 30 min par semaine, à faire de façon autonome.</p>
       </div>
-      <ProgrammeSprint joueuse={{ id: user!.id }} />
+      <ProgrammeSprint joueuse={{ id: user!.id }} semaineInitiale={semaine} seanceInitiale={seance} />
     </main>
   );
 }

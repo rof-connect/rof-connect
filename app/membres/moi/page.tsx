@@ -53,6 +53,7 @@ export default async function MoiPage() {
 
       <p className="mt-2 font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-gris">{t.fiche.autres}</p>
       <div className="flex flex-col gap-3">
+        <CarteHub href="/membres/plans" titre={h.plansTitre} description={h.plansDesc} />
         {peutParcours && <CarteHub href="/membres/sprint" titre={t.nav.sprint} description={h.sprintDesc} />}
         <CarteHub href="/membres/documents" titre={t.nav.documents} description={h.documentsDesc} />
         <CarteHub href="/membres/sondages" titre={t.nav.sondages} description={h.sondagesDesc} />

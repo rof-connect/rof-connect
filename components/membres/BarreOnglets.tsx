@@ -36,7 +36,7 @@ export function BarreOnglets({
       ? { href: "/membres/admin", label: labels.direction, icone: "direction", actifSi: (p) => commence(p, "/membres/admin") }
       : { href: "/membres", label: labels.accueil, icone: "accueil", actifSi: (p) => p === "/membres" },
     { href: "/membres/agenda", label: labels.agenda, icone: "agenda", actifSi: (p) => commence(p, "/membres/agenda") },
-    { href: "/membres/equipe", label: labels.equipe, icone: "equipe", actifSi: (p) => commence(p, "/membres/equipe", "/membres/gc") },
+    { href: "/membres/equipe", label: labels.equipe, icone: "equipe", actifSi: (p) => commence(p, "/membres/equipe", "/membres/gc", "/membres/plans") },
     { href: "/membres/messages", label: labels.messages, icone: "messages", actifSi: (p) => commence(p, "/membres/messages") },
     {
       href: "/membres/moi",
