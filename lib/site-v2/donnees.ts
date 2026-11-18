@@ -224,9 +224,9 @@ export const CONTENU: Record<Sport, Contenu> = {
       { y: "2023", l: ["Champion 2023 Can-Am United League 12U", "Champions Cornwall Invitational All-Star Tournament — 8U"] },
     ],
     engagees: [
-      { who: "Etienne Guertin", s: "Genesee Community College", m: "RHP · NJCAA · Baseball", c: "2026", photo: "/photos/committed-etienne-guertin.jpg" },
-      { who: "Xavier Bellande", s: "Cégep de Drummondville", m: "Voltigeurs · Baseball", c: "2024", photo: "/photos/committed-xavier-bellande.jpg" },
-      { who: "Guillaume Doucet", s: "Cégep de Drummondville", m: "Voltigeurs · Baseball", c: "2024", photo: "/photos/committed-guillaume-doucet.jpg" },
+      { who: "Etienne Guertin", s: "Genesee Community College", m: "RHP · NJCAA · Baseball", c: "2026", photo: "/photos/committed-etienne-guertin-v2.jpg" },
+      { who: "Xavier Bellande", s: "Cégep de Drummondville", m: "Voltigeurs · Baseball", c: "2024", photo: "/photos/committed-xavier-bellande-v2.jpg" },
+      { who: "Guillaume Doucet", s: "Cégep de Drummondville", m: "Voltigeurs · Baseball", c: "2024", photo: "/photos/committed-guillaume-doucet-v2.jpg" },
     ],
     videCalendrier: "Les tournois et showcases du programme baseball seront publiés ici dès qu'ils seront confirmés.",
     videPalmares: "Le palmarès du programme baseball sera ajouté ici.",
