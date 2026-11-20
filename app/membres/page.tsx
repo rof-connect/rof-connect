@@ -101,7 +101,9 @@ export default async function MembresPage() {
   }
 
   const sondages = await chargerSondages(user!.id, estAdmin);
-  const sondagesAFaire = sondages.filter((s) => !s.closed && !s.monVote && s.maDates.length === 0).length;
+  const sondagesOuverts = sondages.filter((s) => !s.closed && !s.monVote && s.maDates.length === 0);
+  const sondagesAFaire = sondagesOuverts.length;
+  const annonce = sondagesOuverts.find((s) => s.description) ?? null; // annonce en tête de l'accueil jusqu'à la réponse
 
   const nbAFaire = sondagesAFaire + tachesPlan.length + (ficheIncomplete ? 1 : 0);
 
@@ -135,6 +137,19 @@ export default async function MembresPage() {
       <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">
         {m2.bienvenue}, {profile?.full_name || user?.email}
       </h1>
+
+      {annonce && (
+        <section aria-label={locale === "en" ? "Announcement" : "Annonce"} className="mt-6 rounded-xl border-2 border-rof-or bg-rof-carte-haut p-4">
+          <p className="font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">
+            {locale === "en" ? "Announcement · Poll" : "Annonce · Sondage"}
+          </p>
+          <p className="mt-1 font-condensed text-2xl font-bold uppercase leading-tight text-rof-texte">{annonce.title}</p>
+          {annonce.description && <p className="mt-2 whitespace-pre-line text-sm text-rof-texte">{annonce.description}</p>}
+          <Link href="/membres/sondages" className={`${styleBouton("primaire", "md")} mt-3`}>
+            {locale === "en" ? "Answer the poll" : "Répondre au sondage"}
+          </Link>
+        </section>
+      )}
 
       {(estAthlete || profile?.role === "member") && (
         <section id="afaire" aria-label={a.aFaire} className="mt-6 rounded-xl border-2 border-rof-or bg-rof-blanc p-4">
