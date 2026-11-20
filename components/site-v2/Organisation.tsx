@@ -19,7 +19,7 @@ export function Organisation({ sport, entraineurs }: { sport: Sport; entraineurs
             <ul className="org-faits">
               <li>
                 <b>Repentigny</b>
-                <span>Lanaudière, Québec</span>
+                <span>Québec</span>
               </li>
               <li>
                 <b>Affiliations</b>

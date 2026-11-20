@@ -7,8 +7,8 @@ const barlow = Barlow({ variable: "--font-barlow", subsets: ["latin"], weight: [
 const bebas = Bebas_Neue({ variable: "--font-bebas", subsets: ["latin"], weight: "400", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { absolute: "Royal On Field — Softball élite, Lanaudière" },
-  description: "Programme élite de baseball et softball de Lanaudière. Équipes, calendrier, recrutement et engagements universitaires.",
+  title: { absolute: "Royal On Field — Softball élite au Québec" },
+  description: "Programme élite de baseball et softball du Québec. Équipes, calendrier, recrutement et engagements universitaires.",
 };
 
 export default function SiteV2Layout({ children }: { children: React.ReactNode }) {

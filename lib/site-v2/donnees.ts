@@ -48,7 +48,7 @@ export const CONTENU: Record<Sport, Contenu> = {
     mot: "Softball",
     kicker: "Royal Softball On Field · Repentigny, QC",
     accroche:
-      "Le programme élite de softball de Lanaudière. Performance athlétique, parcours académique et caractère — de 10U jusqu'au collège américain.",
+      "Le programme élite de softball du Québec. Performance athlétique, parcours académique et caractère — de 10U jusqu'au collège américain.",
     saison: "Saison 2027",
     noteCalendrier: "",
     engagementsSous: "Elles ont signé.",
@@ -153,7 +153,7 @@ export const CONTENU: Record<Sport, Contenu> = {
     mot: "Baseball",
     kicker: "Royal Baseball On Field · Repentigny, QC",
     accroche:
-      "Le programme élite de baseball de Lanaudière. Du 8U au Prep School, bâti sur le même standard Royal : travail, caractère, excellence.",
+      "Le programme élite de baseball du Québec. Du 8U au Prep School, bâti sur le même standard Royal : travail, caractère, excellence.",
     saison: "Saison 2027",
     noteCalendrier: "",
     engagementsSous: "Ils ont signé.",

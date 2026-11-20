@@ -87,7 +87,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
             <div>
               <h5>Contact</h5>
               <a href="mailto:royal@lentrepotdubaseball.com">royal@lentrepotdubaseball.com</a>
-              <a>Repentigny, Lanaudière</a>
+              <a>Repentigny, Québec</a>
               <a>#EarnTheCrown</a>
             </div>
           </div>

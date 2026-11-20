@@ -146,7 +146,7 @@ async function traiter(b: Record<string, unknown>, profileId: string | null): Pr
         `<p><strong>Les parcours présentés :</strong> ${esc(parcours)}</p>` +
         `<p>Le bilan contient aussi un plan d'action avec un calendrier d'étapes et notre suggestion de faire appel à Athlete Recruiting Centre pour le volet scolaire. ${prenom} peut changer son choix de parcours en tout temps dans l'application ROF Connect : le calendrier est alors recalculé.</p>` +
         `<p style="font-size:13px;color:#666">Ce bilan est établi automatiquement à partir de vos réponses. Il ne remplace ni une décision d'admissibilité du NCAA, ni le plan individuel complet. Nous communiquerons avec vous pour planifier une rencontre.</p>` +
-        `<p style="margin-bottom:0">Royal Softball On Field · Repentigny, Lanaudière</p></div></div>`,
+        `<p style="margin-bottom:0">Royal Softball On Field · Repentigny, Québec</p></div></div>`,
       attachments: [{ filename: nomPdf, content: pdf }],
     });
     if (rep.error) throw new Error(rep.error.message);

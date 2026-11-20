@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 /** Le titre suit le volet affiché : « Softball élite » ou « Baseball élite » (le volet baseball ne doit pas se présenter comme du softball). */
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ sport?: string }> }): Promise<Metadata> {
   const sport = sportDe((await searchParams).sport);
-  return { title: { absolute: `Royal On Field — ${sport === "baseball" ? "Baseball" : "Softball"} élite, Lanaudière` } };
+  return { title: { absolute: `Royal On Field — ${sport === "baseball" ? "Baseball" : "Softball"} élite au Québec` } };
 }
 
 const Icone = ({ children }: { children: React.ReactNode }) => (
