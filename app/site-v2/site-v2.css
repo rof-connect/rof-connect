@@ -943,3 +943,25 @@ html:has(.v2){scroll-behavior:smooth}
 
 /* Survol sobre des cartes d'équipes : contour or, sans déplacement */
 .v2 .team.team-carte:hover,.v2 .team.team-carte:focus-visible{transform:none;outline:2px solid var(--gold-soft);outline-offset:-2px}
+
+/* ===== Page LFJMQ : classement et résumés ===== */
+.v2 .lf-vide{color:#4A5570}
+.v2 .dark .lf-vide{color:#C9D4EE}
+.v2 .lf-division{margin-bottom:32px}
+.v2 .lf-division h3{font-family:var(--display);font-size:32px;font-weight:400;color:var(--powder);margin-bottom:12px;line-height:1}
+.v2 .lf-table-defile{overflow-x:auto}
+.v2 .lf-table{width:100%;border-collapse:collapse;min-width:420px;font-size:15px;color:#fff}
+.v2 .lf-table th,.v2 .lf-table td{padding:12px 12px;text-align:center;border-bottom:1px solid rgba(169,200,236,.2)}
+.v2 .lf-table thead th{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--powder);border-bottom:2px solid var(--powder)}
+.v2 .lf-table th[scope="row"]{text-align:left;font-weight:500}
+.v2 .lf-table thead th:nth-child(2){text-align:left}
+.v2 .lf-table .lf-pts{font-family:var(--display);font-size:24px;color:var(--gold-soft)}
+.v2 .lf-table tr.lf-royal{background:rgba(18,56,166,.55)}
+.v2 .lf-table tr.lf-royal th[scope="row"]{color:var(--gold-soft)}
+.v2 .lf-maj{margin-top:8px;font-size:13px;color:#C9D4EE}
+.v2 .lf-resumes{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.v2 .lf-resume{border:1px solid var(--line);border-top:4px solid var(--royal);border-radius:6px;padding:20px;background:#fff}
+.v2 .lf-resume time{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#5A6680}
+.v2 .lf-resume h3{font-family:var(--display);font-size:28px;font-weight:400;line-height:1;color:var(--royal-deep);margin:8px 0 10px}
+.v2 .lf-resume p{font-size:15px;line-height:1.55;color:#2B3550;white-space:pre-line}
+.v2 .lf-resume a{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-size:13px;font-weight:700;color:var(--royal)}

@@ -11,6 +11,7 @@ const ONGLETS: { href: string; label: string; icone: string }[] = [
   { href: "/membres/admin/statuts", label: "Statuts", icone: "M4 6h16M4 12h10M4 18h6M17 14l2 2 4-4" },
   { href: "/membres/admin/conversations", label: "Conversations", icone: "M4 5h16v11H9l-5 4zM8 9h8M8 12h5" },
   { href: "/membres/admin/messages", label: "Messages", icone: "M4 5h16v11H9l-5 4z" },
+  { href: "/membres/admin/lfjmq", label: "LFJMQ", icone: "M5 4h14v4a7 7 0 0 1-14 0zM9 21h6M12 15v6M5 6H3v2a3 3 0 0 0 3 3M19 6h2v2a3 3 0 0 1-3 3" },
   { href: "/membres/admin/sondages", label: "Sondages", icone: "M5 20V10M12 20V4M19 20v-7" },
   { href: "/membres/admin/parcours", label: "Parcours", icone: "M4 19h16M6 15l4-4 3 3 5-6" },
   { href: "/membres/admin/infolettre", label: "Infolettre", icone: "M3 6h18v12H3zM3 7l9 6 9-6" },
