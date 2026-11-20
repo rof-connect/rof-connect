@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Cadre } from "@/components/site-v2/Cadre";
@@ -7,6 +8,12 @@ import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
 import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, FAQ_PARENTS, PARTENAIRES_LOGOS, affiliationsDe, colonnesLogos, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
+
+/** Le titre suit le volet affiché : « Softball élite » ou « Baseball élite » (le volet baseball ne doit pas se présenter comme du softball). */
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ sport?: string }> }): Promise<Metadata> {
+  const sport = sportDe((await searchParams).sport);
+  return { title: { absolute: `Royal On Field — ${sport === "baseball" ? "Baseball" : "Softball"} élite, Lanaudière` } };
+}
 
 const Icone = ({ children }: { children: React.ReactNode }) => (
   <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
@@ -18,6 +25,29 @@ const Icone = ({ children }: { children: React.ReactNode }) => (
 function niveauNom(nom: string) {
   const m = nom.match(/^(\d{1,2}(?:\/\d{1,2})?U)\s+(.+)$/i);
   return m ? { niveau: m[1], reste: m[2] } : { niveau: nom, reste: "" };
+}
+
+/** Visuel de marque d'une carte d'équipe (CSS seulement), remplacé par la photo de l'équipe quand elle existe dans ROF Connect. */
+function VisuelEquipe({ etiquette, photo, alt }: { etiquette?: string; photo?: string | null; alt?: string }) {
+  return (
+    <div className="team-visuel">
+      {photo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="team-photo" src={photo} alt={alt ?? ""} loading="lazy" />
+      ) : (
+        <>
+          <span className="losange l1" aria-hidden />
+          <span className="losange l2" aria-hidden />
+          <Image className="team-logo" src="/logo-r.png" alt="" width={46} height={46} />
+        </>
+      )}
+      {etiquette && (
+        <span className="team-tags">
+          <span className="team-tag">{etiquette}</span>
+        </span>
+      )}
+    </div>
+  );
 }
 
 export default async function SiteV2({ searchParams }: { searchParams: Promise<{ sport?: string }> }) {
@@ -129,34 +159,27 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
               <>
               <div className="teams">
                 {c.aVenir && (
-                  <Link className="team team-avenir" href="/varsity">
-                    <div className="big" aria-hidden>V</div>
-                    <span className="team-tags">
-                      <span className="team-tag">{c.aVenir.etiquette}</span>
-                    </span>
-                    <div className="lvl">{c.aVenir.niveau}</div>
-                    <div className="team-nom">{c.aVenir.nom}</div>
-                    <div className="meta">{c.aVenir.sous}</div>
+                  <Link className="team team-carte team-avenir" href="/varsity">
+                    <VisuelEquipe etiquette={c.aVenir.etiquette} />
+                    <div className="team-bandeau">
+                      <span className="team-cat">{c.aVenir.niveau}</span>
+                      <span className="team-coach">{c.aVenir.nom}</span>
+                    </div>
                   </Link>
                 )}
-                {equipes.map((t) => (
-                  <Link key={t.id} className={`team${t.vedette ? " feat" : ""}`} href={t.roster || t.matchs ? `/equipes/${t.id}` : "/inscription"}>
-                    <div className="big" aria-hidden>{niveauNom(t.nom).niveau.replace("Varsity", "V")}</div>
-                    {t.categorie && (
-                      <span className="team-tags">
-                        <span className="team-tag">{t.categorie}</span>
-                      </span>
-                    )}
-                    <div className="lvl">{niveauNom(t.nom).niveau}</div>
-                    {niveauNom(t.nom).reste && <div className="team-nom">{niveauNom(t.nom).reste}</div>}
-                    {t.description && (
-                      <>
-                        <div className="bar" />
-                        <div className="desc">{t.description}</div>
-                      </>
-                    )}
-                  </Link>
-                ))}
+                {equipes.map((t) => {
+                  const { niveau, reste } = niveauNom(t.nom);
+                  return (
+                    <Link key={t.id} className={`team team-carte${t.vedette ? " feat" : ""}`} href={t.roster || t.matchs ? `/equipes/${t.id}` : "/inscription"}>
+                      <VisuelEquipe etiquette={t.categorie} photo={t.photo} alt={`Photo de l'équipe ${t.nom}`} />
+                      <div className="team-bandeau">
+                        <span className="team-cat">{niveau}</span>
+                        {reste && <span className="team-coach">Coach {reste}</span>}
+                        {t.description && <div className="desc">{t.description}</div>}
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
               </>
             ) : (

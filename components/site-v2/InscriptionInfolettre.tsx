@@ -3,19 +3,19 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { sInscrireInfolettre, type EtatInfolettre } from "@/app/site-v2/infolettre-actions";
 
-const CLE = "rof-infolettre"; // « inscrit » : on ne redemande plus, ni en softball ni en baseball
-const cleRefus = (sport: string) => `rof-infolettre-refus-${sport}`; // refus mémorisé séparément pour chaque sport : le volet baseball redemande même si le volet softball a été refusé
-const PAUSE_REFUS_JOURS = 90;
+const CLE = "rof-infolettre"; // « inscrit » ou date de la dernière apparition de la fenêtre (une seule fois par visiteur, 30 jours)
+const PAUSE_JOURS = 30;
 
 const initial: EtatInfolettre = { ok: false, erreur: null };
 
-const DELAI_MS = 25000; // ouverture après 25 secondes…
+const DELAI_MS = 30000; // ouverture après 30 secondes sur la page…
 const DEFILEMENT = 0.5; // …ou dès que la moitié de la page a défilé (jamais au chargement)
 
 /**
- * Inscription à l'infolettre : jamais au chargement, seulement après 25 s ou 50 % de défilement.
+ * Inscription à l'infolettre : jamais au chargement, seulement après 30 s OU 50 % de défilement, une seule fois par visiteur.
+ * La date d'apparition est mémorisée 30 jours dans localStorage (sans localStorage, la fenêtre s'ouvre une fois par visite).
  * Sur ordinateur, une fenêtre ; sur mobile, un bandeau en bas de l'écran (jamais plein écran).
- * Le visiteur peut refuser, et on ne le redemande pas avant 90 jours.
+ * Le formulaire reste en permanence dans le pied de page.
  */
 export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball" }) {
   const [ouvert, setOuvert] = useState(false);
@@ -27,24 +27,23 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
 
   const deja = () => {
     try {
-      if (localStorage.getItem(CLE) === "inscrit") return true;
-      const t = Number(localStorage.getItem(cleRefus(sport)));
-      return Number.isFinite(t) && t > 0 && Date.now() - t < PAUSE_REFUS_JOURS * 86400000;
+      const v = localStorage.getItem(CLE);
+      if (v === "inscrit") return true;
+      const t = Number(v);
+      return Number.isFinite(t) && t > 0 && Date.now() - t < PAUSE_JOURS * 86400000;
     } catch {
       return false;
     }
   };
-  const retenir = (cle: string, valeur: string) => {
+  const retenir = (valeur: string) => {
     try {
-      localStorage.setItem(cle, valeur);
+      localStorage.setItem(CLE, valeur);
     } catch {
       /* navigation privée : on ne retient rien */
     }
   };
 
-  // Réévalué à chaque changement de sport : ouvrir le volet baseball affiche la demande même si le softball a été refusé.
   useEffect(() => {
-    setOuvert(false);
     if (deja()) return;
     let fait = false;
     const ouvrir = () => {
@@ -52,6 +51,7 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
       fait = true;
       avant.current = document.activeElement as HTMLElement | null;
       setMobile(window.matchMedia("(max-width: 700px)").matches);
+      retenir(String(Date.now())); // une seule fois par visiteur, que la personne s'inscrive ou ferme la fenêtre
       setOuvert(true);
     };
     const t = setTimeout(ouvrir, DELAI_MS);
@@ -64,25 +64,23 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
       clearTimeout(t);
       window.removeEventListener("scroll", surDefilement);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sport]);
+  }, []);
 
   useEffect(() => {
-    if (etat.ok) retenir(CLE, "inscrit");
+    if (etat.ok) retenir("inscrit");
   }, [etat.ok]);
 
   useEffect(() => {
     if (ouvert && !mobile) champ.current?.focus(); // sur mobile, pas de clavier ouvert d'office
   }, [ouvert]);
 
-  const fermer = (refus: boolean) => {
-    if (refus && !etat.ok) retenir(cleRefus(sport), String(Date.now()));
+  const fermer = () => {
     setOuvert(false);
     avant.current?.focus?.();
   };
 
   const clavier = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") return fermer(true);
+    if (e.key === "Escape") return fermer();
     if (e.key !== "Tab" || !boite.current) return;
     const f = [...boite.current.querySelectorAll<HTMLElement>("button, input:not([tabindex='-1'])")].filter((x) => !x.hasAttribute("disabled"));
     if (!f.length) return;
@@ -99,9 +97,9 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
 
   if (!ouvert) return null;
   return (
-    <div className={`infolettre-fond${mobile ? " bandeau" : ""}`} onMouseDown={(e) => e.target === e.currentTarget && fermer(true)}>
+    <div className={`infolettre-fond${mobile ? " bandeau" : ""}`} onMouseDown={(e) => e.target === e.currentTarget && fermer()}>
       <div ref={boite} className="infolettre" role="dialog" aria-modal={mobile ? undefined : true} aria-labelledby="infolettre-titre" aria-describedby="infolettre-texte" onKeyDown={clavier}>
-        <button type="button" className="infolettre-x" aria-label="Fermer sans m'inscrire" onClick={() => fermer(true)}>
+        <button type="button" className="infolettre-x" aria-label="Fermer sans m'inscrire" onClick={() => fermer()}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
             <path d="M5 5l14 14M19 5 5 19" />
           </svg>
@@ -110,7 +108,7 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
           <div role="status">
             <h2 id="infolettre-titre">Merci !</h2>
             <p id="infolettre-texte">Tu es inscrit à l&apos;infolettre de Royal On Field. À bientôt dans ta boîte de réception.</p>
-            <button type="button" className="btn solid" onClick={() => fermer(false)}>
+            <button type="button" className="btn solid" onClick={() => fermer()}>
               Continuer vers le site
             </button>
           </div>
@@ -143,7 +141,7 @@ export function InscriptionInfolettre({ sport }: { sport: "softball" | "baseball
               <button type="submit" className="btn solid" disabled={enCours}>
                 {enCours ? "Envoi…" : "Je m'inscris"}
               </button>
-              <button type="button" className="btn ghost" onClick={() => fermer(true)}>
+              <button type="button" className="btn ghost" onClick={() => fermer()}>
                 Non merci
               </button>
             </div>

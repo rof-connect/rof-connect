@@ -2,12 +2,12 @@
   --royal:#1238A6; --royal-deep:#0A1F5C; --navy:#060F2E; --ink:#0B0B0F;
   --powder:#A9C8EC; --gold:#C9A227; --gold-soft:#E6C65C; --white:#FFFFFF; --mist:#F3F6FB; --line:#DCE3EF;
   --accent:var(--powder); --accent-2:var(--royal); --mark:var(--royal);
-  --display:var(--font-bebas),Impact,sans-serif; --body:var(--font-inter),system-ui,sans-serif;
+  --display:var(--font-bebas),Impact,sans-serif; --body:var(--font-barlow),system-ui,sans-serif;
 }
 .v2[data-sport="baseball"]{ --accent:var(--gold); --accent-2:var(--powder); --mark:var(--gold); }
 .v2 *{box-sizing:border-box;margin:0;padding:0}
 html:has(.v2){scroll-behavior:smooth}
-.v2{font-family:var(--body);color:var(--ink);background:var(--white);-webkit-font-smoothing:antialiased}
+.v2{font-family:var(--body);color:var(--ink);background:var(--white);-webkit-font-smoothing:antialiased;font-synthesis-weight:none}
 .v2 a{color:inherit;text-decoration:none}
 .v2 img{display:block;max-width:100%}
 .v2 .wrap{max-width:1280px;margin:0 auto;padding:0 28px}
@@ -470,14 +470,14 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .banniere .b-mention{font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
 .v2 .banniere .b-cat{font-family:var(--display);font-size:24px;line-height:1;letter-spacing:.04em}
 
-/* Style Can-Am : tissu noir, texte or, liseré orange */
-.v2 .banniere-canam .toile{background:linear-gradient(170deg,#1b1b20 0%,#08080b 100%);box-shadow:inset 0 0 0 4px #E8851A;color:#E6C65C}
+/* Style Can-Am : tissu noir, texte or, liseré or */
+.v2 .banniere-canam .toile{background:linear-gradient(170deg,#1b1b20 0%,#08080b 100%);box-shadow:inset 0 0 0 4px #E6C65C;color:#E6C65C}
 .v2 .banniere-canam .b-annee{color:#8EB4F5}
 .v2 .banniere-canam .b-cat{color:#fff}
-/* Style Canada : toile blanche, liseré orange, bleu marine */
-.v2 .banniere-canada .toile{background:linear-gradient(170deg,#fff 0%,#e9eef7 100%);box-shadow:inset 0 0 0 4px #E8851A;color:#1c2f63}
-.v2 .banniere-canada .b-mention{color:#E8851A}
-.v2 .banniere-canada .b-annee{color:#E8851A}
+/* Style Canada : toile blanche, liseré or, texte marine (l'or seul manque de contraste sur le blanc) */
+.v2 .banniere-canada .toile{background:linear-gradient(170deg,#fff 0%,#e9eef7 100%);box-shadow:inset 0 0 0 4px #E6C65C;color:#0A1F5C}
+.v2 .banniere-canada .b-mention{color:#0A1F5C}
+.v2 .banniere-canada .b-annee{color:#0A1F5C}
 /* Style provincial : bleu royal, or */
 .v2 .banniere-provincial .toile{background:linear-gradient(170deg,#1B47C2 0%,#0A1F5C 100%);box-shadow:inset 0 0 0 4px #E6C65C;color:#fff}
 .v2 .banniere-provincial .b-annee{color:#E6C65C}
@@ -911,3 +911,36 @@ html:has(.v2){scroll-behavior:smooth}
 .v2 .tel-onglets .on{color:#5B8FEA}
 @media (max-width:1000px){.v2 .rc-telephones{grid-template-columns:1fr 1fr}}
 @media (max-width:640px){.v2 .rc-telephones{grid-template-columns:1fr}}
+
+/* ===== Cartes d'équipes : visuel de marque en CSS (en attendant les photos 2027) ===== */
+.v2 .team.team-carte{padding:0;min-height:0;justify-content:flex-start;background:var(--royal-deep)}
+.v2 .team.team-carte::before{display:none}
+.v2 .team-visuel{position:relative;aspect-ratio:5/4;background:var(--royal);border-bottom:4px solid #E6C65C;overflow:hidden}
+.v2 .team-visuel .losange{position:absolute;left:50%;top:50%;aspect-ratio:1;transform:translate(-50%,-50%) rotate(45deg);border:2px solid rgba(169,200,236,.35)}
+.v2 .team-visuel .l1{width:50%}
+.v2 .team-visuel .l2{width:74%;border-color:rgba(169,200,236,.15)}
+.v2 .team-visuel .team-logo{position:absolute;left:50%;top:50%;width:46px;height:46px;transform:translate(-50%,-50%);object-fit:contain}
+.v2 .team-visuel .team-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.v2 .team-carte .team-tags{top:10px;left:10px}
+.v2 .team-carte .team-tag{background:var(--powder);color:var(--royal-deep)}
+.v2 .team-bandeau{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 8px;padding:10px 12px 12px;background:var(--royal-deep)}
+.v2 .team-cat{font-family:var(--display);font-size:30px;line-height:1;color:#fff;letter-spacing:.02em}
+.v2 .team-coach{font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-soft);text-align:right}
+.v2 .team-carte .desc{flex:0 0 100%;margin-top:4px;font-size:12px;line-height:1.45;color:#C9D4EE}
+.v2 .team.team-avenir{opacity:.75}
+
+/* ===== Accessibilité : mouvement réduit ===== */
+@media (prefers-reduced-motion: reduce){
+  html:has(.v2){scroll-behavior:auto}
+  .v2 *,.v2 *::before,.v2 *::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+}
+
+/* Formulaire d'infolettre permanent du pied de page */
+.v2 .footer-infolettre{margin-top:40px;padding-top:28px;border-top:1px solid #23262F;max-width:560px}
+.v2 .footer-infolettre label{display:block;font-size:14px;margin-bottom:10px}
+.v2 .footer-infolettre-champ{display:flex;gap:8px;flex-wrap:wrap}
+.v2 .footer-infolettre-champ input{flex:1 1 220px;min-height:44px;padding:0 14px;border-radius:6px;border:1px solid #3a4054;background:var(--navy);color:#fff;font:inherit;font-size:15px}
+.v2 .footer-infolettre-champ input:focus-visible{outline:3px solid var(--powder);outline-offset:2px}
+.v2 .footer-infolettre .infolettre-erreur{color:var(--gold-soft)}
+.v2 .footer-infolettre .infolettre-note{font-size:12px;margin-top:8px;color:#AEB6C8}
+.v2 footer .footer-infolettre h5{margin-bottom:8px}

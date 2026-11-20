@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Entete } from "./Entete";
 import { InscriptionInfolettre } from "./InscriptionInfolettre";
+import { FormInfolettrePied } from "./FormInfolettrePied";
 import { affiliationsDe, CONTENU, SPORTS, type Sport } from "@/lib/site-v2/donnees";
 import { liensUtilitaires } from "@/lib/site-v2/menu";
 
@@ -90,6 +91,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
               <a>#EarnTheCrown</a>
             </div>
           </div>
+          <FormInfolettrePied sport={sport} />
           <div className="bottom">
             <span>© 2026 Royal On Field</span>
             <ul className="footer-affil" aria-label="Affiliations">

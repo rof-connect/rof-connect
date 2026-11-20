@@ -213,12 +213,20 @@ export default async function EquipePage({ params, searchParams }: { params: Pro
               <input name="gamechanger_url" defaultValue={equipe.gamechanger_url ?? ""} placeholder="https://web.gc.com/teams/…" className={champ} />
             </div>
             <div>
-              <p className={etiquette}>Niveau de compétition (étiquette sur la carte de l'équipe ; facultatif)</p>
+              <p className={etiquette}>Niveau de compétition (étiquette sur la carte de l&apos;équipe ; facultatif)</p>
               <select name="niveau_competition" defaultValue={["NATIONAL", "SCOUT TEAM"].includes(equipe.niveau_competition ?? "") ? (equipe.niveau_competition ?? "") : ""} className={champ}>
                 <option value="">Aucune étiquette</option>
                 <option value="NATIONAL">NATIONAL</option>
                 <option value="SCOUT TEAM">SCOUT TEAM</option>
               </select>
+            </div>
+            <div>
+              <p className={etiquette}>Photo de l&apos;équipe (facultatif : remplace le visuel de marque sur la carte du site public)</p>
+              <input name="photo_equipe" type="file" accept="image/jpeg,image/png,image/webp" className={champ} />
+              <label className="mt-2 flex items-center gap-2 text-xs text-rof-gris">
+                <input type="checkbox" name="retirer_photo" className="h-4 w-4" />
+                Retirer la photo actuelle
+              </label>
             </div>
             <div>
               <p className={etiquette}>Description courte (facultatif)</p>

@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { idGameChanger, lienGameChanger } from "@/lib/site-v2/donnees";
 import { definirGroupe } from "@/lib/groupes";
+import { definirPhotoEquipe } from "@/lib/photos-equipes";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function creerEquipe(formData: FormData) {
   const orgId = String(formData.get("org_id") ?? "");
@@ -110,6 +112,21 @@ export async function modifierEquipe(formData: FormData) {
       })
       .eq("id", teamId);
     if (error) console.error("equipes: champs publics", error.message);
+
+    // Photo d'équipe facultative : si elle existe, elle remplace le visuel de marque sur la carte du site public.
+    const { data: { user } } = await supabase.auth.getUser();
+    const { data: moi } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
+    if (moi?.role === "admin") {
+      const photo = formData.get("photo_equipe") as File | null;
+      if (formData.get("retirer_photo") === "on") {
+        await definirPhotoEquipe(teamId, null);
+      } else if (photo && photo.size > 0 && photo.size <= 5 * 1024 * 1024 && /^image\/(jpeg|png|webp)$/.test(photo.type)) {
+        const ext = photo.type === "image/png" ? "png" : photo.type === "image/webp" ? "webp" : "jpg";
+        const chemin = `equipes/${teamId}/${crypto.randomUUID()}.${ext}`;
+        const { error: errPhoto } = await createAdminClient().storage.from("media").upload(chemin, photo, { contentType: photo.type });
+        if (!errPhoto) await definirPhotoEquipe(teamId, chemin);
+      }
+    }
   }
 
   revalidatePath("/site-v2");

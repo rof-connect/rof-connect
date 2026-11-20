@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { comparerEquipes } from "@/lib/equipes";
 import { chargerArchivees } from "@/lib/joueuses-archivees";
 import { chargerGroupes } from "@/lib/groupes";
+import { urlsPhotosEquipes } from "@/lib/photos-equipes";
 import { chargerStatutsJoueuses, statutEffectif } from "@/lib/statuts";
 import { NIVEAU_COMPETITION_PROVISOIRE, ORDRE_PUBLIC, GAMECHANGER_LIEN_PROVISOIRE, GAMECHANGER_PROVISOIRE, idGameChanger, lienGameChanger, type Sport } from "./donnees";
 
@@ -17,6 +18,7 @@ export type EquipePublique = {
   gamechanger: string; // identifiant du widget calendrier GameChanger (vide = aucun)
   gamechangerLien: string; // lien de la page de l'équipe sur GameChanger (vide = aucun)
   roster: boolean; // la Direction autorise l'affichage du roster (par défaut : oui)
+  photo: string | null; // photo d'équipe téléversée dans ROF Connect (sinon : visuel de marque)
 };
 
 export type ResultatEquipes = {
@@ -126,5 +128,6 @@ async function enrichir(lignes: LigneEquipe[], admin: ReturnType<typeof createAd
       ),
     };
   });
-  return { equipes, joueuses: uniques.size };
+  const photos = await urlsPhotosEquipes(equipes.map((e) => e.id));
+  return { equipes: equipes.map((e) => ({ ...e, photo: photos.get(e.id) ?? null })), joueuses: uniques.size };
 }
