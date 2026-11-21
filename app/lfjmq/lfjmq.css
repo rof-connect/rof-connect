@@ -24,7 +24,8 @@ html:has(.lf) { scroll-padding-top: 72px; scroll-behavior: smooth; }
 
   & * { box-sizing: border-box; min-width: 0; }
   & h1, & h2, & h3 { font-family: var(--titre); font-weight: 700; line-height: 1.05; margin: 0; text-wrap: balance; }
-  & h2 { font-size: clamp(30px, 4vw, 44px); text-transform: uppercase; color: light-dark(var(--royal), #fff); }
+  & h2, & .head h1 { font-size: clamp(30px, 4vw, 44px); text-transform: uppercase; color: light-dark(var(--royal), #fff); }
+  & .join h1 { font-size: clamp(30px, 4vw, 44px); text-transform: uppercase; color: #fff; }
   & h3 { font-size: 20px; font-weight: 600; text-transform: uppercase; }
   & a { color: inherit; }
   & p { margin: 0 0 1em; }
@@ -225,4 +226,11 @@ html:has(.lf) { scroll-padding-top: 72px; scroll-behavior: smooth; }
   & .dv a { margin-top: auto; align-self: flex-start; font: 600 15px var(--titre); text-transform: uppercase; text-decoration: none; color: light-dark(var(--royal), #fff); border-bottom: 2px solid var(--gold); padding: 6px 0; position: relative; }
   & .dv.on a { color: #fff; }
   @media (max-width: 820px) { & .dgrid { grid-template-columns: 1fr; } }
+
+  /* Explorer la ligue (accueil) */
+  & .exp { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  & .exp a { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 20px; background: var(--bg); border: 1px solid var(--line); border-top: 4px solid var(--royal); border-radius: 4px; text-decoration: none; }
+  & .exp a:hover { border-top-color: var(--gold); background: var(--soft); }
+  & .exp b { font: 700 24px/1.1 var(--titre); text-transform: uppercase; color: light-dark(var(--royal), #fff); }
+  & .exp span { color: var(--mute); font-size: 15px; }
 }

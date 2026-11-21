@@ -54,9 +54,9 @@ export const CHIFFRES: [string, string][] = [
 ];
 
 export const DIVISIONS = [
-  { cle: "d1", nom: "Division 1", niveau: "Junior majeur", points: ["5 équipes", "Saison 2026 complétée", "Championnes : Golden Crown"], lien: { href: "#classement", texte: "Voir le classement" } },
-  { cle: "d2", nom: "Division 2", niveau: "14U", points: ["Saison 2027 : mai à septembre", "Tournoi de printemps en mai", "Inscriptions ouvertes"], lien: { href: "#inscription", texte: "Inscrire une équipe" } },
-  { cle: "d3", nom: "Division 3", niveau: "12U", points: ["Saison 2027 : mai à septembre", "Tournoi de printemps en mai", "Inscriptions ouvertes"], lien: { href: "#inscription", texte: "Inscrire une équipe" } },
+  { cle: "d1", nom: "Division 1", niveau: "Junior majeur", points: ["5 équipes", "Saison 2026 complétée", "Championnes : Golden Crown"], lien: { href: "/lfjmq#classement", texte: "Voir le classement" } },
+  { cle: "d2", nom: "Division 2", niveau: "14U", points: ["Saison 2027 : mai à septembre", "Tournoi de printemps en mai", "Inscriptions ouvertes"], lien: { href: "/lfjmq/inscription", texte: "Inscrire une équipe" } },
+  { cle: "d3", nom: "Division 3", niveau: "12U", points: ["Saison 2027 : mai à septembre", "Tournoi de printemps en mai", "Inscriptions ouvertes"], lien: { href: "/lfjmq/inscription", texte: "Inscrire une équipe" } },
 ] as const;
 
 /** Résultats affichés dans la bande du haut quand le widget GameChanger de la division n'est pas encore branché. */

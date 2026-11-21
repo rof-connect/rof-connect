@@ -124,7 +124,7 @@ export function BandeResultats({ widgets }: Props) {
             ›
           </button>
         </div>
-        <a className="all" href={widget && lien ? lien : "#classement"} {...(widget && lien ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+        <a className="all" href={widget && lien ? lien : "/lfjmq#classement"} {...(widget && lien ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
           Tous les résultats
         </a>
       </div>

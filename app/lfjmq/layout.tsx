@@ -33,14 +33,14 @@ export default async function LigueLayout({ children }: { children: React.ReactN
             </span>
           </Link>
           <nav aria-label="Navigation principale">
-            <a href="/lfjmq#classement">Classement</a>
-            <a href="/lfjmq#equipes">Équipes</a>
-            <a href="/lfjmq#divisions">Divisions</a>
-            <a href="/lfjmq#meneuses">Meneuses</a>
-            <a href="/lfjmq#finale">Finale</a>
-            <a href="/lfjmq#inscription" className="cta">
+            <Link href="/lfjmq#classement">Classement</Link>
+            <Link href="/lfjmq/equipes">Équipes</Link>
+            <Link href="/lfjmq/meneuses">Meneuses</Link>
+            <Link href="/lfjmq/finale">Finale</Link>
+            <Link href="/lfjmq/divisions">Divisions</Link>
+            <Link href="/lfjmq/inscription" className="cta">
               Inscrire<span className="lg"> une équipe</span>
-            </a>
+            </Link>
           </nav>
         </div>
       </header>
