@@ -38,6 +38,9 @@ const nextConfig: NextConfig = {
       { source: "/site-v2/organisation", destination: "/organisation", permanent: true },
       { source: "/site-v2/calendrier", destination: "/calendrier", permanent: true },
       { source: "/site-v2/rof-connect", destination: "/rof-connect", permanent: true },
+      { source: "/lfjmq/horaire", destination: "/lfjmq", permanent: true },
+      { source: "/lfjmq/classement", destination: "/lfjmq#classement", permanent: true },
+      { source: "/lfjmq/resumes", destination: "/lfjmq#finale", permanent: true },
     ];
   },
 };
