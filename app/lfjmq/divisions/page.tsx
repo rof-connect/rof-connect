@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DIVISIONS } from "@/lib/lfjmq-saison";
 
-export const metadata: Metadata = { title: { absolute: "Divisions | LFJMQ" }, description: "Les trois divisions de la LFJMQ : Division 1 (junior majeur), Division 2 (14U) et Division 3 (12U)." };
+export const metadata: Metadata = { title: { absolute: "Divisions | LFJMQ" }, description: "Les trois divisions de la LFJMQ : Division 1 (junior majeur), Division 2 (15U) et Division 3 (13U)." };
 
 export default function DivisionsPage() {
   return (

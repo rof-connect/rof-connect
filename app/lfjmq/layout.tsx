@@ -65,8 +65,8 @@ export default async function LigueLayout({ children }: { children: React.ReactN
             <h3 style={{ marginTop: 18 }}>Divisions</h3>
             <ul>
               <li>Division 1</li>
-              <li>Division 2 · 14U</li>
-              <li>Division 3 · 12U</li>
+              <li>Division 2 · 15U</li>
+              <li>Division 3 · 13U</li>
             </ul>
           </div>
           <div>

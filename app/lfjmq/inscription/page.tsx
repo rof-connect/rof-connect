@@ -9,7 +9,7 @@ export default function InscriptionPage() {
         <div>
           <h1>Inscrire une équipe en 2027</h1>
           <p>
-            La LFJMQ entame sa deuxième saison et ouvre la porte à de nouvelles équipes situées à moins de 3 heures de route, au Québec, en Ontario et aux États-Unis. Trois divisions : Division 1, Division 2 (14U) et Division 3 (12U).
+            La LFJMQ entame sa deuxième saison et ouvre la porte à de nouvelles équipes situées à moins de 3 heures de route, au Québec, en Ontario et aux États-Unis. Trois divisions : Division 1, Division 2 (15U) et Division 3 (13U).
           </p>
           <p>Formule payée à la présence : forfaits Événement et Saison, à partir de 99 $.</p>
           <div className="btns">

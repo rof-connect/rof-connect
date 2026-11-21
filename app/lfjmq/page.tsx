@@ -8,7 +8,7 @@ const SECTIONS = [
   { href: "/lfjmq/equipes", titre: "Équipes", texte: "Les cinq équipes de la Division 1 et leurs meneuses" },
   { href: "/lfjmq/meneuses", titre: "Meneuses", texte: "Au bâton et au monticule, saison 2026" },
   { href: "/lfjmq/finale", titre: "La finale", texte: "Golden Crown 4, Force 0 : le résumé et la photo" },
-  { href: "/lfjmq/divisions", titre: "Divisions", texte: "Division 1, Division 2 (14U) et Division 3 (12U)" },
+  { href: "/lfjmq/divisions", titre: "Divisions", texte: "Division 1, Division 2 (15U) et Division 3 (13U)" },
   { href: "/lfjmq/inscription", titre: "Inscrire une équipe", texte: "Saison 2027 : forfaits à partir de 99 $" },
 ];
 
