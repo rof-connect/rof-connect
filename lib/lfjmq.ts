@@ -92,3 +92,30 @@ export function lireClassement(texte: string): Division[] {
 export function texteClassement(divisions: Division[]): string {
   return divisions.map((d) => [`# ${d.nom}`, ...d.lignes.map((l) => [l.equipe, l.j, l.v, l.d, l.n, l.pts].join(";"))].join("\n")).join("\n\n");
 }
+
+/** Données fictives pour l'aperçu (?demo=1), disponibles seulement en développement. Rien n'est enregistré. */
+const DEMO: DonneesLfjmq = {
+  maj: new Date().toISOString(),
+  widgetId: "",
+  lienHoraire: "https://web.gc.com",
+  lienClassement: "https://web.gc.com",
+  divisions: [
+    {
+      nom: "18U",
+      lignes: [
+        { equipe: "Royal On Field", j: 10, v: 8, d: 2, n: 0, pts: 16 },
+        { equipe: "Équipe exemple A", j: 10, v: 6, d: 4, n: 0, pts: 12 },
+        { equipe: "Équipe exemple B", j: 10, v: 3, d: 6, n: 1, pts: 7 },
+        { equipe: "Équipe exemple C", j: 10, v: 2, d: 8, n: 0, pts: 4 },
+      ],
+    },
+  ],
+  resumes: [
+    { id: "1", date: "2026-11-14", titre: "Royal 5, Équipe exemple A 3", fr: "Une grosse quatrième manche a permis à Royal de prendre les devants. La lanceuse a retiré sept frappeuses sur des prises.", en: "", lien: "https://web.gc.com" },
+    { id: "2", date: "2026-11-07", titre: "Équipe exemple B 2, Royal 6", fr: "Royal a frappé quatre doubles et a gardé l'avance du début à la fin.", en: "", lien: "" },
+  ],
+};
+
+export async function donneesLfjmq(demo: boolean): Promise<DonneesLfjmq> {
+  return demo && process.env.NODE_ENV !== "production" ? DEMO : chargerLfjmq();
+}

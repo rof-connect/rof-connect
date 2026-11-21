@@ -17,8 +17,7 @@ async function verifierAdmin() {
 
 function rafraichir() {
   revalidatePath("/membres/admin/lfjmq");
-  revalidatePath("/lfjmq");
-  revalidatePath("/site-v2/lfjmq");
+  revalidatePath("/lfjmq", "layout");
 }
 
 export async function majClassement(formData: FormData) {

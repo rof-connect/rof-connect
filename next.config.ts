@@ -18,7 +18,6 @@ const nextConfig: NextConfig = {
         { source: "/organisation", destination: "/site-v2/organisation" },
         { source: "/calendrier", destination: "/site-v2/calendrier" },
         { source: "/rof-connect", destination: "/site-v2/rof-connect" },
-        { source: "/lfjmq", destination: "/site-v2/lfjmq" },
       ],
       afterFiles: [],
       fallback: [],
@@ -39,7 +38,6 @@ const nextConfig: NextConfig = {
       { source: "/site-v2/organisation", destination: "/organisation", permanent: true },
       { source: "/site-v2/calendrier", destination: "/calendrier", permanent: true },
       { source: "/site-v2/rof-connect", destination: "/rof-connect", permanent: true },
-      { source: "/site-v2/lfjmq", destination: "/lfjmq", permanent: true },
     ];
   },
 };

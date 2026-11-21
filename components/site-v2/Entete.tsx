@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { liensUtilitaires } from "@/lib/site-v2/menu";
 
-type Props = { sport: "softball" | "baseball"; base?: string };
+type Props = { sport: "softball" | "baseball"; base?: string; ligue?: boolean };
 
 /** En-tête collant : logo, navigation et menu mobile. */
-export function Entete({ sport, base = "" }: Props) {
+export function Entete({ sport, base = "", ligue = false }: Props) {
   const [ouvert, setOuvert] = useState(false);
   const ferme = () => setOuvert(false);
 
@@ -28,7 +28,7 @@ export function Entete({ sport, base = "" }: Props) {
           <a href={`${base}#engagements`} onClick={ferme}>{sport === "baseball" ? "Engagements" : "Engagements universitaires"}</a>
           <Link className="cta" href="/connexion" onClick={ferme}>ROF Connect</Link>
           <hr className="nav-sep" aria-hidden />
-          {liensUtilitaires(sport).map((l) => (
+          {liensUtilitaires(sport, ligue).map((l) => (
             <Link key={l.label} className="nav-util" href={l.href} onClick={ferme}>{l.label}</Link>
           ))}
         </nav>

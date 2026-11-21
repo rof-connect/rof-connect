@@ -5,6 +5,7 @@ import { Cadre } from "@/components/site-v2/Cadre";
 import { Bannieres } from "@/components/site-v2/Bannieres";
 import { ReseauxSociaux } from "@/components/site-v2/ReseauxSociaux";
 import { chargerEquipesPubliques } from "@/lib/site-v2/equipes";
+import { lfjmqPublie } from "@/lib/lfjmq";
 import { CONTENU, FIELDLEVEL, GALERIES, HERO, NIVEAUX, FAQ_PARENTS, PARTENAIRES_LOGOS, affiliationsDe, colonnesLogos, lienFieldLevel, sportDe } from "@/lib/site-v2/donnees";
 
 export const dynamic = "force-dynamic";
@@ -219,6 +220,9 @@ export default async function SiteV2({ searchParams }: { searchParams: Promise<{
               </h2>
               {c.noteCalendrier && <span className="pill">{c.noteCalendrier}</span>}
               <Link className="btn solid btn-horaire" href={`/calendrier?sport=${sport}`}>Horaire de chaque équipe →</Link>
+              {sport === "softball" && lfjmqPublie() && (
+                <Link className="btn ghost-clair btn-horaire" href="/lfjmq">LFJMQ : classement et résumés →</Link>
+              )}
             </div>
             {c.calendrier.length > 0 && <p className="cal-note">Dates et lieux à confirmer — mis à jour au fur et à mesure.</p>}
             <div className="sched">
