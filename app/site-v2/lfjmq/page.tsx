@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Cadre } from "@/components/site-v2/Cadre";
 import { CalendrierGameChanger } from "@/components/site-v2/CalendrierGameChanger";
-import { chargerLfjmq, lfjmqPublie } from "@/lib/lfjmq";
+import { chargerLfjmq, lfjmqPublie, type DonneesLfjmq } from "@/lib/lfjmq";
 
 export const dynamic = "force-dynamic";
 
@@ -16,9 +16,32 @@ export const metadata: Metadata = {
 
 const jour = (iso: string) => new Date(iso + "T12:00:00").toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" });
 
-export default async function LfjmqPage() {
+/** Données fictives pour l'aperçu (?demo=1), disponibles seulement en développement. Rien n'est enregistré. */
+const DEMO: DonneesLfjmq = {
+  maj: new Date().toISOString(),
+  widgetId: "",
+  lienHoraire: "https://web.gc.com",
+  lienClassement: "https://web.gc.com",
+  divisions: [
+    {
+      nom: "18U",
+      lignes: [
+        { equipe: "Royal On Field", j: 10, v: 8, d: 2, n: 0, pts: 16 },
+        { equipe: "Équipe exemple A", j: 10, v: 6, d: 4, n: 0, pts: 12 },
+        { equipe: "Équipe exemple B", j: 10, v: 3, d: 6, n: 1, pts: 7 },
+      ],
+    },
+  ],
+  resumes: [
+    { id: "1", date: "2026-11-14", titre: "Royal 5, Équipe exemple A 3", fr: "Une grosse quatrième manche a permis à Royal de prendre les devants. La lanceuse a retiré sept frappeuses sur des prises.", en: "", lien: "https://web.gc.com" },
+    { id: "2", date: "2026-11-07", titre: "Équipe exemple B 2, Royal 6", fr: "Royal a frappé quatre doubles et a gardé l'avance du début à la fin.", en: "", lien: "" },
+  ],
+};
+
+export default async function LfjmqPage({ searchParams }: { searchParams: Promise<{ demo?: string }> }) {
   if (!lfjmqPublie()) notFound(); // page préparée mais pas encore en ligne
-  const d = await chargerLfjmq();
+  const demo = process.env.NODE_ENV !== "production" && (await searchParams).demo === "1";
+  const d = demo ? DEMO : await chargerLfjmq();
   const resumes = [...d.resumes].sort((a, b) => b.date.localeCompare(a.date));
 
   return (
