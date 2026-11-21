@@ -33,7 +33,7 @@ export default async function LfjmqAdminPage() {
         <p className="text-xs text-rof-gris">Dans GameChanger : page de la ligue, Tools, Create Scoreboard. Copie l&apos;identifiant du widget (widgetId) du code fourni.</p>
         {CLES_DIVISION.map((k) => (
           <fieldset key={k} className="flex flex-col gap-3 rounded-lg border border-rof-ligne p-3">
-            <legend className="px-1 font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">{OPTIONS_DIVISION.find((o) => o.cle === k)?.nom}</legend>
+            <legend className="px-1 font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-or">{OPTIONS_DIVISION.find((o) => o.cle === k)?.nom.fr}</legend>
             <div>
               <p className={etiquette}>Identifiant du widget</p>
               <input name={`widget_${k}`} defaultValue={d.widgets[k].widgetId} placeholder="ex. 7995b8d4-b175-40db-9190-7719a306837c" className={champ} />

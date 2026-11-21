@@ -1,4 +1,4 @@
-import type { Meneuses } from "@/lib/lfjmq-saison";
+import { dec, type Lang, type Meneuses } from "@/lib/lfjmq-saison";
 
 export function Bouclier({ sigle, champ }: { sigle: string; champ?: boolean }) {
   return (
@@ -11,19 +11,19 @@ export function Bouclier({ sigle, champ }: { sigle: string; champ?: boolean }) {
   );
 }
 
-export function Liste({ m }: { m: Meneuses }) {
+export function Liste({ m, lang }: { m: Meneuses; lang: Lang }) {
   return (
     <div className="ldr">
       <h3>
-        {m.titre}
-        {m.sous && <small>{m.sous}</small>}
+        {m.titre[lang]}
+        {m.sous && <small>{m.sous[lang]}</small>}
       </h3>
       <ol>
         {m.lignes.map(([nom, equipe, valeur]) => (
           <li key={nom + valeur}>
             <span className="n">{nom}</span>
             <span className="t">{equipe}</span>
-            <span className="v">{valeur}</span>
+            <span className="v">{dec(lang, valeur)}</span>
           </li>
         ))}
       </ol>

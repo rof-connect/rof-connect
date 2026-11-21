@@ -1,37 +1,41 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { CHIFFRES, CLASSEMENT_D1 } from "@/lib/lfjmq-saison";
+import { notFound } from "next/navigation";
+import { D, MAIL, adresse, estLang, metaPage } from "@/lib/lfjmq-i18n";
+import { CHIFFRES, CLASSEMENT_D1, dec } from "@/lib/lfjmq-saison";
 
 export const dynamic = "force-dynamic";
 
-const SECTIONS = [
-  { href: "/lfjmq/equipes", titre: "Équipes", texte: "Les cinq équipes de la Division 1 et leurs meneuses" },
-  { href: "/lfjmq/meneuses", titre: "Meneuses", texte: "Au bâton et au monticule, saison 2026" },
-  { href: "/lfjmq/finale", titre: "La finale", texte: "Golden Crown 4, Force 0 : le résumé et la photo" },
-  { href: "/lfjmq/divisions", titre: "Divisions", texte: "Division 1, Division 2 (15U) et Division 3 (13U)" },
-  { href: "/lfjmq/inscription", titre: "Inscrire une équipe", texte: "Saison 2027 : forfaits à partir de 99 $" },
-];
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  return estLang(lang) ? metaPage(lang) : {};
+}
 
-export default function AccueilLigue() {
+export default async function AccueilLigue({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  if (!estLang(lang)) notFound();
+  const d = D[lang].accueil;
+  void MAIL;
+
   return (
     <>
       <section className="hero">
         <div className="wrap">
           <figure>
-            <Image src="/lfjmq/championnes.jpg" alt="Les joueuses de Golden Crown posent avec la bannière Championnes LFJMQ 2026" fill priority sizes="(min-width: 820px) 55vw, 100vw" />
+            <Image src="/lfjmq/championnes.jpg" alt={d.imgAlt} fill priority sizes="(min-width: 820px) 55vw, 100vw" />
           </figure>
           <div className="txt">
-            <span className="tag">Saison 2026 · Division 1</span>
-            <h1>Golden Crown, championnes 2026</h1>
-            <p>Blanchissage en finale : Beatrice Vezina et Arielle Prescott ont limité Force à trois coups sûrs.</p>
-            <div className="score" role="group" aria-label="Pointage de la finale">
+            <span className="tag">{d.tag}</span>
+            <h1>{d.h1}</h1>
+            <p>{d.resume}</p>
+            <div className="score" role="group" aria-label={d.scoreAria}>
               <table>
                 <tbody>
                   <tr>
-                    <th>Finale</th>
-                    <th>P</th>
-                    <th>CS</th>
-                    <th>E</th>
+                    {d.scoreCols.map((c) => (
+                      <th key={c}>{c}</th>
+                    ))}
                   </tr>
                   <tr className="win">
                     <td>Golden Crown</td>
@@ -49,23 +53,23 @@ export default function AccueilLigue() {
               </table>
             </div>
             <div className="btns">
-              <Link className="btn gold" href="/lfjmq/finale">
-                Résumé de la finale
+              <Link className="btn gold" href={adresse(lang, "finale")}>
+                {d.btnFinale}
               </Link>
               <a className="btn line" href="#classement">
-                Classement final
+                {d.btnClassement}
               </a>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="nums" aria-label="Saison 2026 en chiffres">
+      <section className="nums" aria-label={d.chiffresAria}>
         <div className="wrap">
           {CHIFFRES.map(([n, texte]) => (
-            <div key={texte}>
+            <div key={n}>
               <b>{n}</b>
-              <span>{texte}</span>
+              <span>{texte[lang]}</span>
             </div>
           ))}
         </div>
@@ -74,27 +78,27 @@ export default function AccueilLigue() {
       <section className="band" id="classement">
         <div className="wrap">
           <div className="head">
-            <h2>Classement 2026</h2>
-            <small>Saison régulière · Division 1</small>
+            <h2>{d.classementTitre}</h2>
+            <small>{d.classementSous}</small>
           </div>
           <table className="std">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Équipe</th>
-                <th>V</th>
-                <th>D</th>
-                <th>N</th>
-                <th>PCT</th>
-                <th>Écart</th>
-                <th className="hide">Points marqués</th>
+                <th>{d.cols.equipe}</th>
+                <th>{d.cols.v}</th>
+                <th>{d.cols.d}</th>
+                <th>{d.cols.n}</th>
+                <th>{d.cols.pct}</th>
+                <th>{d.cols.ecart}</th>
+                <th className="hide">{d.cols.pm}</th>
               </tr>
             </thead>
             <tbody>
               {CLASSEMENT_D1.map((t, i) => (
                 <tr key={t.nom} className={t.champ ? "champ" : undefined}>
                   <td>{i + 1}</td>
-                  <td>{t.nom}</td>
+                  <td data-champ={d.champions}>{t.nom}</td>
                   <td>{t.v}</td>
                   <td>{t.d}</td>
                   <td>{t.n}</td>
@@ -104,25 +108,25 @@ export default function AccueilLigue() {
                       <i style={{ width: `${parseFloat(t.pct) * 100}%` }} />
                     </span>
                   </td>
-                  <td>{t.ecart}</td>
+                  <td>{dec(lang, t.ecart)}</td>
                   <td className="hide">{t.pm}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="note">V : victoires · D : défaites · N : matchs nuls · PCT : pourcentage de victoires. Source : GameChanger.</p>
+          <p className="note">{d.legende}</p>
         </div>
       </section>
 
       <section className="band explorer" aria-labelledby="t-explorer">
         <div className="wrap">
           <div className="head">
-            <h2 id="t-explorer">Explorer la ligue</h2>
+            <h2 id="t-explorer">{d.explorerTitre}</h2>
           </div>
           <ul className="exp">
-            {SECTIONS.map((s) => (
-              <li key={s.href}>
-                <Link href={s.href}>
+            {d.explorer.map((s) => (
+              <li key={s.page}>
+                <Link href={adresse(lang, s.page)}>
                   <b>{s.titre}</b>
                   <span>{s.texte}</span>
                 </Link>

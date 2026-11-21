@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { OPTIONS_DIVISION, RESULTATS } from "@/lib/lfjmq-saison";
+import { D, adresse } from "@/lib/lfjmq-i18n";
+import { OPTIONS_DIVISION, RESULTATS, type Lang } from "@/lib/lfjmq-saison";
 
 type GC = { team: { schedule: { init: (o: { target: string; widgetId: string; maxVerticalGamesVisible?: number }) => void } } };
 declare global {
@@ -13,10 +14,11 @@ declare global {
 const SDK = "https://widgets.gc.com/static/js/sdk.v1.js";
 const CLE = "lfjmq-div";
 
-type Props = { widgets: Record<string, { widgetId: string; url: string }> };
+type Props = { lang: Lang; widgets: Record<string, { widgetId: string; url: string }> };
 
 /** Bande de résultats du haut : changer de division change les résultats (widget GameChanger de la division, sinon derniers résultats saisis). */
-export function BandeResultats({ widgets }: Props) {
+export function BandeResultats({ lang, widgets }: Props) {
+  const t = D[lang].bande;
   const [division, setDivision] = useState("d1");
   const liste = useRef<HTMLDivElement>(null);
   const cible = "gc-" + useId().replace(/[^a-zA-Z0-9]/g, "");
@@ -77,14 +79,14 @@ export function BandeResultats({ widgets }: Props) {
   };
 
   return (
-    <div className="tick" role="region" aria-label="Résultats récents">
+    <div className="tick" role="region" aria-label={t.region}>
       <div className="wrap">
         <label className="sel">
-          <span className="sr">Division</span>
+          <span className="sr">{t.division}</span>
           <select value={division} onChange={(e) => changer(e.target.value)}>
             {OPTIONS_DIVISION.map((o) => (
               <option key={o.cle} value={o.cle}>
-                {o.nom}
+                {o.nom[lang]}
               </option>
             ))}
           </select>
@@ -99,7 +101,7 @@ export function BandeResultats({ widgets }: Props) {
                 return (
                   <article className="g" key={p.a[0] + p.b[0] + p.d}>
                     <div className="st">
-                      <span>{p.st}</span>
+                      <span>{p.st[lang]}</span>
                       <span>{p.d}</span>
                     </div>
                     <div className={`r${aGagne ? " w" : ""}`}>
@@ -113,19 +115,19 @@ export function BandeResultats({ widgets }: Props) {
                   </article>
                 );
               })}
-              <div className="g msg">Saison 2027 : début en mai</div>
+              <div className="g msg">{t.debut}</div>
             </>
           ) : (
-            <div className="g msg">Aucun résultat pour l&apos;instant. La saison commence en mai.</div>
+            <div className="g msg">{t.aucun}</div>
           )}
         </div>
         <div className="nav">
-          <button type="button" onClick={defiler} aria-label="Résultats suivants">
+          <button type="button" onClick={defiler} aria-label={t.suivants}>
             ›
           </button>
         </div>
-        <a className="all" href={widget && lien ? lien : "/lfjmq#classement"} {...(widget && lien ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
-          Tous les résultats
+        <a className="all" href={widget && lien ? lien : adresse(lang, undefined, "classement")} {...(widget && lien ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+          {t.tous}
         </a>
       </div>
     </div>
