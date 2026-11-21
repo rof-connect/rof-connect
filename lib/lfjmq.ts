@@ -25,14 +25,6 @@ export type DonneesLfjmq = {
 
 export const VIDE: DonneesLfjmq = { maj: null, widgetId: "", lienClassement: "", lienHoraire: "", divisions: [], resumes: [] };
 
-/**
- * La page est préparée mais cachée : elle n'est visible en production que si la variable d'environnement LFJMQ_PUBLIC vaut « 1 ».
- * En développement, elle est toujours visible.
- */
-export function lfjmqPublie() {
-  return process.env.NODE_ENV !== "production" || process.env.LFJMQ_PUBLIC === "1";
-}
-
 export async function chargerLfjmq(): Promise<DonneesLfjmq> {
   const { data } = await createAdminClient().storage.from("media").download(FICHIER);
   if (!data) return VIDE;

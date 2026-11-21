@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/calendrier",
     "/varsity",
     "/rof-connect",
+    "/lfjmq",
     "/inscription",
     "/parcours",
   ];

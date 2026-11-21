@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { chargerLfjmq, lfjmqPublie, texteClassement } from "@/lib/lfjmq";
+import { chargerLfjmq, texteClassement } from "@/lib/lfjmq";
 import { bouton } from "@/components/ui/boutons";
 import { ajouterResume, majClassement, majLiensLfjmq, supprimerResume } from "./actions";
 
@@ -19,7 +19,6 @@ export default async function LfjmqAdminPage() {
 
   const d = await chargerLfjmq();
   const resumes = [...d.resumes].sort((a, b) => b.date.localeCompare(a.date));
-  const publie = lfjmqPublie() && process.env.NODE_ENV === "production";
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-5 py-10">
@@ -28,7 +27,7 @@ export default async function LfjmqAdminPage() {
         <h1 className="mt-1 font-condensed text-3xl font-bold uppercase text-rof-texte">LFJMQ</h1>
         <p className="mt-2 text-sm text-rof-gris">
           Contenu de la page de la ligue sur le site public softball : horaire GameChanger, classement et résumés des matchs.{" "}
-          {publie ? "La page est en ligne sur /lfjmq." : "La page est préparée mais pas encore en ligne : elle n'est visible que sur l'ordinateur de développement."}
+          Le site de la ligue est en ligne sur royalonfield.ca/lfjmq.
         </p>
       </div>
 

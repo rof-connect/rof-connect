@@ -6,13 +6,11 @@ import { InscriptionInfolettre } from "./InscriptionInfolettre";
 import { FormInfolettrePied } from "./FormInfolettrePied";
 import { affiliationsDe, CONTENU, SPORTS, type Sport } from "@/lib/site-v2/donnees";
 import { liensUtilitaires } from "@/lib/site-v2/menu";
-import { lfjmqPublie } from "@/lib/lfjmq";
 
 /** Cadre commun du site public : barre utilitaire, en-tête, pied de page et symboles SVG. */
 export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; provisoire?: boolean; accueil?: boolean; children: React.ReactNode }) {
   // Sur l'accueil, les ancres restent locales ; ailleurs (roster), elles reviennent à l'accueil du sport.
   const base = accueil ? "" : accueilHref(sport);
-  const ligue = lfjmqPublie() && sport === "softball"; // lien vers le site de la ligue, caché tant qu'elle n'est pas publiée
   return (
     <div className="v2" data-sport={sport}>
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden>
@@ -38,7 +36,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
       <div className="util">
         <div className="wrap">
           <div className="links">
-            {liensUtilitaires(sport, ligue).map((l) => (
+            {liensUtilitaires(sport).map((l) => (
               <Link key={l.label} href={l.href}>{l.label}</Link>
             ))}
           </div>
@@ -52,7 +50,7 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
         </div>
       </div>
 
-      <Entete sport={sport} base={base} ligue={ligue} />
+      <Entete sport={sport} base={base} />
       {accueil && <InscriptionInfolettre key={sport} sport={sport} />}
 
       <main id="top">{children}</main>
@@ -75,7 +73,6 @@ export function Cadre({ sport, provisoire, accueil, children }: { sport: Sport; 
               <h5>Programmes</h5>
               <Link href="/site-v2">Softball</Link>
               <Link href="/baseball">Baseball</Link>
-              {ligue && <Link href="/lfjmq">LFJMQ, notre ligue</Link>}
               <a href={`${base}#recrutement`}>Le parcours Royal</a>
             </div>
             <div>
