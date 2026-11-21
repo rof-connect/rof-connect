@@ -53,13 +53,6 @@ export const LIGNES_FINALE: [string, Bi][] = [
   ["Kassandra Turmel", { fr: "6,1 MN · 8 CS · 4 P · 6 RB", en: "6.1 IP · 8 H · 4 R · 6 K" }],
 ];
 
-export const CHIFFRES: [string, Bi][] = [
-  ["5", { fr: "équipes en Division 1", en: "teams in Division 1" }],
-  ["46", { fr: "matchs de saison régulière", en: "regular-season games" }],
-  ["526", { fr: "points marqués", en: "runs scored" }],
-  ["82", { fr: "retraits au bâton pour Beatrice Vezina, meilleure de la ligue", en: "strikeouts for Beatrice Vezina, best in the league" }],
-];
-
 export const DIVISIONS: { cle: string; nom: Bi; niveau: Bi; points: { fr: string[]; en: string[] }; lien: "classement" | "inscription" }[] = [
   {
     cle: "d1",

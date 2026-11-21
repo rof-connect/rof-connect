@@ -183,15 +183,6 @@ html:has(.lf) { scroll-padding-top: 72px; scroll-behavior: smooth; }
     & .g { width: 170px; }
   }
 
-  /* Chiffres de la saison */
-  & .nums { background: var(--bg); border-bottom: 1px solid var(--line); }
-  & .nums .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  & .nums div { padding: 22px max(2vw, 14px); border-left: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
-  & .nums div:first-child { border-left: 0; padding-left: max(5vw, 16px); }
-  & .nums b { font: 700 clamp(32px, 4vw, 46px)/1 var(--titre); color: light-dark(var(--royal), #fff); font-variant-numeric: tabular-nums; }
-  & .nums span { font-size: 14px; color: var(--mute); max-width: 24ch; }
-  @media (max-width: 700px) { & .nums .wrap { grid-template-columns: 1fr 1fr; } & .nums div { border-left: 0; border-top: 1px solid var(--line); padding: 16px; } & .nums div:first-child { padding-left: 16px; } }
-
   /* Équipes */
   & .tgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
   @media (min-width: 1150px) { & .tgrid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; } }

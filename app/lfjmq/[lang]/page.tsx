@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { D, MAIL, adresse, estLang, metaPage } from "@/lib/lfjmq-i18n";
-import { CHIFFRES, CLASSEMENT_D1, dec } from "@/lib/lfjmq-saison";
+import { CLASSEMENT_D1, dec } from "@/lib/lfjmq-saison";
 
 export const dynamic = "force-dynamic";
 
@@ -61,17 +61,6 @@ export default async function AccueilLigue({ params }: { params: Promise<{ lang:
               </a>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="nums" aria-label={d.chiffresAria}>
-        <div className="wrap">
-          {CHIFFRES.map(([n, texte]) => (
-            <div key={n}>
-              <b>{n}</b>
-              <span>{texte[lang]}</span>
-            </div>
-          ))}
         </div>
       </section>
 

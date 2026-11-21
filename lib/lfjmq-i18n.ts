@@ -35,7 +35,7 @@ type Dico = {
   meta: { titre: string; description: string; equipes: [string, string]; meneuses: [string, string]; finale: [string, string]; divisions: [string, string]; inscription: [string, string] };
   accueil: {
     tag: string; h1: string; resume: string; imgAlt: string; scoreAria: string; scoreCols: [string, string, string, string];
-    btnFinale: string; btnClassement: string; chiffresAria: string; classementTitre: string; classementSous: string;
+    btnFinale: string; btnClassement: string; classementTitre: string; classementSous: string;
     cols: { equipe: string; v: string; d: string; n: string; pct: string; ecart: string; pm: string }; champions: string; legende: string;
     explorerTitre: string; explorer: { page: Page; titre: string; texte: string }[];
   };
@@ -79,7 +79,6 @@ export const D: Record<Lang, Dico> = {
       scoreCols: ["Finale", "P", "CS", "E"],
       btnFinale: "Résumé de la finale",
       btnClassement: "Classement final",
-      chiffresAria: "Saison 2026 en chiffres",
       classementTitre: "Classement 2026",
       classementSous: "Saison régulière · Division 1",
       cols: { equipe: "Équipe", v: "V", d: "D", n: "N", pct: "PCT", ecart: "Écart", pm: "Points marqués" },
@@ -171,7 +170,6 @@ export const D: Record<Lang, Dico> = {
       scoreCols: ["Final", "R", "H", "E"],
       btnFinale: "Final recap",
       btnClassement: "Final standings",
-      chiffresAria: "2026 season in numbers",
       classementTitre: "2026 standings",
       classementSous: "Regular season · Division 1",
       cols: { equipe: "Team", v: "W", d: "L", n: "T", pct: "PCT", ecart: "GB", pm: "Runs scored" },
