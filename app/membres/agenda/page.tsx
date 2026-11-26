@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AgendaCalendrier, type JourAgenda } from "@/components/membres/AgendaCalendrier";
 import { createClient } from "@/lib/supabase/server";
 import { CarteEvenement } from "@/components/membres/CarteEvenement";
 import { FormAjoutEvenement } from "@/components/membres/FormAjoutEvenement";
@@ -104,23 +105,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
   const seancesSprint = voitSprint ? (seancesSprintAgenda() as NonNullable<typeof evenements>) : [];
   const tous = [...(evenements ?? []), ...seancesSprint].sort((a, b) => (a.event_date ?? "").localeCompare(b.event_date ?? ""));
 
-  const aVenir = tous.filter((e) => (e.event_date ?? "") >= jour);
-  const passes = tous.filter((e) => (e.event_date ?? "") < jour).reverse();
   const plusieursEquipes = equipes.length > 1;
-
-  // Regroupe les événements à venir : Aujourd'hui, Demain, Cette semaine, Plus tard.
-  const jours = (d: string) => Math.round((Date.parse(d + "T12:00:00Z") - Date.parse(jour + "T12:00:00Z")) / 86400000);
-  const periode = (d: string) => {
-    const n = jours(d);
-    return n <= 0 ? "Aujourd'hui" : n === 1 ? "Demain" : n <= 7 ? "Cette semaine" : "Plus tard";
-  };
-  const groupesAVenir: { titre: string; items: typeof aVenir }[] = [];
-  for (const e of aVenir) {
-    const titre = periode(e.event_date ?? jour);
-    const g = groupesAVenir.find((x) => x.titre === titre);
-    if (g) g.items.push(e);
-    else groupesAVenir.push({ titre, items: [e] });
-  }
 
   const carte = (e: NonNullable<typeof evenements>[number], passe: boolean) => {
     const body = (e.body ?? {}) as EvenementBody;
@@ -156,6 +141,27 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
     );
   };
 
+  // Calendrier : les activités sont regroupées par journée ; la bande couvre le passé récent et les prochaines semaines.
+  const decaler = (d: string, n: number) => new Date(Date.parse(d + "T12:00:00Z") + n * 86400000).toISOString().slice(0, 10);
+  const dates = [...new Set(tous.map((e) => e.event_date ?? "").filter(Boolean))];
+  const jours: JourAgenda[] = dates.map((date) => {
+    const duJour = tous.filter((e) => e.event_date === date);
+    const aFaire = duJour.filter((e) => ((e.body ?? {}) as EvenementBody).mode === "completer");
+    return {
+      date,
+      etiquettes: [...new Set(duJour.map((e) => {
+        const b = (e.body ?? {}) as EvenementBody;
+        return e.id.startsWith("sprint-") ? "Sprint" : b.mode === "completer" ? "Physique" : b.type || "Activité";
+      }))],
+      fait: aFaire.length > 0 && aFaire.length === duJour.length && aFaire.every((e) => (presences ?? []).some((p) => p.content_id === e.id && p.profile_id === user!.id && p.response === "yes")),
+      contenu: duJour.map((e) => carte(e, date < jour)),
+    };
+  });
+  const premier = dates[0] ?? jour;
+  const dernier = dates[dates.length - 1] ?? jour;
+  const debutBande = [premier, decaler(jour, -7)].sort()[0];
+  const finBande = [dernier, decaler(jour, 30)].sort()[1];
+
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-5 py-6">
       <div>
@@ -178,6 +184,8 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         </div>
       )}
 
+      {(equipes.length > 0 || tous.length > 0) && <AgendaCalendrier key={filtre || "toutes"} jours={jours} aujourdhui={jour} debut={debutBande < decaler(jour, -180) ? decaler(jour, -180) : debutBande} fin={finBande} />}
+
       {equipesCoach.length > 0 && (
         <details className="rounded-2xl border border-rof-ligne bg-rof-blanc">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 [&::-webkit-details-marker]:hidden">
@@ -198,31 +206,6 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         </details>
       )}
 
-      <section className="flex flex-col gap-2">
-        <h2 className="font-condensed text-sm font-bold uppercase tracking-[0.2em] text-rof-or">À venir ({aVenir.length})</h2>
-        {aVenir.length > 0 && <p className="text-xs text-rof-gris">Touche un événement pour voir les détails.</p>}
-        {groupesAVenir.map((g) => (
-          <div key={g.titre} className="flex flex-col gap-2">
-            <h3 className="mt-1 font-condensed text-xs font-bold uppercase tracking-[0.2em] text-rof-gris">{g.titre}</h3>
-            {g.items.map((e) => carte(e, false))}
-          </div>
-        ))}
-        {equipes.length > 0 && aVenir.length === 0 && (
-          <p className="rounded-2xl border border-rof-ligne bg-rof-blanc p-4 text-sm text-rof-gris">Aucun événement à venir pour le moment.</p>
-        )}
-      </section>
-
-      {passes.length > 0 && (
-        <details className="group rounded-2xl border border-rof-ligne bg-rof-blanc">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 [&::-webkit-details-marker]:hidden">
-            <span className="font-condensed text-lg font-bold uppercase text-rof-texte">Événements passés ({passes.length})</span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-rof-ligne text-rof-poudre transition-transform group-open:rotate-180" aria-hidden="true">
-              ⌄
-            </span>
-          </summary>
-          <div className="flex flex-col gap-3 border-t border-rof-ligne p-3">{passes.map((e) => carte(e, true))}</div>
-        </details>
-      )}
     </main>
   );
 }
