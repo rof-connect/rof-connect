@@ -39,6 +39,7 @@ export function CarteEvenement({
   profilId,
   completionLocale = false,
   lienProgramme,
+  lienGuide,
 }: {
   id: string;
   titre: string;
@@ -61,6 +62,7 @@ export function CarteEvenement({
   profilId?: string; // pour mémoriser les étapes cochées de cette personne sur l'appareil
   completionLocale?: boolean; // séance générée par l'app : « complété » gardé sur l'appareil
   lienProgramme?: string; // lien vers la page complète du programme (animations)
+  lienGuide?: string; // guide du programme (charges, progression)
 }) {
   const aCompleter = mode === "completer";
   const [voirListe, setVoirListe] = useState(false);
@@ -181,6 +183,12 @@ export function CarteEvenement({
       {lienProgramme && (
         <Link href={lienProgramme} className={`${bouton("accent", "md")} mt-3 w-full`}>
           ▶ Ouvrir le programme avec les animations
+        </Link>
+      )}
+
+      {lienGuide && (
+        <Link href={lienGuide} className={`${bouton("accent", "md")} mt-3 w-full`}>
+          Guide : choisir mes charges
         </Link>
       )}
 

@@ -17,6 +17,7 @@ type EvenementBody = {
   mode?: string | null; // « completer » : entraînement à faire quand on veut, bouton « complété » à la place de la présence
   pdf_path?: string | null;
   pdf_nom?: string | null;
+  phase?: number | null; // phase du programme de préparation physique (phase 2 : guide des charges)
   exercices_blocs?: { titre: string; info?: string; exercices: { code: string; nom: string; series: string; description: string; image?: string; anim?: string }[] }[];
 };
 
@@ -132,6 +133,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         presents={roster.filter((j) => rows.find((p) => p.profile_id === j.id && p.response === "yes"))}
         absents={roster.filter((j) => rows.find((p) => p.profile_id === j.id && p.response === "no"))}
         sansReponse={roster.filter((j) => !rows.find((p) => p.profile_id === j.id))}
+        lienGuide={body.phase === 2 ? "/membres/guide-physique" : undefined}
         mode={body.mode ?? null}
         profilId={user!.id}
         pdfUrl={urlsPdf.get(e.id) ?? null}
@@ -182,6 +184,16 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             </Link>
           ))}
         </div>
+      )}
+
+      {tous.some((e) => ((e.body ?? {}) as EvenementBody).phase === 2) && (
+        <Link href="/membres/guide-physique" className="flex items-center justify-between gap-3 rounded-2xl border border-rof-or bg-rof-blanc p-4">
+          <span>
+            <span className="block font-condensed text-lg font-bold uppercase text-rof-texte">Guide de préparation physique</span>
+            <span className="block text-xs text-rof-gris">Phase 2 · décembre : le programme, tes charges et la progression</span>
+          </span>
+          <span aria-hidden="true" className="text-rof-or">→</span>
+        </Link>
       )}
 
       {(equipes.length > 0 || tous.length > 0) && <AgendaCalendrier key={filtre || "toutes"} jours={jours} aujourdhui={jour} debut={debutBande < decaler(jour, -180) ? decaler(jour, -180) : debutBande} fin={finBande} />}
